@@ -10,6 +10,7 @@
 ---
 
 ## 📜 **License**
-LICENSE
+[LICENSE](./LICENSE).
+
 
 ---

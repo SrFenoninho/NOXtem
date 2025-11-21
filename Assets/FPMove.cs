@@ -7,12 +7,12 @@ public class FPMove : MonoBehaviour
     public float gravity = -9.81f;
     public float jumpHeight = 1.2f;
 
-    [Header("Ground Check")] //verifica se está no chão teste
+    [Header("Ground Check")] //verifica se está no chão
     public float groundDistance = 0.3f;
     public LayerMask groundMask;
 
     [Header("Camera Settings")]
-    public float mouseSensitivity = 100f;
+    public float mouseSensitivity = 100f; 
 
     CharacterController controller;
     Transform playerCamera;

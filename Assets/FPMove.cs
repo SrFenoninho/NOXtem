@@ -7,7 +7,7 @@ public class FPMove : MonoBehaviour
     public float gravity = -9.81f;
     public float jumpHeight = 1.2f;
 
-    [Header("Ground Check")] //verifica se está no chão
+    [Header("Ground Check")] //verifica se está no chão teste
     public float groundDistance = 0.3f;
     public LayerMask groundMask;
 

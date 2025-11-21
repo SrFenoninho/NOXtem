@@ -3,13 +3,13 @@
 
 ---
 
-## 🧩 **Engine**
-- 🎮 **Unity** — Motor principal  
-- 🖥️ **C#** — Linguagem de programação  
+## 🧩 **Engine & Programming Language**
+- 🎮 **Unity** 
+- 🖥️ **C#**
 
 ---
 
-## 📜 **Licença**
-Define aqui a licença do projeto (sugerido: **MIT**).
+## 📜 **License**
+LICENSE
 
 ---

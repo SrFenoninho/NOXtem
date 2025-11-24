@@ -1,14 +1,16 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class LockedDoor : MonoBehaviour
 {
-    public string requiredKeyID = "Door";
+    public Text messageText;
+    public string requiredKeyID = "Door"; // "Door" is just an example key ID
     public bool isLocked = true;
     private Rigidbody rb;
 
     void Start()
     {
-        rb = GetComponent<Rigidbody>();
+        rb = GetComponent<Rigidbody>(); 
         rb.isKinematic = true;
     }
     public void OnTriggerEnter(Collider other)
@@ -22,12 +24,18 @@ public class LockedDoor : MonoBehaviour
             {
                 isLocked = false;
                 rb.isKinematic = false;
-                Debug.Log("Porta destrancada!");
+                messageText.text = "A door is unlocked";
             }
             else
             {
-                Debug.Log("Precisa da chave correta");
+                messageText.text = "You need a security key";
             }
         }
+        CancelInvoke(nameof(ClearMessage));
+        Invoke(nameof(ClearMessage), 2f);
+    }
+    void ClearMessage()
+    {
+        messageText.text = "";
     }
 }

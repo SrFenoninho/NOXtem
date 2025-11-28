@@ -1007,6 +1007,78 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: -8151035844026319201, guid: 01a9b52151244b5448927d0e7b59eea3, type: 3}
+--- !u!1 &312463077
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 312463080}
+  - component: {fileID: 312463079}
+  - component: {fileID: 312463078}
+  m_Layer: 0
+  m_Name: HitboxObjective (2)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &312463078
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 312463077}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d76153d37895862458043acce29d549c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  objectiveText: {fileID: 1011357090}
+  newObjectiveText: 'Objective:
+
+    Interesting, maybe you could open a kind of
+    gate or something.'
+  needsInteraction: 0
+--- !u!65 &312463079
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 312463077}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.95, y: 5.86, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!4 &312463080
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 312463077}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -13, y: 5.1575613, z: -1.83}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &318879162
 GameObject:
   m_ObjectHideFlags: 0
@@ -3029,6 +3101,7 @@ GameObject:
   - component: {fileID: 817852860}
   - component: {fileID: 817852859}
   - component: {fileID: 817852861}
+  - component: {fileID: 817852862}
   m_Layer: 0
   m_Name: venatoActivationn
   m_TagString: Untagged
@@ -3085,6 +3158,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   monster: {fileID: 1414226329}
+--- !u!114 &817852862
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 817852858}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d76153d37895862458043acce29d549c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  objectiveText: {fileID: 1011357090}
+  newObjectiveText: 'Objective:
+
+    RUN!!!'
+  needsInteraction: 0
 --- !u!1 &823622504 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7904519492570463653, guid: 01a9b52151244b5448927d0e7b59eea3, type: 3}
@@ -3856,8 +3946,8 @@ MonoBehaviour:
     m_RichText: 0
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
-    m_LineSpacing: 1.5
-  m_Text: "Objective: \nExplore the place."
+    m_LineSpacing: 1.25
+  m_Text: " Objective: \nExplore the place."
 --- !u!222 &1011357091
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -5632,7 +5722,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 1990890012}
-  speed: 3
+  speed: 6
 --- !u!1 &1416254908 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3319272242282108514, guid: ab726435170243444b3bec5859121025, type: 3}
@@ -6801,6 +6891,78 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 8404227713159518692, guid: ab726435170243444b3bec5859121025, type: 3}
+--- !u!1 &1639882091
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1639882094}
+  - component: {fileID: 1639882093}
+  - component: {fileID: 1639882092}
+  m_Layer: 0
+  m_Name: HitboxObjective (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1639882092
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1639882091}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d76153d37895862458043acce29d549c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  objectiveText: {fileID: 1011357090}
+  newObjectiveText: 'Objective:
+
+    Okay, let''s find what you came here looking
+    for.'
+  needsInteraction: 0
+--- !u!65 &1639882093
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1639882091}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.95, y: 5.86, z: 3.99}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!4 &1639882094
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1639882091}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 4.817, y: 5.1575613, z: -4}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1640217132 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -4200992026853630256, guid: ab726435170243444b3bec5859121025, type: 3}
@@ -8711,3 +8873,5 @@ SceneRoots:
   - {fileID: 129666770}
   - {fileID: 817852860}
   - {fileID: 2144819337}
+  - {fileID: 1639882094}
+  - {fileID: 312463080}

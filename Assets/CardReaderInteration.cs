@@ -51,6 +51,7 @@ public class CardReaderInteraction : MonoBehaviour
         {
             UnlockDoor();
             messageText.text = "Access Granted!";
+            Destroy(GetComponent<SphereCollider>());
         }
         else
         {
@@ -74,7 +75,6 @@ public class CardReaderInteraction : MonoBehaviour
     }
     void ClearMessage()
     {
-        if (!playerInside)
             messageText.text = "";
     }
 }

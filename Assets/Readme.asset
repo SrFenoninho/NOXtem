@@ -13,22 +13,21 @@ MonoBehaviour:
   m_Name: Readme
   m_EditorClassIdentifier: 
   icon: {fileID: 2800000, guid: 727a75301c3d24613a3ebcec4a24c2c8, type: 3}
-  title: URP Empty Template
+  title: NØXtem
   sections:
-  - heading: Welcome to the Universal Render Pipeline
-    text: This template includes the settings and assets you need to start creating with the Universal Render Pipeline.
-    linkText: 
-    url:
-  - heading: URP Documentation
-    text:
-    linkText: Read more about URP
-    url: https://docs.unity3d.com/Packages/com.unity.render-pipelines.universal@latest
-  - heading: Forums
-    text:
-    linkText: Get answers and support
-    url: https://forum.unity.com/forums/universal-render-pipeline.383/
-  - heading: Report bugs
-    text:
-    linkText: Submit a report
-    url: https://unity3d.com/unity/qa/bug-reporting
+  - heading: "🌑 NØXtem"
+    text: >-
+      A low-poly suspense and action game that shifts between first-person and third-person / hack-and-slash gameplay, developed in Unity.
+    linkText: ""
+    url: ""
+  - heading: "Engine & Programming Language"
+    text: >-
+      • Unity
+      • C#
+    linkText: ""
+    url: ""
+  - heading: "License"
+    text: ""
+    linkText: "LICENSE"
+    url: "https://github.com/SrFenoninho/NOXtem/blob/main/LICENSE"
   loadedLayout: 1

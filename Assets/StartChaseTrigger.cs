@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class StartChaseTrigger : MonoBehaviour
 {
-    public MonsterChaseAI monster;   // Again, calling it "AI" is saying a lot, but whatever :D
+    public MonsterChaseAI monster;   // Again, calling it "AI" is saying a lot, but whatever :)
 
     private void OnTriggerEnter(Collider other)
     {

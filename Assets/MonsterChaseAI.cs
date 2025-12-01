@@ -41,7 +41,6 @@ public class MonsterChaseAI : MonoBehaviour
             if (playerHealth != null)
             {
                 playerInZone = true;
-                Debug.Log("Player entered damage zone!");
             }
         }
     }

@@ -592,6 +592,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 8eef8329ec5176245a046bf14916266a, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1414226329}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 8eef8329ec5176245a046bf14916266a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1414226331}
   m_SourcePrefab: {fileID: 100100000, guid: 8eef8329ec5176245a046bf14916266a, type: 3}
 --- !u!1 &157312285 stripped
 GameObject:
@@ -5701,7 +5704,7 @@ CapsuleCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
@@ -5723,6 +5726,29 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 1990890012}
   speed: 6
+  attackDamage: 100
+  attackInterval: 1
+--- !u!65 &1414226331
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1414226326}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 4.56, z: 1.06}
+  m_Center: {x: 0, y: 2.52, z: 0}
 --- !u!1 &1416254908 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3319272242282108514, guid: ab726435170243444b3bec5859121025, type: 3}
@@ -8336,6 +8362,9 @@ PrefabInstance:
       addedObject: {fileID: 1990890014}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 2257244b7c91e044493b2c26aa1464e6, type: 3}
       insertIndex: -1
+      addedObject: {fileID: 1990890018}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 2257244b7c91e044493b2c26aa1464e6, type: 3}
+      insertIndex: -1
       addedObject: {fileID: 1990890017}
   m_SourcePrefab: {fileID: 100100000, guid: 2257244b7c91e044493b2c26aa1464e6, type: 3}
 --- !u!1 &1990890011 stripped
@@ -8383,6 +8412,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 5
+  sprintSpeed: 7
   gravity: -15
   jumpHeight: 1
   groundDistance: 0.3
@@ -8440,6 +8470,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 89db82cdc42a4a04a8092ccc231345b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1990890018
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1990890011}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd86df2654363784d8550e92c660a273, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 100
+  currentHealth: 0
+  damageCooldown: 1
 --- !u!1 &1993691881 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6590768792273708963, guid: ab726435170243444b3bec5859121025, type: 3}

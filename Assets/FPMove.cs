@@ -4,10 +4,11 @@ public class FPMove : MonoBehaviour
 {
     [Header("Movement Settings")]
     public float speed = 5f;
+    public float sprintSpeed = 8f;
     public float gravity = -9.81f;
     public float jumpHeight = 1.2f;
 
-    [Header("Ground Check")] //verifica se está no chão
+    [Header("Ground Check")] 
     public float groundDistance = 0.3f;
     public LayerMask groundMask;
 
@@ -44,12 +45,13 @@ public class FPMove : MonoBehaviour
         // Movimentos básicos
         float x = Input.GetAxis("Horizontal");   // A / D
         float z = Input.GetAxis("Vertical");     // W / S
+        float currentSpeed = Input.GetKey(KeyCode.LeftShift) ? sprintSpeed : speed; // LShift
 
         Vector3 move = transform.right * x + transform.forward * z;
-        controller.Move(move * speed * Time.deltaTime);
+        controller.Move(move * currentSpeed * Time.deltaTime);
 
         if (Input.GetButtonDown("Jump") && isGrounded)
-            velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity); // Fórmula matemática para calcular a altura do pulo
+            velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity); // Mathematical formula to calculate jump height
 
         velocity.y += gravity * Time.deltaTime;
         controller.Move(velocity * Time.deltaTime);

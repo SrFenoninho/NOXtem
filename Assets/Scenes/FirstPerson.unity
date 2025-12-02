@@ -1245,7 +1245,7 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.3
-  far clip plane: 1000
+  far clip plane: 100
   field of view: 40
   orthographic: 0
   orthographic size: 5
@@ -3949,7 +3949,7 @@ MonoBehaviour:
     m_RichText: 0
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
-    m_LineSpacing: 1.25
+    m_LineSpacing: 1.4
   m_Text: " Objective: \nExplore the place."
 --- !u!222 &1011357091
 CanvasRenderer:
@@ -8411,7 +8411,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28459524e0755e84d8f7f71bd1a06878, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 5
+  speed: 4
   sprintSpeed: 7
   gravity: -15
   jumpHeight: 1
@@ -8900,7 +8900,8 @@ MonoBehaviour:
   objectiveText: {fileID: 1011357090}
   newObjectiveText: 'Objective:
 
-    Find a way to open the Security Room.'
+    Find a way to open the Security Room (metal
+    door).'
   needsInteraction: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:

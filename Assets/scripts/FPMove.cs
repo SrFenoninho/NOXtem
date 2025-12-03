@@ -37,7 +37,6 @@ public class FPMove : MonoBehaviour
 
     void Update()
     {
-        // Ground check com RaycastHit
         RaycastHit hit;
         isGrounded = Physics.Raycast(transform.position, Vector3.down, out hit, groundDistance + 0.1f, groundMask);
 
@@ -45,8 +44,8 @@ public class FPMove : MonoBehaviour
             velocity.y = -2f;
 
         // Movimentos básicos
-        float x = Input.GetAxis("Horizontal");   // A / D
-        float z = Input.GetAxis("Vertical");     // W / S
+        float x = Input.GetAxisRaw("Horizontal");   // A / D
+        float z = Input.GetAxisRaw("Vertical");     // W / S
         float currentSpeed = Input.GetKey(KeyCode.LeftShift) ? sprintSpeed : speed; // LShift
 
         Vector3 move = transform.right * x + transform.forward * z;

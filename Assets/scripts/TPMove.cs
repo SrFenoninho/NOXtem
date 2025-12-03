@@ -41,25 +41,29 @@ public class TPMove : MonoBehaviour
 
     void HandleMovement()
     {
-        float h = Input.GetAxis("Horizontal");
-        float v = Input.GetAxis("Vertical");
-
+        float h = Input.GetAxisRaw("Horizontal");
+        float v = Input.GetAxisRaw("Vertical");
         float currentSpeed = Input.GetKey(KeyCode.LeftShift) ? sprintSpeed : speed;
 
-        // Direção corrigida, sem inversões
-        Vector3 moveDirection = (transform.forward * v) + (transform.right * h);
+        Transform cameraTransform = Camera.main.transform;
+        Vector3 forward = cameraTransform.forward;
+        Vector3 right = cameraTransform.right;
 
-        // Movimento
+        forward.y = 0f;
+        right.y = 0f;
+        forward.Normalize();
+        right.Normalize();
+
+        Vector3 moveDirection = (forward * v) + (right * h);
+
         if (moveDirection.magnitude > 0.1f)
         {
             controller.Move(moveDirection.normalized * currentSpeed * Time.deltaTime);
 
-            // Rotação do modelo na direção do movimento
-            Quaternion targetRotation = Quaternion.LookRotation(moveDirection);
+            Quaternion targetRotation = Quaternion.LookRotation(moveDirection) * Quaternion.Euler(0, 180, 0);
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 10f * Time.deltaTime);
         }
 
-        // Gravidade
         velocity.y += gravity * Time.deltaTime;
         controller.Move(velocity * Time.deltaTime);
     }

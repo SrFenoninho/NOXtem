@@ -152,7 +152,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyPrefab: {fileID: 194701035}
-  spawnRadius: 10
+  spawnRadius: 20
   spawnInterval: 2
   maxEnemies: 10
 --- !u!64 &170264425
@@ -342,7 +342,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 100
-  speed: 3
+  speed: 6
   attackDamage: 10
   attackInterval: 1
   isOriginal: 1
@@ -512,6 +512,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 31ed60520825ed948ac0b3db0b004a4b, type: 3}
       insertIndex: -1
       addedObject: {fileID: 379268465}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 31ed60520825ed948ac0b3db0b004a4b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 379268466}
   m_SourcePrefab: {fileID: 100100000, guid: 31ed60520825ed948ac0b3db0b004a4b, type: 3}
 --- !u!4 &379268458 stripped
 Transform:
@@ -577,10 +580,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78c2908df8c190949872ca46c623f036, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 5
-  sprintSpeed: 10
-  gravity: -9.81
-  jumpHeight: 1.2
+  speed: 7
+  sprintSpeed: 15
+  gravity: -30
+  jumpHeight: 4
   groundDistance: 0.3
   groundMask:
     serializedVersion: 2
@@ -612,14 +615,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6cf70ea0322b6774f895979ea481dbab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lightDamage: 25
+  lightDamage: 20
   lightAttackDuration: 0.1
-  heavyDamage: 60
+  heavyDamage: 40
   heavyWindupTime: 0.5
   heavyAttackDuration: 0.8
   attackHitbox: {fileID: 857770395}
   enemyTag: Enemy
   attackCooldown: 0.2
+--- !u!114 &379268466
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 234859689}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55cbd456e02fcdd47b6657e63ceb0b47, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  regenAmount: 2
+  regenInterval: 5
 --- !u!1 &511264040
 GameObject:
   m_ObjectHideFlags: 0
@@ -1125,7 +1142,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0.00248288, y: -0.0003020291, z: -0.0035968006, w: 0.99999046}
   m_LocalPosition: {x: -6.867689, y: 0.96, z: -38.438972}
-  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_LocalScale: {x: 6.832902, y: 2, z: 3.2414}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}

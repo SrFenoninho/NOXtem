@@ -1,32 +1,52 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public class Hitbox : MonoBehaviour
 {
-    private float damage;
-    private string Enemy;
-    private bool active = false;
+    private float currentDamage;
+    private string targetTag;
+    private Collider myCollider;
 
-    public void EnableHitbox(float dmg, string tag)
+    private List<GameObject> enemiesHit = new List<GameObject>();
+
+    void Awake()
     {
-        damage = dmg;
-        Enemy = tag;
-        active = true;
+        myCollider = GetComponent<Collider>();
+        myCollider.enabled = false;
+        myCollider.isTrigger = true;
+    }
+
+    public void EnableHitbox(float damage, string tag)
+    {
+        currentDamage = damage;
+        targetTag = tag;
+
+        enemiesHit.Clear();
+
+        myCollider.enabled = true;
     }
 
     public void DisableHitbox()
     {
-        active = false;
+        myCollider.enabled = false;
     }
 
-    private void OnTriggerEnter(Collider other)
+    void OnTriggerEnter(Collider other)
     {
-        if (!active) return;
-        if (!other.CompareTag(Enemy)) return;
-
-        EnemyAI enemy = other.GetComponentInParent<EnemyAI>();
-        if (enemy != null)
+        if (other.CompareTag(targetTag))
         {
-            enemy.TakeDamage(damage);
+            if (enemiesHit.Contains(other.gameObject))
+            {
+                return;
+            }
+
+            EnemyAI enemy = other.GetComponent<EnemyAI>();
+            if (enemy != null)
+            {
+                enemy.TakeDamage(currentDamage);
+
+                enemiesHit.Add(other.gameObject);
+            }
         }
     }
 }

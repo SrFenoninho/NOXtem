@@ -14,6 +14,9 @@ public class EnemyAI : MonoBehaviour
 
     public System.Action OnDeath;
 
+    public bool isOriginal = false;
+
+
     void Start()
     {
         currentHealth = maxHealth;
@@ -23,6 +26,8 @@ public class EnemyAI : MonoBehaviour
 
     void Update()
     {
+        if (isOriginal) return;
+
         if (player == null) return;
         Vector3 direction = (player.position - transform.position).normalized;
         transform.position += direction * speed * Time.deltaTime;
@@ -60,7 +65,7 @@ public class EnemyAI : MonoBehaviour
     }
     public void TakeDamage(float damage)
     {
-        currentHealth -= damage;
+        currentHealth = currentHealth - damage;
         Debug.Log("Inimigo tomou " + damage + " de dano. Vida restante: " + currentHealth);
 
         if (currentHealth <= 0)

@@ -44,6 +44,7 @@ public class EnemySpawn : MonoBehaviour
         EnemyAI ai = enemy.GetComponent<EnemyAI>();
         if (ai != null)
         {
+            ai.isOriginal = false;
             ai.OnDeath += () => currentEnemies--;
         }
     }

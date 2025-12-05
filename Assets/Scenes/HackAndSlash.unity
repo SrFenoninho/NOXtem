@@ -496,6 +496,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 31ed60520825ed948ac0b3db0b004a4b, type: 3}
       insertIndex: -1
       addedObject: {fileID: 857770393}
+    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 31ed60520825ed948ac0b3db0b004a4b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1456246455}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 31ed60520825ed948ac0b3db0b004a4b, type: 3}
       insertIndex: -1
@@ -515,6 +518,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 31ed60520825ed948ac0b3db0b004a4b, type: 3}
       insertIndex: -1
       addedObject: {fileID: 379268466}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 31ed60520825ed948ac0b3db0b004a4b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 379268467}
   m_SourcePrefab: {fileID: 100100000, guid: 31ed60520825ed948ac0b3db0b004a4b, type: 3}
 --- !u!4 &379268458 stripped
 Transform:
@@ -620,6 +626,8 @@ MonoBehaviour:
   heavyDamage: 40
   heavyWindupTime: 0.5
   heavyAttackDuration: 0.8
+  defenseKey: 113
+  defenseHitbox: {fileID: 0}
   attackHitbox: {fileID: 857770395}
   enemyTag: Enemy
   attackCooldown: 0.2
@@ -637,6 +645,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   regenAmount: 2
   regenInterval: 5
+--- !u!114 &379268467
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 234859689}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 298e64728ea5d0b4a80d6dd2f90a032d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  comboText: {fileID: 511264042}
+  comboFormat: COMBO x{0}
+  comboResetTime: 2
+  minimumComboToShow: 2
 --- !u!1 &511264040
 GameObject:
   m_ObjectHideFlags: 0
@@ -648,6 +672,7 @@ GameObject:
   - component: {fileID: 511264041}
   - component: {fileID: 511264043}
   - component: {fileID: 511264042}
+  - component: {fileID: 511264044}
   m_Layer: 5
   m_Name: Combos
   m_TagString: Untagged
@@ -663,7 +688,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 511264040}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -76.822945}
+  m_LocalPosition: {x: 0, y: 0, z: -71}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -671,7 +696,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 245.58612, y: 108.08725}
+  m_AnchoredPosition: {x: 168, y: 86}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &511264042
@@ -696,10 +721,10 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 25
+    m_FontSize: 15
     m_FontStyle: 1
     m_BestFit: 0
-    m_MinSize: 2
+    m_MinSize: 1
     m_MaxSize: 40
     m_Alignment: 4
     m_AlignByGeometry: 0
@@ -707,7 +732,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Combos
+  m_Text: 
 --- !u!222 &511264043
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -716,6 +741,22 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 511264040}
   m_CullTransparentMesh: 1
+--- !u!114 &511264044
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 511264040}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 298e64728ea5d0b4a80d6dd2f90a032d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  comboText: {fileID: 0}
+  comboFormat: COMBO x{0}
+  comboResetTime: 1
+  minimumComboToShow: 2
 --- !u!1001 &828197419
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1006,7 +1047,7 @@ Canvas:
   serializedVersion: 3
   m_RenderMode: 1
   m_Camera: {fileID: 1942857035}
-  m_PlaneDistance: 3.11
+  m_PlaneDistance: 4.08
   m_PixelPerfect: 0
   m_ReceivesEvents: 1
   m_OverrideSorting: 0
@@ -1031,7 +1072,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 511264041}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 379268458}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -1298,7 +1339,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 379268458}
-  targetOffset: {x: 0, y: 3.5, z: 0}
+  targetOffset: {x: 0, y: 5, z: 0}
   distance: 13
   sensitivity: 300
   minVerticalAngle: -30
@@ -1315,6 +1356,5 @@ SceneRoots:
   - {fileID: 1657274572}
   - {fileID: 170264428}
   - {fileID: 379268457}
-  - {fileID: 1456246455}
   - {fileID: 179840290}
   - {fileID: 1242053809}

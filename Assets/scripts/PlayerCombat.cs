@@ -29,17 +29,26 @@ public class PlayerCombat : MonoBehaviour
 
     void Update()
     {
+        bool wasDefending = isDefending; // verify previous state
         isDefending = Input.GetKey(defenseKey);
 
-        if (defenseHitbox != null)
+        if (isDefending && !wasDefending) 
         {
-            if (isDefending)
-                defenseHitbox.EnableDefense();
-            else
-                defenseHitbox.DisableDefense();
+            if (defenseHitbox != null)
+            {
+                defenseHitbox.ActivateDefense();
+            }
         }
 
-        if (isDefending) return;
+        if (!isDefending && wasDefending)
+        {
+            if (defenseHitbox != null)
+            {
+                defenseHitbox.DeactivateDefense();
+            }
+        }
+
+        if (isDefending) return; // cannot attack while defending
         if (Time.time < nextAttackTime) return;
         if (isAttacking || isHeavyCharging) return;
 

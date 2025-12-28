@@ -1,24 +1,30 @@
 using UnityEngine;
+
 public class HitboxDefense : MonoBehaviour
 {
-    private Collider myCollider;
+    [Header("Defense Settings")]
+    public GameObject defenseWallPrefab; // I need to vent, this was such a difficult solution to reach, I really spent a lot of time on this, and I know there are still bugs but I'm getting closer to making a good defense, BTW IDK what I doing!
+    public Transform spawnPoint; 
 
-    void Awake()
+    private GameObject currentDefenseWall;
+
+    public void ActivateDefense()
     {
-        myCollider = GetComponent<Collider>();
-        myCollider.enabled = false;
-        myCollider.isTrigger = true;
+        if (currentDefenseWall != null) return;
+        if (defenseWallPrefab != null && spawnPoint != null)
+        {
+            currentDefenseWall = Instantiate(defenseWallPrefab, spawnPoint.position, spawnPoint.rotation);
+            Debug.Log("Defense wall created!");
+        }
     }
 
-    public void EnableDefense()
+    public void DeactivateDefense()
     {
-        myCollider.enabled = true;
-        Debug.Log("Defense hitbox enabled");
-    }
-
-    public void DisableDefense()
-    {
-        myCollider.enabled = false;
-        Debug.Log("Defense hitbox disabled");
+        if (currentDefenseWall != null)
+        {
+            Destroy(currentDefenseWall);
+            currentDefenseWall = null;
+            Debug.Log("Defense wall destroyed!");
+        }
     }
 }

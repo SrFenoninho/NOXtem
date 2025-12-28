@@ -1,39 +1,30 @@
 using UnityEngine;
-
 public class EnemyAI : MonoBehaviour
 {
     public float maxHealth = 100f;
     public float speed = 3f;
     public float attackDamage = 10f;
     public float attackInterval = 1f;
-
     private float currentHealth;
     private Transform player;
     private PlayerHealth playerHealth;
     private float nextAttack = 0f;
-
     public System.Action OnDeath;
-
     public bool isOriginal = false;
-
-
     void Start()
     {
         currentHealth = maxHealth;
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
         if (playerObj != null) player = playerObj.transform;
     }
-
     void Update()
     {
         if (isOriginal) return;
-
         if (player == null) return;
         Vector3 direction = (player.position - transform.position).normalized;
         transform.position += direction * speed * Time.deltaTime;
         transform.LookAt(player);
     }
-
     void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
@@ -41,13 +32,11 @@ public class EnemyAI : MonoBehaviour
             playerHealth = other.GetComponent<PlayerHealth>();
         }
     }
-
     void OnTriggerStay(Collider other)
     {
         if (other.CompareTag("Player") && Time.time >= nextAttack)
         {
             if (playerHealth == null) playerHealth = other.GetComponent<PlayerHealth>();
-
             if (playerHealth != null)
             {
                 playerHealth.TakeDamage(attackDamage);
@@ -55,7 +44,6 @@ public class EnemyAI : MonoBehaviour
             }
         }
     }
-
     void OnTriggerExit(Collider other)
     {
         if (other.CompareTag("Player"))
@@ -67,12 +55,10 @@ public class EnemyAI : MonoBehaviour
     {
         currentHealth = currentHealth - damage;
         Debug.Log("Enemy took " + damage + " damage. Remaining health: " + currentHealth);
-
         if (currentHealth <= 0)
         {
             OnDeath?.Invoke();
             Destroy(gameObject);
         }
     }
-
 }

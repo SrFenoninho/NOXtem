@@ -1,4 +1,5 @@
 ~~~~Random dialogue when initiating a call~~~~
+
 -----LINE 1-----
 
 Will: Miss B?
@@ -42,7 +43,7 @@ Will: B?
 B: Will.
 
 ----------------
------LINE 6-----
+-----LINE 8-----
 
 B: William.
 Will: B… the star of the show. To what do I owe this pleasure?

@@ -1,80 +1,64 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class CardReaderInteraction : MonoBehaviour
+public class CardReaderInteraction : MonoBehaviour, IInteractable
 {
-    [Header("UI Message")]
-    public Text messageText;
-
     [Header("Door Settings")]
     public GameObject GateDoor1;
     public GameObject GateDoor2;
     public string keyName = "Keycard";
 
-    private bool playerInside = false;
-    private PlayerKeys playerKeys;
+    [Header("UI")]
+    public Text messageText;
 
-    private void OnTriggerEnter(Collider other)
+    private bool isUnlocked = false;
+
+    public string GetInteractMessage()
     {
-        if (other.CompareTag("Player"))
-        {
-            playerInside = true;
-            playerKeys = other.GetComponent<PlayerKeys>();
+        if (isUnlocked)
+            return "Already unlocked";
 
-            messageText.text = "Press E to use card reader";
-        }
+        return "Press E to use card reader";
     }
-
-    private void OnTriggerExit(Collider other)
+    public void Interact(GameObject player)
     {
-        if (other.CompareTag("Player"))
-        {
-            playerInside = false;
-            messageText.text = "";
-            playerKeys = null;
-        }
-    }
+        if (isUnlocked) return;
 
-    private void Update()
-    {
-        if (playerInside && Input.GetKeyDown(KeyCode.E))
-        {
-            TryAccess();
-        }
-    }
+        PlayerKeys playerKeys = player.GetComponent<PlayerKeys>();
 
-    void TryAccess()
-    {
         if (playerKeys == null) return;
 
         if (playerKeys.HasKey(keyName))
         {
             UnlockDoor();
-            messageText.text = "Access Granted!";
-            Destroy(GetComponent<SphereCollider>());
+            isUnlocked = true;
+
+            if (messageText != null)
+            {
+                messageText.text = "Access Granted!";
+                Invoke(nameof(ClearMessage), 2f);
+            }
         }
         else
         {
-            messageText.text = $"You need a {keyName}";
+            if (messageText != null)
+            {
+                messageText.text = $"You need a {keyName}";
+                Invoke(nameof(ClearMessage), 2f);
+            }
         }
-
-        CancelInvoke(nameof(ClearMessage));
-        Invoke(nameof(ClearMessage), 2f);
     }
     void UnlockDoor()
     {
         if (GateDoor1 != null)
-        {
             GateDoor1.SetActive(false);
-            // this makes the door disappear, is temporary! In a future, probably, I make an animation or other thing
-        }
+
         if (GateDoor2 != null)
-        {
             GateDoor2.SetActive(false);
-        }
     }
     void ClearMessage()
     {
+        if (messageText != null)
             messageText.text = "";
     }
 }

@@ -19,7 +19,7 @@ public class MonsterChaseAI : MonoBehaviour
 
         Vector3 direction = (player.position - transform.position).normalized;
         transform.position += direction * speed * Time.deltaTime; // Follow the player
-        transform.LookAt(player);
+        transform.LookAt(transform.position - (player.position - transform.position));
 
         if (playerInZone && Time.time >= nextAttack && playerHealth != null)
         {

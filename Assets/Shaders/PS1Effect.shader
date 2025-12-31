@@ -40,7 +40,7 @@ Shader "Custom/PS1Effect"
                 v2f o;
                 o.vertex = UnityObjectToClipPos(v.vertex);
                 
-                // Vertex snapping (PS1 effect) - AJUSTADO
+                // Vertex snapping (PS1 effect)
                 if (_VertexInaccuracy > 0)
                 {
                     float gridSize = _VertexInaccuracy;

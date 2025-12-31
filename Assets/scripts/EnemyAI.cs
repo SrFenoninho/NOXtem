@@ -23,7 +23,7 @@ public class EnemyAI : MonoBehaviour
         if (player == null) return;
         Vector3 direction = (player.position - transform.position).normalized;
         transform.position += direction * speed * Time.deltaTime;
-        transform.LookAt(player);
+        transform.LookAt(transform.position - (player.position - transform.position));
     }
     void OnTriggerEnter(Collider other)
     {

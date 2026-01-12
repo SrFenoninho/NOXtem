@@ -4007,7 +4007,7 @@ GameObject:
   - component: {fileID: 817852861}
   - component: {fileID: 817852862}
   m_Layer: 0
-  m_Name: venatoActivationn
+  m_Name: venatorActivationn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -345,6 +345,8 @@ MonoBehaviour:
   speed: 6
   attackDamage: 10
   attackInterval: 1
+  knockbackForce: 5
+  knockbackDuration: 0.3
   isOriginal: 1
 --- !u!136 &194701038
 CapsuleCollider:
@@ -871,6 +873,8 @@ MonoBehaviour:
   maxHealth: 100
   currentHealth: 0
   damageCooldown: 1
+  knockbackForce: 15
+  knockbackDuration: 0.3
 --- !u!114 &379268465
 MonoBehaviour:
   m_ObjectHideFlags: 0

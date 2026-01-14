@@ -23,7 +23,7 @@ public class MonsterChaseAI : MonoBehaviour
 
         if (playerInZone && Time.time >= nextAttack && playerHealth != null)
         {
-            playerHealth.TakeDamage(attackDamage);
+            playerHealth.TakeDamage(attackDamage, transform.position);
             nextAttack = Time.time + attackInterval;
         }
     }

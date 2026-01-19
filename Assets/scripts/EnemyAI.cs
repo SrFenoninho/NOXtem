@@ -43,9 +43,12 @@ public class EnemyAI : MonoBehaviour
             return;
         }
 
-        Vector3 direction = (player.position - transform.position).normalized;
-        transform.position += direction * speed * Time.deltaTime;
-        transform.LookAt(transform.position - (player.position - transform.position));
+        Vector3 targetPoint = transform.position - (player.position - transform.position);
+        targetPoint.y = transform.position.y;
+        transform.LookAt(targetPoint);
+        Vector3 moveDirection = (player.position - transform.position).normalized;
+        moveDirection.y = 0;
+        transform.position += moveDirection * speed * Time.deltaTime;
     }
     void OnTriggerEnter(Collider other)
     {

@@ -51,8 +51,7 @@ public class RadialMenuManager : MonoBehaviour
 
     void Update()
     {
-        // Opening voiceline finished - show UI
-        if (isVoicelinePlaying && !audioSource.isPlaying)
+        if (isVoicelinePlaying && !audioSource.isPlaying) // Opening voiceline finished - show UI
         {
             isVoicelinePlaying = false;
             Cursor.visible = true;
@@ -60,8 +59,7 @@ public class RadialMenuManager : MonoBehaviour
             radialMenuUI.SetActive(true);
         }
 
-        // Option audio finished - close menu
-        if (isOptionAudioPlaying && !audioSource.isPlaying)
+        if (isOptionAudioPlaying && !audioSource.isPlaying) // Option audio finished - close menu
         {
             isOptionAudioPlaying = false;
             FullCloseMenu();
@@ -84,8 +82,7 @@ public class RadialMenuManager : MonoBehaviour
             }
         }
 
-        // Keyboard selection only when UI is visible
-        if (isMenuOpen && !isVoicelinePlaying && !isOptionAudioPlaying && radialMenuUI.activeSelf)
+        if (isMenuOpen && !isVoicelinePlaying && !isOptionAudioPlaying && radialMenuUI.activeSelf) // Keyboard selection only when UI is visible
         {
             if (Input.GetKeyDown(KeyCode.Alpha1) || Input.GetKeyDown(KeyCode.Keypad1))
                 SelectOption(1);

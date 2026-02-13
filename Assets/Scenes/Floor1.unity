@@ -1202,13 +1202,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 4
   sprintSpeed: 7
-  gravity: -15
-  jumpHeight: 1
+  gravity: -20
+  jumpHeight: 2
   groundDistance: 0.3
   groundMask:
     serializedVersion: 2
     m_Bits: 0
   mouseSensitivity: 300
+  useHeadBob: 1
+  bobSpeed: 14
+  bobAmount: 0.05
+  useFovKick: 1
+  sprintFOV: 60
+  fovSmoothSpeed: 3
+  footstepSounds:
+  - {fileID: 8300000, guid: 0386ffefc9f141f41bb0594f29a87cc0, type: 3}
+  - {fileID: 8300000, guid: f2bb9fd115eb3514ea3e01fd0a55c2d8, type: 3}
+  - {fileID: 8300000, guid: 12200e2bc0d19e04e89b1c0746bd4432, type: 3}
+  - {fileID: 8300000, guid: d488b6197f1b18d41a5b6ecf6d4e69ff, type: 3}
+  jumpSound: {fileID: 8300000, guid: c7eafbcc4bde5b34cbba381997ba5b00, type: 3}
+  landSound: {fileID: 8300000, guid: f2131054bad53d04cbccaf31f5461d1e, type: 3}
+  footstepInterval: 0.5
 --- !u!114 &267318117
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1221,7 +1235,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1fdc74713982a614eb5d42972f0fde5c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pushForce: 2
+  pushForce: 3
 --- !u!143 &267318118
 CharacterController:
   m_ObjectHideFlags: 0
@@ -9436,7 +9450,7 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.3
+  near clip plane: 0.1
   far clip plane: 100
   field of view: 40
   orthographic: 0
@@ -16445,7 +16459,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2257244b7c91e044493b2c26aa1464e6, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 14.465
+      value: 14.374
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2257244b7c91e044493b2c26aa1464e6, type: 3}
       propertyPath: m_LocalPosition.z

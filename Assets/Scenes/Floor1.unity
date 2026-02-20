@@ -19088,6 +19088,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 080996d3df2a1944e91eff0e18e0fa7c, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 03de886d1db9e2c4d9bb6e176b8ce0af, type: 2}
     - target: {fileID: 919132149155446097, guid: 080996d3df2a1944e91eff0e18e0fa7c, type: 3}
       propertyPath: m_Name
       value: NEWDESKTOP (2)
@@ -19287,6 +19291,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 080996d3df2a1944e91eff0e18e0fa7c, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 03de886d1db9e2c4d9bb6e176b8ce0af, type: 2}
     - target: {fileID: 919132149155446097, guid: 080996d3df2a1944e91eff0e18e0fa7c, type: 3}
       propertyPath: m_Name
       value: NEWDESKTOP (1)

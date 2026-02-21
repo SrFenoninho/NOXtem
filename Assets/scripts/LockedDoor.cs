@@ -28,7 +28,7 @@ public class LockedDoor : MonoBehaviour
             }
             else
             {
-                messageText.text = "You need a security key";
+                messageText.text = $"You need a {requiredKeyID} key";
             }
         }
         CancelInvoke(nameof(ClearMessage));

@@ -55,6 +55,7 @@ public class FPMove : MonoBehaviour
     void Start()
     {
         controller = GetComponent<CharacterController>();
+        controller.center = new Vector3(0, controller.height / 2, 0); // Ensure the center is at the correct height
         playerCamera = GetComponentInChildren<Camera>().transform;
         cam = playerCamera.GetComponent<Camera>();
 
@@ -147,7 +148,7 @@ public class FPMove : MonoBehaviour
         xRotation = Mathf.Clamp(xRotation, -90f, 90f);
 
         playerCamera.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
-        transform.rotation = Quaternion.Euler(0f, yRotation, 0f);
+        transform.Rotate(Vector3.up * mouseX);
     }
 
     void HandleHeadBob(float speed)

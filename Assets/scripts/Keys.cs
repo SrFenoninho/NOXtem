@@ -38,7 +38,7 @@ public class Keys : MonoBehaviour, IInteractable
             if (meshRenderer != null)
                 meshRenderer.enabled = false; // Hide the key object
 
-            Destroy(gameObject, 0.1f);
+            Destroy(gameObject, 2.1f);
         }
     }
     void ClearMessage()

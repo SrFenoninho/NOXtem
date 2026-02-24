@@ -14,9 +14,12 @@ public class RotateObject : MonoBehaviour
     public float particleSize = 0.3f;
 
     private ParticleSystem particles;
+    private MeshRenderer meshRenderer;
+    private bool effectsStopped = false;
 
     void Start()
     {
+        meshRenderer = GetComponent<MeshRenderer>();
         if (useParticles)
         {
             CreateParticleSystem();
@@ -25,7 +28,23 @@ public class RotateObject : MonoBehaviour
 
     void Update()
     {
-        transform.Rotate(rotationSpeed * Time.deltaTime);
+        if (!effectsStopped && meshRenderer != null && !meshRenderer.enabled)
+        {
+            StopEffects();
+        }
+        if (!effectsStopped)
+        {
+            transform.Rotate(rotationSpeed * Time.deltaTime);
+        }
+    }
+
+    void StopEffects()
+    {
+        effectsStopped = true;
+        if (particles != null)
+        {
+            particles.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+        }
     }
 
     void CreateParticleSystem()

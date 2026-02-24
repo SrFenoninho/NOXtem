@@ -13,7 +13,7 @@ public class Keys : MonoBehaviour, IInteractable
 
     public string GetInteractMessage()
     {
-        return $"Press E to pick up {keyName}";
+        return $"Press E to pick up {keyName} key.";
     }
     public void Interact(GameObject player)
     {
@@ -38,7 +38,7 @@ public class Keys : MonoBehaviour, IInteractable
             if (meshRenderer != null)
                 meshRenderer.enabled = false; // Hide the key object
 
-            Destroy(gameObject, 2.1f);
+            Destroy(gameObject, 0.1f);
         }
     }
     void ClearMessage()

@@ -32,9 +32,18 @@ public class RotateObject : MonoBehaviour
     {
         GameObject particleObj = new GameObject("Particles");
         particleObj.transform.SetParent(transform);
-        particleObj.transform.localPosition = Vector3.zero;
 
-        particles = particleObj.AddComponent<ParticleSystem>();
+        Renderer rend = GetComponent<Renderer>();
+        if (rend != null)
+        {
+            particleObj.transform.position = rend.bounds.center;
+        }
+        else
+        {
+            particleObj.transform.localPosition = Vector3.zero;
+        }
+
+            particles = particleObj.AddComponent<ParticleSystem>();
 
         var main = particles.main;
         main.startColor = particleColor;
@@ -73,8 +82,8 @@ public class RotateObject : MonoBehaviour
         );
         colorOverLifetime.color = new ParticleSystem.MinMaxGradient(gradient);
         var renderer = particles.GetComponent<ParticleSystemRenderer>();
-        renderer.material = new Material(Shader.Find("Particles/Standard Unlit"));
-        renderer.material.SetColor("_Color", particleColor);
+        renderer.material = new Material(Shader.Find("Mobile/Particles/Additive"));
+        renderer.material.SetColor("_TintColor", particleColor);
         renderer.renderMode = ParticleSystemRenderMode.Billboard;
     }
 }

@@ -4,8 +4,7 @@ using UnityEngine.UI;
 public class CardReaderInteraction : MonoBehaviour, IInteractable
 {
     [Header("Door Settings")]
-    public GameObject GateDoor1;
-    public GameObject GateDoor2;
+    public SimpleLockedDoor doorToUnlock;
     public string keyName = "Keycard";
 
     [Header("UI")]
@@ -20,6 +19,7 @@ public class CardReaderInteraction : MonoBehaviour, IInteractable
 
         return "Press E to use card reader";
     }
+
     public void Interact(GameObject player)
     {
         if (isUnlocked) return;
@@ -48,14 +48,20 @@ public class CardReaderInteraction : MonoBehaviour, IInteractable
             }
         }
     }
+
     void UnlockDoor()
     {
-        if (GateDoor1 != null)
-            GateDoor1.SetActive(false);
-
-        if (GateDoor2 != null)
-            GateDoor2.SetActive(false);
+        if (doorToUnlock != null)
+        {
+            doorToUnlock.Unlock();
+            Debug.Log("Door unlocked by card reader!");
+        }
+        else
+        {
+            Debug.LogWarning("No door assigned to card reader!");
+        }
     }
+
     void ClearMessage()
     {
         if (messageText != null)

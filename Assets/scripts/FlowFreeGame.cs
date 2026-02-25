@@ -133,12 +133,33 @@ public class FlowFreeGame : MonoBehaviour
 
     void CheckCompletion()
     {
-        for (int x = 0; x < 5; x++)
-            for (int y = 0; y < 5; y++)
-                if (grid[x, y] == Color.clear) return;
+        if (currentPuzzle.solution == null) return;
+
+        for (int y = 0; y < 5; y++)
+        {
+            for (int x = 0; x < 5; x++)
+            {
+                char solChar = currentPuzzle.solution[y][x];
+                Color expectedColor = GetColorFromSolutionChar(solChar);
+
+                if (grid[x, y] != expectedColor)
+                    return;
+            }
+        }
 
         Debug.Log("Puzzle completed!");
         if (terminal != null)
             terminal.OnGameComplete();
+    }
+
+    Color GetColorFromSolutionChar(char c)
+    {
+        foreach (ColorPair pair in currentPuzzle.pairs)
+        {
+            char startChar = currentPuzzle.solution[pair.start.y][pair.start.x];
+            if (startChar == c)
+                return pair.color;
+        }
+        return Color.clear;
     }
 }

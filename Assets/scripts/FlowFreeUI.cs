@@ -21,7 +21,6 @@ public class FlowFreeUI : MonoBehaviour
     {
         ClearGrid();
 
-        // Calcula offset para centrar a grelha
         float totalSize = 5 * cellSize + 4 * cellSpacing;
         float offset = -(totalSize / 2f) + (cellSize / 2f);
 
@@ -37,16 +36,28 @@ public class FlowFreeUI : MonoBehaviour
                 rect.anchoredPosition = new Vector2(posX, posY);
                 rect.sizeDelta = new Vector2(cellSize, cellSize);
 
+                Image bg = cellObj.GetComponent<Image>();
+                if (bg != null) bg.color = Color.white;
+
+                GameObject shapeObj = new GameObject("Shape", typeof(RectTransform), typeof(Image));
+                shapeObj.transform.SetParent(cellObj.transform, false);
+                RectTransform shapeRect = shapeObj.GetComponent<RectTransform>();
+                shapeRect.anchoredPosition = Vector2.zero;
+                shapeRect.sizeDelta = new Vector2(40f, 40f);
+
                 FlowFreeCell cell = cellObj.GetComponent<FlowFreeCell>();
                 if (cell == null)
                     cell = cellObj.AddComponent<FlowFreeCell>();
+
+                cell.bgImage = bg;
+                cell.shapeImage = shapeObj.GetComponent<Image>();
+                cell.shapeImage.raycastTarget = false;
 
                 cell.Initialize(x, y, game);
                 cells[x, y] = cell;
             }
         }
 
-        // Atualiza visuais dos endpoints
         foreach (ColorPair pair in puzzle.pairs)
         {
             cells[pair.start.x, pair.start.y].UpdateVisual();

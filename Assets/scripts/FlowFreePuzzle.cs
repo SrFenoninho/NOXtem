@@ -12,6 +12,7 @@ public class ColorPair
 public class PuzzleData
 {
     public ColorPair[] pairs;
+    public string[] solution;
 }
 
 public class FlowFreePuzzle : MonoBehaviour
@@ -40,6 +41,7 @@ public class FlowFreePuzzle : MonoBehaviour
         puzzles[0].pairs[2] = new ColorPair { color = orange, start = new Vector2Int(2, 1), end = new Vector2Int(3, 4) };
         puzzles[0].pairs[3] = new ColorPair { color = Color.blue, start = new Vector2Int(3, 1), end = new Vector2Int(4, 4) };
         puzzles[0].pairs[4] = new ColorPair { color = Color.red, start = new Vector2Int(0, 3), end = new Vector2Int(2, 3) };
+        puzzles[0].solution = new string[] { "YGGGG", "YGOBB", "YYOOB", "RYROB", "RRROB" };
 
         // Puzzle 2
         // OBBBG
@@ -53,6 +55,7 @@ public class FlowFreePuzzle : MonoBehaviour
         puzzles[1].pairs[2] = new ColorPair { color = Color.green, start = new Vector2Int(4, 0), end = new Vector2Int(3, 3) };
         puzzles[1].pairs[3] = new ColorPair { color = Color.red, start = new Vector2Int(2, 1), end = new Vector2Int(1, 4) };
         puzzles[1].pairs[4] = new ColorPair { color = Color.yellow, start = new Vector2Int(4, 2), end = new Vector2Int(2, 4) };
+        puzzles[1].solution = new string[] { "OBBBG", "OBRGG", "OBRGY", "ORRGY", "ORYYY" };
 
         // Puzzle 3
         // OYYYY
@@ -66,6 +69,7 @@ public class FlowFreePuzzle : MonoBehaviour
         puzzles[2].pairs[2] = new ColorPair { color = Color.green, start = new Vector2Int(2, 2), end = new Vector2Int(0, 4) };
         puzzles[2].pairs[3] = new ColorPair { color = Color.red, start = new Vector2Int(3, 2), end = new Vector2Int(1, 4) };
         puzzles[2].pairs[4] = new ColorPair { color = Color.blue, start = new Vector2Int(4, 2), end = new Vector2Int(2, 4) };
+        puzzles[2].solution = new string[] { "OYYYY", "OOOOY", "GGGRB", "GRRRB", "GRBBB" };
 
         // Puzzle 4
         // OOORG
@@ -79,6 +83,7 @@ public class FlowFreePuzzle : MonoBehaviour
         puzzles[3].pairs[2] = new ColorPair { color = Color.green, start = new Vector2Int(4, 0), end = new Vector2Int(2, 2) };
         puzzles[3].pairs[3] = new ColorPair { color = Color.blue, start = new Vector2Int(3, 3), end = new Vector2Int(0, 4) };
         puzzles[3].pairs[4] = new ColorPair { color = Color.yellow, start = new Vector2Int(4, 3), end = new Vector2Int(1, 4) };
+        puzzles[3].solution = new string[] { "OOORG", "ORRRG", "ORGGG", "BBBBY", "BYYYY" };
 
         // Puzzle 5
         // RBBBB
@@ -92,6 +97,7 @@ public class FlowFreePuzzle : MonoBehaviour
         puzzles[4].pairs[2] = new ColorPair { color = orange, start = new Vector2Int(2, 2), end = new Vector2Int(0, 4) };
         puzzles[4].pairs[3] = new ColorPair { color = Color.green, start = new Vector2Int(4, 2), end = new Vector2Int(1, 3) };
         puzzles[4].pairs[4] = new ColorPair { color = Color.yellow, start = new Vector2Int(4, 3), end = new Vector2Int(1, 4) };
+        puzzles[4].solution = new string[] { "RBBBB", "RRRRB", "OOOGG", "OGGGY", "OYYYY" };
 
         // Puzzle 6
         // YYYYY
@@ -105,6 +111,7 @@ public class FlowFreePuzzle : MonoBehaviour
         puzzles[5].pairs[2] = new ColorPair { color = Color.red, start = new Vector2Int(4, 1), end = new Vector2Int(1, 2) };
         puzzles[5].pairs[3] = new ColorPair { color = orange, start = new Vector2Int(4, 2), end = new Vector2Int(2, 4) };
         puzzles[5].pairs[4] = new ColorPair { color = Color.green, start = new Vector2Int(3, 3), end = new Vector2Int(0, 4) };
+        puzzles[5].solution = new string[] { "YYYYY", "BBBRR", "BRRRO", "BGGGO", "GGOOO" };
     }
 
     public PuzzleData GetRandomPuzzle()

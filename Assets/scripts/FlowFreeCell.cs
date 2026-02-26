@@ -61,6 +61,19 @@ public class FlowFreeCell : MonoBehaviour
 
     Sprite GetCircleSprite()
     {
-        return Resources.GetBuiltinResource<Sprite>("UI/Skin/Knob.psd");
+        int size = 64;
+        Texture2D tex = new Texture2D(size, size);
+        float radius = size / 2f;
+        Color transparent = new Color(0, 0, 0, 0);
+        for (int y = 0; y < size; y++)
+        {
+            for (int x = 0; x < size; x++)
+            {
+                float dist = Vector2.Distance(new Vector2(x, y), new Vector2(radius, radius));
+                tex.SetPixel(x, y, dist <= radius ? Color.white : transparent);
+            }
+        }
+        tex.Apply();
+        return Sprite.Create(tex, new Rect(0, 0, size, size), new Vector2(0.5f, 0.5f));
     }
 }

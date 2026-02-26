@@ -1,5 +1,7 @@
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using System.Collections;
 using System.Collections.Generic;
 
 public class FlowFreeGame : MonoBehaviour
@@ -9,11 +11,16 @@ public class FlowFreeGame : MonoBehaviour
     public FlowFreeTerminal terminal;
     public FlowFreeUI gameUI;
 
+    [Header("UI Feedback")]
+    public Text winText;
+    public Button resetButton;
+
     private PuzzleData currentPuzzle;
     private Color[,] grid = new Color[5, 5];
     private bool[,] isEndpoint = new bool[5, 5];
     private Color currentDragColor = Color.clear;
     private FlowFreeCell[,] cellRefs = new FlowFreeCell[5, 5];
+    private bool puzzleComplete = false;
 
     void Awake()
     {
@@ -24,6 +31,15 @@ public class FlowFreeGame : MonoBehaviour
     {
         if (puzzleData != null)
             StartNewGame();
+
+        if (resetButton != null)
+            resetButton.onClick.AddListener(ResetPuzzle);
+    }
+
+    void OnDisable()
+    {
+        if (resetButton != null)
+            resetButton.onClick.RemoveListener(ResetPuzzle);
     }
 
     public void RegisterCell(FlowFreeCell cell)
@@ -34,12 +50,47 @@ public class FlowFreeGame : MonoBehaviour
     public void StartNewGame()
     {
         if (puzzleData == null) return;
+
         currentPuzzle = puzzleData.GetRandomPuzzle();
         currentDragColor = Color.clear;
+        puzzleComplete = false;
+
+        if (winText != null)
+        {
+            winText.text = "";
+            winText.gameObject.SetActive(false);
+        }
+
         InitializeGrid();
+
         if (gameUI != null)
             gameUI.DrawGrid(currentPuzzle);
+
         Debug.Log("New Flow Free puzzle loaded!");
+    }
+
+    public void ResetPuzzle()
+    {
+        for (int x = 0; x < 5; x++)
+            for (int y = 0; y < 5; y++)
+                if (!isEndpoint[x, y])
+                    grid[x, y] = Color.clear;
+
+        puzzleComplete = false;
+        currentDragColor = Color.clear;
+
+        if (winText != null)
+        {
+            winText.text = "";
+            winText.gameObject.SetActive(false);
+        }
+
+        for (int x = 0; x < 5; x++)
+            for (int y = 0; y < 5; y++)
+                if (cellRefs[x, y] != null)
+                    cellRefs[x, y].UpdateVisual();
+
+        Debug.Log("Puzzle reset!");
     }
 
     void InitializeGrid()
@@ -62,6 +113,8 @@ public class FlowFreeGame : MonoBehaviour
 
     void Update()
     {
+        if (puzzleComplete) return;
+
         if (Input.GetMouseButtonDown(0))
         {
             FlowFreeCell cell = GetCellUnderMouse();
@@ -83,7 +136,6 @@ public class FlowFreeGame : MonoBehaviour
             FlowFreeCell cell = GetCellUnderMouse();
             if (cell != null && !isEndpoint[cell.x, cell.y])
             {
-
                 if (HasAdjacentColor(cell.x, cell.y, currentDragColor))
                 {
                     grid[cell.x, cell.y] = currentDragColor;
@@ -111,15 +163,12 @@ public class FlowFreeGame : MonoBehaviour
     FlowFreeCell GetCellUnderMouse()
     {
         if (EventSystem.current == null) return null;
-
         PointerEventData pointerData = new PointerEventData(EventSystem.current)
         {
             position = Input.mousePosition
         };
-
         List<RaycastResult> results = new List<RaycastResult>();
         EventSystem.current.RaycastAll(pointerData, results);
-
         foreach (var result in results)
         {
             FlowFreeCell cell = result.gameObject.GetComponent<FlowFreeCell>();
@@ -147,7 +196,22 @@ public class FlowFreeGame : MonoBehaviour
             }
         }
 
+        puzzleComplete = true;
         Debug.Log("Puzzle completed!");
+
+        if (winText != null)
+        {
+            winText.gameObject.SetActive(true);
+            winText.text = "Puzzle Complete!";
+        }
+
+        StartCoroutine(CompleteAfterDelay(2.5f));
+    }
+
+    IEnumerator CompleteAfterDelay(float delay)
+    {
+        yield return new WaitForSecondsRealtime(delay);
+
         if (terminal != null)
             terminal.OnGameComplete();
     }

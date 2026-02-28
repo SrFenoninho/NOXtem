@@ -1,60 +1,37 @@
 using UnityEngine;
-using System.Collections;
 
 public class EnemySpawn : MonoBehaviour
 {
     [Header("Spawn Settings")]
     public GameObject enemyPrefab;
-    public float spawnRadius = 10f;
-    public float spawnInterval = 2f;
-    public int maxEnemies = 10;
-
-    [Header("Difficulty")]
-    public bool increaseDifficulty = true;      // Gradually reduce spawn interval over time
-    public float minSpawnInterval = 0.5f;       // Minimum interval at max difficulty
-    public float difficultyRate = 0.05f;        // How fast interval decreases per second
-
-    [Header("Spawn Height")]
-    public float spawnHeightOffset = 2f;        // Spawn enemies slightly above ground so CharacterController lands naturally
+    public GameObject cloneSpawnerPrefab;       // Assign the CloneSpawner prefab here
+    public int enemyCount = 20;                 // How many enemies to spawn at start
+    public float spawnRadius = 10f;             // Radius around spawner
+    public float spawnHeightOffset = 2f;        // Slightly above ground so CharacterController lands naturally
 
     private int currentEnemies = 0;
-    private float currentSpawnInterval;
 
     void Start()
     {
-        currentSpawnInterval = spawnInterval;
-        StartCoroutine(SpawnRoutine());
+        SpawnAllEnemies();
     }
 
-    void Update()
+    void SpawnAllEnemies()
     {
-        // Gradually increase difficulty by reducing spawn interval
-        if (increaseDifficulty && currentSpawnInterval > minSpawnInterval)
+        for (int i = 0; i < enemyCount; i++)
         {
-            currentSpawnInterval -= difficultyRate * Time.deltaTime;
-            currentSpawnInterval = Mathf.Max(currentSpawnInterval, minSpawnInterval);
-        }
-    }
-
-    IEnumerator SpawnRoutine()
-    {
-        while (true)
-        {
-            if (currentEnemies < maxEnemies)
-                SpawnEnemy();
-
-            yield return new WaitForSeconds(currentSpawnInterval);
+            SpawnEnemy();
         }
     }
 
     void SpawnEnemy()
     {
-        float angle = Random.Range(0f, Mathf.PI * 2);
-        float distance = Random.Range(spawnRadius * 0.5f, spawnRadius);
+        float angle = Random.Range(0f, Mathf.PI * 2f);
+        float distance = Random.Range(spawnRadius * 0.3f, spawnRadius);
 
         Vector3 spawnPos = transform.position + new Vector3(
             Mathf.Cos(angle) * distance,
-            spawnHeightOffset,              // Slightly above ground so enemy falls into place
+            spawnHeightOffset,
             Mathf.Sin(angle) * distance
         );
 
@@ -65,8 +42,16 @@ public class EnemySpawn : MonoBehaviour
         if (ai != null)
         {
             ai.isOriginal = false;
-            ai.OnDeath += () => currentEnemies--;
+            ai.generation = 0;
+            ai.enemyPrefab = enemyPrefab;
+            ai.cloneSpawnerPrefab = cloneSpawnerPrefab;
+            ai.OnDeath += HandleEnemyDeath;
         }
+    }
+
+    void HandleEnemyDeath()
+    {
+        currentEnemies--;
     }
 
     void OnDrawGizmosSelected()
@@ -74,6 +59,6 @@ public class EnemySpawn : MonoBehaviour
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, spawnRadius);
         Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(transform.position, spawnRadius * 0.5f);
+        Gizmos.DrawWireSphere(transform.position, spawnRadius * 0.3f);
     }
 }

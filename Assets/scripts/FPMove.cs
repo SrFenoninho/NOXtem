@@ -119,7 +119,7 @@ public class FPMove : MonoBehaviour
         // FOV kick
         if (useFovKick)
         {
-            bool isSprinting = Input.GetKey(KeyCode.LeftShift) && isGrounded;
+            bool isSprinting = Input.GetKey(KeyCode.LeftShift) && isGrounded && Input.GetAxisRaw("Vertical") > 0f;
             HandleFOVKick(isSprinting);
         }
 
@@ -145,7 +145,7 @@ public class FPMove : MonoBehaviour
     {
         float x = Input.GetAxisRaw("Horizontal");
         float z = Input.GetAxisRaw("Vertical");
-        bool isSprinting = Input.GetKey(KeyCode.LeftShift) && isGrounded;
+        bool isSprinting = Input.GetKey(KeyCode.LeftShift) && isGrounded && z > 0f;
         float currentSpeed = isSprinting ? sprintSpeed : speed;
 
         Vector3 inputDir = transform.right * x + transform.forward * z;
@@ -213,7 +213,7 @@ public class FPMove : MonoBehaviour
                 int randomIndex = Random.Range(0, footstepSounds.Length);
                 audioSource.PlayOneShot(footstepSounds[randomIndex]);
             }
-            nextFootstep = Time.time + footstepInterval;
+            nextFootstep = Time.time + (Input.GetKey(KeyCode.LeftShift) && Input.GetAxisRaw("Vertical") > 0f ? footstepInterval * 0.6f : footstepInterval);
         }
     }
 

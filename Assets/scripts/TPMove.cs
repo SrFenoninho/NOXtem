@@ -28,6 +28,7 @@ public class TPMove : MonoBehaviour
     private bool jumpInput;
     private bool isJumping;
     private AudioSource audioSource;
+    private float currentSpeed;
     private float nextFootstep = 0f;
 
     void Start()
@@ -68,8 +69,7 @@ public class TPMove : MonoBehaviour
     {
         float h = Input.GetAxisRaw("Horizontal");
         float v = Input.GetAxisRaw("Vertical");
-        bool isSprinting = Input.GetKey(KeyCode.LeftShift) && isGrounded;
-        float currentSpeed = isSprinting ? sprintSpeed : speed;
+        bool isSprinting = Input.GetKey(KeyCode.LeftShift);
 
         // Get camera-relative movement direction
         Transform cam = Camera.main.transform;
@@ -97,6 +97,7 @@ public class TPMove : MonoBehaviour
 
         if (isGrounded)
         {
+            currentSpeed = isSprinting ? sprintSpeed : speed;
             moveDir.y = -stickToGroundForce; // Keep grounded on slopes
 
             if (jumpInput)

@@ -13,7 +13,7 @@ public class EnemyAI : MonoBehaviour
     [Header("Attack")]
     public float attackDamage = 10f;
     public float attackInterval = 1f;
-    public float attackRange = 1.5f;        // Distance at which enemy deals damage directly
+    public float attackRange = 1.5f;
 
     [Header("Knockback")]
     public float knockbackForce = 5f;
@@ -21,6 +21,17 @@ public class EnemyAI : MonoBehaviour
 
     [Header("Stuck Detection")]
     public float stuckCountMax = 10f;
+
+    [Header("Clone Spawn Range")]
+    public float cloneSpawnMinRadius = 4f;
+    public float cloneSpawnMaxRadius = 8f;
+    public float cloneSpawnHeightOffset = 2f;
+
+    // Assigned at runtime by EnemySpawn or EnemyCloneSpawner
+    [HideInInspector] public GameObject enemyPrefab;
+    [HideInInspector] public GameObject cloneSpawnerPrefab;
+    [HideInInspector] public int generation = 0;
+    [HideInInspector] public int maxGeneration = 3;
 
     private float currentHealth;
     private Transform player;
@@ -49,7 +60,7 @@ public class EnemyAI : MonoBehaviour
         if (playerObj != null)
         {
             player = playerObj.transform;
-            playerHealth = playerObj.GetComponent<PlayerHealth>(); // Get it directly, no need for triggers
+            playerHealth = playerObj.GetComponent<PlayerHealth>();
         }
 
         controller = GetComponent<CharacterController>();
@@ -62,7 +73,6 @@ public class EnemyAI : MonoBehaviour
         if (isOriginal) return;
         if (player == null) return;
 
-        // Attack check in Update for reliability
         HandleAttack();
     }
 
@@ -116,15 +126,13 @@ public class EnemyAI : MonoBehaviour
             moveDir.z = 0;
         }
 
-        // Smoother gravity - no more trembling
         if (controller.isGrounded)
-            moveDir.y = -2f;                // Small constant to keep grounded, not -10
+            moveDir.y = -2f;
         else
             moveDir.y += Physics.gravity.y * 2f * Time.fixedDeltaTime;
 
         controller.Move(moveDir * Time.fixedDeltaTime);
 
-        // Stuck detection
         if (Vector3.Distance(previousPosition, transform.position) < 0.01f)
         {
             stuckCount++;
@@ -156,10 +164,32 @@ public class EnemyAI : MonoBehaviour
         }
 
         if (currentHealth <= 0)
+            Die();
+    }
+
+    void Die()
+    {
+        if (generation < maxGeneration && cloneSpawnerPrefab != null && enemyPrefab != null)
         {
-            OnDeath?.Invoke();
-            Destroy(gameObject);
+            // Pick the clone's final position here, so particles appear there
+            float angle = Random.Range(0f, Mathf.PI * 2f);
+            float distance = Random.Range(cloneSpawnMinRadius, cloneSpawnMaxRadius);
+            Vector3 clonePos = transform.position + new Vector3(
+                Mathf.Cos(angle) * distance,
+                cloneSpawnHeightOffset,
+                Mathf.Sin(angle) * distance
+            );
+
+            GameObject spawnerObj = Instantiate(cloneSpawnerPrefab, clonePos, Quaternion.identity);
+            EnemyCloneSpawner spawner = spawnerObj.GetComponent<EnemyCloneSpawner>();
+            if (spawner != null)
+            {
+                spawner.Initialize(enemyPrefab, cloneSpawnerPrefab, generation + 1, maxGeneration, () => OnDeath?.Invoke());
+            }
         }
+
+        OnDeath?.Invoke();
+        Destroy(gameObject);
     }
 
     void OnDrawGizmosSelected()

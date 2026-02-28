@@ -1979,6 +1979,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Be
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 2257244b7c91e044493b2c26aa1464e6, type: 3}
+      propertyPath: m_TagString
+      value: Player
+      objectReference: {fileID: 0}
     - target: {fileID: 3286586945055254830, guid: 2257244b7c91e044493b2c26aa1464e6, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
@@ -21067,8 +21071,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28459524e0755e84d8f7f71bd1a06878, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 4
-  sprintSpeed: 8
+  speed: 3
+  sprintSpeed: 6
   gravity: -20
   jumpHeight: 2
   stickToGroundForce: 10
@@ -21082,7 +21086,7 @@ MonoBehaviour:
   bobSpeed: 14
   bobAmount: 0.05
   useFovKick: 1
-  sprintFOV: 60
+  sprintFOV: 55
   fovSmoothSpeed: 3
   footstepSounds:
   - {fileID: 8300000, guid: 0386ffefc9f141f41bb0594f29a87cc0, type: 3}

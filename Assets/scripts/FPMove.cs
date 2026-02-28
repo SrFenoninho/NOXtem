@@ -8,6 +8,8 @@ public class FPMove : MonoBehaviour
     public float sprintSpeed = 8f;
     public float gravity = -9.81f;
     public float jumpHeight = 1.2f;
+    public float stickToGroundForce = 10f;      // Force to keep player grounded on slopes
+    public float gravityMultiplier = 3f;         // Multiplier for heavier fall gravity
 
     [Header("Ground Check")]
     public float groundDistance = 0.3f;
@@ -33,6 +35,11 @@ public class FPMove : MonoBehaviour
     public AudioClip landSound;
     public float footstepInterval = 0.5f;
 
+    [Header("Stuck Detection")]
+    public bool useStuckDetection = true;       // Detects and recovers when player gets stuck
+    public float stuckThreshold = 0.01f;
+    public float stuckTimeLimit = 2f;
+
     // Private variables
     CharacterController controller;
     Transform playerCamera;
@@ -40,10 +47,12 @@ public class FPMove : MonoBehaviour
     AudioSource audioSource;
 
     Vector3 velocity;
+    Vector3 moveDir;
     float xRotation = 0f;
-    float yRotation = 0f;
     bool isGrounded;
     bool wasGrounded;
+    bool isJumping;
+    bool jumpInput;
 
     // Head bob
     private float defaultCameraY;
@@ -52,89 +61,71 @@ public class FPMove : MonoBehaviour
     // Footsteps
     private float nextFootstep = 0f;
 
+    // Stuck detection
+    private Vector3 previousPosition;
+    private float stuckTimer = 0f;
+
     void Start()
     {
         controller = GetComponent<CharacterController>();
-        controller.center = new Vector3(0, controller.height / 2, 0); // Ensure the center is at the correct height
+        controller.center = new Vector3(0, controller.height / 2, 0);
         playerCamera = GetComponentInChildren<Camera>().transform;
         cam = playerCamera.GetComponent<Camera>();
 
-        // Audio
         audioSource = GetComponent<AudioSource>();
         if (audioSource == null)
             audioSource = gameObject.AddComponent<AudioSource>();
 
-        // Cursor
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
-        // Ground mask
         if (groundMask == 0)
             groundMask = ~LayerMask.GetMask("Player");
 
-        // Head bob setup
         defaultCameraY = playerCamera.localPosition.y;
-
-        // FOV setup
         normalFOV = cam.fieldOfView;
+        previousPosition = transform.position;
     }
 
     void Update()
     {
-        // Ground check
-        RaycastHit hit;
         wasGrounded = isGrounded;
-        isGrounded = Physics.Raycast(transform.position, Vector3.down, out hit, groundDistance + 0.1f, groundMask);
-
-        if (isGrounded && velocity.y < 0)
-            velocity.y = -2f;
+        isGrounded = controller.isGrounded; // Use CharacterController built-in ground check
 
         // Landing sound
-        if (isGrounded && !wasGrounded && landSound != null)
+        if (isGrounded && !wasGrounded)
         {
-            audioSource.PlayOneShot(landSound);
+            if (landSound != null)
+                audioSource.PlayOneShot(landSound);
+
+            isJumping = false;
         }
 
-        // Movement
-        float x = Input.GetAxisRaw("Horizontal");
-        float z = Input.GetAxisRaw("Vertical");
-
-        bool isSprinting = Input.GetKey(KeyCode.LeftShift) && isGrounded;
-        float currentSpeed = isSprinting ? sprintSpeed : speed;
-
-        Vector3 move = transform.right * x + transform.forward * z;
-        controller.Move(move * currentSpeed * Time.deltaTime);
-
-        // Jump
-        if (Input.GetButtonDown("Jump") && isGrounded)
+        // Jump input stored here, applied in FixedUpdate for physics consistency
+        if (Input.GetButtonDown("Jump") && isGrounded && !isJumping)
         {
-            velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
-
+            jumpInput = true;
             if (jumpSound != null)
                 audioSource.PlayOneShot(jumpSound);
         }
 
-        // Gravity
-        velocity.y += gravity * Time.deltaTime;
-        controller.Move(velocity * Time.deltaTime);
-
         // Head bob
         if (useHeadBob && isGrounded)
         {
-            HandleHeadBob(move.magnitude > 0 ? currentSpeed : 0);
+            bool isMoving = Input.GetAxisRaw("Horizontal") != 0 || Input.GetAxisRaw("Vertical") != 0;
+            HandleHeadBob(isMoving ? (Input.GetKey(KeyCode.LeftShift) ? sprintSpeed : speed) : 0);
         }
 
-        // FOV kick (sprint)
+        // FOV kick
         if (useFovKick)
         {
+            bool isSprinting = Input.GetKey(KeyCode.LeftShift) && isGrounded;
             HandleFOVKick(isSprinting);
         }
 
-        // Footsteps
-        if (isGrounded && move.magnitude > 0)
-        {
-            HandleFootsteps();
-        }
+        // Stuck detection
+        if (useStuckDetection)
+            HandleStuckDetection();
     }
 
     void LateUpdate()
@@ -143,7 +134,6 @@ public class FPMove : MonoBehaviour
         float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
         float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
 
-        yRotation += mouseX;
         xRotation -= mouseY;
         xRotation = Mathf.Clamp(xRotation, -90f, 90f);
 
@@ -151,21 +141,56 @@ public class FPMove : MonoBehaviour
         transform.Rotate(Vector3.up * mouseX);
     }
 
+    void FixedUpdate() // Physics handled in FixedUpdate for consistent framerate
+    {
+        float x = Input.GetAxisRaw("Horizontal");
+        float z = Input.GetAxisRaw("Vertical");
+        bool isSprinting = Input.GetKey(KeyCode.LeftShift) && isGrounded;
+        float currentSpeed = isSprinting ? sprintSpeed : speed;
+
+        Vector3 inputDir = transform.right * x + transform.forward * z;
+        if (inputDir.magnitude > 1f)
+            inputDir.Normalize();
+
+        moveDir.x = inputDir.x * currentSpeed;
+        moveDir.z = inputDir.z * currentSpeed;
+
+        if (isGrounded)
+        {
+            moveDir.y = -stickToGroundForce; // Keep player grounded on slopes
+
+            if (jumpInput)
+            {
+                moveDir.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
+                jumpInput = false;
+                isJumping = true;
+            }
+        }
+        else
+        {
+            // Apply heavier gravity while airborne for more natural fall
+            moveDir += Physics.gravity * gravityMultiplier * Time.fixedDeltaTime;
+        }
+
+        controller.Move(moveDir * Time.fixedDeltaTime);
+
+        // Footsteps
+        if (isGrounded && inputDir.magnitude > 0)
+            HandleFootsteps();
+    }
+
     void HandleHeadBob(float speed)
     {
         if (speed > 0)
         {
             bobTimer += Time.deltaTime * bobSpeed;
-
             float bobOffsetY = Mathf.Sin(bobTimer) * bobAmount;
-
             Vector3 newPos = playerCamera.localPosition;
             newPos.y = defaultCameraY + bobOffsetY;
             playerCamera.localPosition = newPos;
         }
         else
         {
-            // Reset head bob when not moving
             bobTimer = 0f;
             Vector3 newPos = playerCamera.localPosition;
             newPos.y = Mathf.Lerp(newPos.y, defaultCameraY, Time.deltaTime * 5f);
@@ -188,8 +213,28 @@ public class FPMove : MonoBehaviour
                 int randomIndex = Random.Range(0, footstepSounds.Length);
                 audioSource.PlayOneShot(footstepSounds[randomIndex]);
             }
-
             nextFootstep = Time.time + footstepInterval;
         }
+    }
+
+    // Detects if the player is stuck in geometry and attempts recovery
+    void HandleStuckDetection()
+    {
+        if (Vector3.Distance(previousPosition, transform.position) < stuckThreshold && !isGrounded)
+        {
+            stuckTimer += Time.deltaTime;
+            if (stuckTimer >= stuckTimeLimit)
+            {
+                // Apply upward impulse to free the player
+                moveDir.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
+                stuckTimer = 0f;
+                Debug.Log("Player stuck - attempting recovery!");
+            }
+        }
+        else
+        {
+            stuckTimer = 0f;
+        }
+        previousPosition = transform.position;
     }
 }

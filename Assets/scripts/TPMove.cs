@@ -7,14 +7,28 @@ public class TPMove : MonoBehaviour
     public float sprintSpeed = 8f;
     public float gravity = -9.81f;
     public float jumpHeight = 1.2f;
+    public float gravityMultiplier = 2.5f;      // Heavier fall for more natural feel
+    public float stickToGroundForce = 10f;      // Force to keep player grounded on slopes
+    public float rotationSpeed = 10f;           // How fast the character turns
 
     [Header("Ground Check")]
     public float groundDistance = 0.3f;
     public LayerMask groundMask;
 
-    CharacterController controller;
-    Vector3 velocity;
-    bool isGrounded;
+    [Header("Audio")]
+    public AudioClip[] footstepSounds;
+    public AudioClip jumpSound;
+    public AudioClip landSound;
+    public float footstepInterval = 0.4f;
+
+    private CharacterController controller;
+    private Vector3 moveDir;
+    private bool isGrounded;
+    private bool wasGrounded;
+    private bool jumpInput;
+    private bool isJumping;
+    private AudioSource audioSource;
+    private float nextFootstep = 0f;
 
     void Start()
     {
@@ -22,55 +36,96 @@ public class TPMove : MonoBehaviour
 
         if (groundMask == 0)
             groundMask = ~LayerMask.GetMask("Player");
+
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+            audioSource = gameObject.AddComponent<AudioSource>();
     }
 
     void Update()
     {
-        HandleGroundCheck();
-        HandleMovement();
-        HandleJump();
+        wasGrounded = isGrounded;
+        isGrounded = controller.isGrounded;
+
+        // Landing
+        if (isGrounded && !wasGrounded)
+        {
+            isJumping = false;
+            if (landSound != null)
+                audioSource.PlayOneShot(landSound);
+        }
+
+        // Store jump input here, apply in FixedUpdate
+        if (Input.GetButtonDown("Jump") && isGrounded && !isJumping)
+        {
+            jumpInput = true;
+            if (jumpSound != null)
+                audioSource.PlayOneShot(jumpSound);
+        }
     }
 
-    void HandleGroundCheck()
-    {
-        isGrounded = Physics.Raycast(transform.position, Vector3.down, groundDistance + 0.1f, groundMask);
-
-        if (isGrounded && velocity.y < 0)
-            velocity.y = -2f;
-    }
-
-    void HandleMovement()
+    void FixedUpdate() // Physics and movement in FixedUpdate for consistency
     {
         float h = Input.GetAxisRaw("Horizontal");
         float v = Input.GetAxisRaw("Vertical");
-        float currentSpeed = Input.GetKey(KeyCode.LeftShift) ? sprintSpeed : speed;
+        bool isSprinting = Input.GetKey(KeyCode.LeftShift) && isGrounded;
+        float currentSpeed = isSprinting ? sprintSpeed : speed;
 
-        Transform cameraTransform = Camera.main.transform;
-        Vector3 forward = cameraTransform.forward;
-        Vector3 right = cameraTransform.right;
-
+        // Get camera-relative movement direction
+        Transform cam = Camera.main.transform;
+        Vector3 forward = cam.forward;
+        Vector3 right = cam.right;
         forward.y = 0f;
         right.y = 0f;
         forward.Normalize();
         right.Normalize();
 
-        Vector3 moveDirection = (forward * v) + (right * h);
+        Vector3 inputDir = (forward * v) + (right * h);
 
-        if (moveDirection.magnitude > 0.1f)
+        if (inputDir.magnitude > 1f)
+            inputDir.Normalize();
+
+        // Rotate character to face movement direction
+        if (inputDir.magnitude > 0.1f)
         {
-            controller.Move(moveDirection.normalized * currentSpeed * Time.deltaTime);
-
-            Quaternion targetRotation = Quaternion.LookRotation(moveDirection) * Quaternion.Euler(0, 180, 0);
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 10f * Time.deltaTime);
+            Quaternion targetRotation = Quaternion.LookRotation(inputDir);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.fixedDeltaTime);
         }
 
-        velocity.y += gravity * Time.deltaTime;
-        controller.Move(velocity * Time.deltaTime);
+        moveDir.x = inputDir.x * currentSpeed;
+        moveDir.z = inputDir.z * currentSpeed;
+
+        if (isGrounded)
+        {
+            moveDir.y = -stickToGroundForce; // Keep grounded on slopes
+
+            if (jumpInput)
+            {
+                moveDir.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
+                jumpInput = false;
+                isJumping = true;
+            }
+        }
+        else
+        {
+            // Heavier gravity while airborne
+            moveDir += Physics.gravity * gravityMultiplier * Time.fixedDeltaTime;
+        }
+
+        controller.Move(moveDir * Time.fixedDeltaTime);
+
+        // Footsteps
+        if (isGrounded && inputDir.magnitude > 0.1f)
+            HandleFootsteps();
     }
 
-    void HandleJump()
+    void HandleFootsteps()
     {
-        if (Input.GetButtonDown("Jump") && isGrounded)
-            velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
+        if (Time.time >= nextFootstep && footstepSounds.Length > 0)
+        {
+            int randomIndex = Random.Range(0, footstepSounds.Length);
+            audioSource.PlayOneShot(footstepSounds[randomIndex]);
+            nextFootstep = Time.time + footstepInterval;
+        }
     }
 }

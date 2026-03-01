@@ -7,9 +7,9 @@ public class TPMove : MonoBehaviour
     public float sprintSpeed = 8f;
     public float gravity = -9.81f;
     public float jumpHeight = 1.2f;
-    public float gravityMultiplier = 2.5f;      // Heavier fall for more natural feel
-    public float stickToGroundForce = 10f;      // Force to keep player grounded on slopes
-    public float rotationSpeed = 10f;           // How fast the character turns
+    public float gravityMultiplier = 2.5f;
+    public float stickToGroundForce = 10f;
+    public float rotationSpeed = 10f;
 
     [Header("Ground Check")]
     public float groundDistance = 0.3f;
@@ -31,8 +31,17 @@ public class TPMove : MonoBehaviour
     private float currentSpeed;
     private float nextFootstep = 0f;
 
+    private Vector3 attackImpulseDir;
+    private float attackImpulseForce;
+    private float attackImpulseEndTime;
+
+    private PlayerCombat playerCombat;
+
+
     void Start()
     {
+        playerCombat = GetComponent<PlayerCombat>();
+
         controller = GetComponent<CharacterController>();
 
         if (groundMask == 0)
@@ -45,10 +54,11 @@ public class TPMove : MonoBehaviour
 
     void Update()
     {
+        if (playerCombat != null && (playerCombat.IsDefending || playerCombat.IsHeavyCharging)) return;
+
         wasGrounded = isGrounded;
         isGrounded = controller.isGrounded;
 
-        // Landing
         if (isGrounded && !wasGrounded)
         {
             isJumping = false;
@@ -56,22 +66,28 @@ public class TPMove : MonoBehaviour
                 audioSource.PlayOneShot(landSound);
         }
 
-        // Store jump input here, apply in FixedUpdate
         if (Input.GetButtonDown("Jump") && isGrounded && !isJumping)
         {
             jumpInput = true;
             if (jumpSound != null)
                 audioSource.PlayOneShot(jumpSound);
         }
+
+        // Apply attack impulse directly, same approach as PlayerHealth knockback
+        if (Time.time < attackImpulseEndTime)
+        {
+            controller.Move(attackImpulseDir * attackImpulseForce * Time.deltaTime);
+        }
     }
 
-    void FixedUpdate() // Physics and movement in FixedUpdate for consistency
+    void FixedUpdate()
     {
+        if (playerCombat != null && (playerCombat.IsDefending || playerCombat.IsHeavyCharging)) return;
+
         float h = Input.GetAxisRaw("Horizontal");
         float v = Input.GetAxisRaw("Vertical");
         bool isSprinting = Input.GetKey(KeyCode.LeftShift);
 
-        // Get camera-relative movement direction
         Transform cam = Camera.main.transform;
         Vector3 forward = cam.forward;
         Vector3 right = cam.right;
@@ -85,7 +101,6 @@ public class TPMove : MonoBehaviour
         if (inputDir.magnitude > 1f)
             inputDir.Normalize();
 
-        // Rotate character to face movement direction
         if (inputDir.magnitude > 0.1f)
         {
             Quaternion targetRotation = Quaternion.LookRotation(inputDir);
@@ -98,7 +113,7 @@ public class TPMove : MonoBehaviour
         if (isGrounded)
         {
             currentSpeed = isSprinting ? sprintSpeed : speed;
-            moveDir.y = -stickToGroundForce; // Keep grounded on slopes
+            moveDir.y = -stickToGroundForce;
 
             if (jumpInput)
             {
@@ -109,13 +124,11 @@ public class TPMove : MonoBehaviour
         }
         else
         {
-            // Heavier gravity while airborne
             moveDir += Physics.gravity * gravityMultiplier * Time.fixedDeltaTime;
         }
 
         controller.Move(moveDir * Time.fixedDeltaTime);
 
-        // Footsteps
         if (isGrounded && inputDir.magnitude > 0.1f)
             HandleFootsteps();
     }
@@ -126,7 +139,14 @@ public class TPMove : MonoBehaviour
         {
             int randomIndex = Random.Range(0, footstepSounds.Length);
             audioSource.PlayOneShot(footstepSounds[randomIndex]);
-            nextFootstep = Time.time + footstepInterval;
+            nextFootstep = Time.time + (Input.GetKey(KeyCode.LeftShift) && Input.GetAxisRaw("Vertical") > 0f ? footstepInterval * 0.6f : footstepInterval);
         }
+    }
+
+    public void AddImpulse(Vector3 direction, float force)
+    {
+        attackImpulseDir = direction;
+        attackImpulseForce = force;
+        attackImpulseEndTime = Time.time + 0.15f;
     }
 }

@@ -16,6 +16,7 @@ public class PlayerCombat : MonoBehaviour
     public HitboxDefense defenseHitbox;
     private bool isDefending = false;
     public bool IsDefending => isDefending;
+    public bool IsHeavyCharging => isHeavyCharging;
 
     [Header("Hitbox Settings")]
     public Hitbox attackHitbox;
@@ -24,18 +25,27 @@ public class PlayerCombat : MonoBehaviour
     [Header("Cooldown")]
     public float attackCooldown = 0.2f;
 
-    // canAttack controls whether the player can start a new attack
-    // the hitbox itself controls whether damage is being dealt
+    [Header("Knockback")]
+    public float lightKnockback = 5f;
+    public float heavyKnockback = 15f;
+
+    [Header("Stun Duration")]
+    public float lightStunDuration = 0.5f;
+    public float heavyStunDuration = 1.5f;
+
+    [Header("Attack Impulse")]
+    public float lightImpulseForce = 3f;
+    public float heavyImpulseForce = 8f;
+
     private bool canAttack = true;
-
     private bool isHeavyCharging = false;
-
-    // Reference to combo system - registered hits automatically
     private PlayerComboSYS comboSystem;
+    private TPMove tpMove;
 
     void Start()
     {
         comboSystem = GetComponent<PlayerComboSYS>();
+        tpMove = GetComponent<TPMove>();
     }
 
     void Update()
@@ -59,7 +69,7 @@ public class PlayerCombat : MonoBehaviour
 
         if (isDefending && !wasDefending)
         {
-            CancelAttack(); // Cancel any attack when defense starts
+            CancelAttack();
             if (defenseHitbox != null)
                 defenseHitbox.ActivateDefense();
         }
@@ -74,7 +84,8 @@ public class PlayerCombat : MonoBehaviour
     void LightAttack()
     {
         canAttack = false;
-        attackHitbox.EnableHitbox(lightDamage, enemyTag, this);
+        tpMove?.AddImpulse(transform.forward, lightImpulseForce);
+        attackHitbox.EnableHitbox(lightDamage, enemyTag, this, lightKnockback, lightStunDuration);
         Invoke(nameof(EndHitWindow), lightAttackDuration);
         Invoke(nameof(EndAttack), lightAttackDuration + attackCooldown);
     }
@@ -88,9 +99,10 @@ public class PlayerCombat : MonoBehaviour
 
     void ExecuteHeavyAttack()
     {
-        if (!isHeavyCharging) return;           // Was cancelled (e.g. took damage)
+        if (!isHeavyCharging) return;
         isHeavyCharging = false;
-        attackHitbox.EnableHitbox(heavyDamage, enemyTag, this);
+        tpMove?.AddImpulse(transform.forward, heavyImpulseForce);
+        attackHitbox.EnableHitbox(heavyDamage, enemyTag, this, heavyKnockback, heavyStunDuration);
         Invoke(nameof(EndHitWindow), heavyAttackDuration);
         Invoke(nameof(EndAttack), heavyAttackDuration + attackCooldown);
     }
@@ -102,10 +114,9 @@ public class PlayerCombat : MonoBehaviour
 
     void EndAttack()
     {
-        canAttack = true;                       // Ready to attack again
+        canAttack = true;
     }
 
-    // Call this when player takes damage to cancel heavy windup
     public void CancelAttack()
     {
         if (isHeavyCharging)
@@ -120,7 +131,6 @@ public class PlayerCombat : MonoBehaviour
         canAttack = true;
     }
 
-    // Called by Hitbox when it hits an enemy - registers combo hit
     public void OnHitLanded()
     {
         if (comboSystem != null)

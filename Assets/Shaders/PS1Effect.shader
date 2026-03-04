@@ -4,63 +4,127 @@ Shader "Custom/PS1Effect"
     {
         _MainTex ("Texture", 2D) = "white" {}
         _VertexInaccuracy ("Vertex Inaccuracy", Range(0, 200)) = 50
+        // os parametros de fog sao controlados pelo DarknessManager via Shader.SetGlobal
+        // nao os expor aqui evita que o Inspector os sobrescreva
     }
+
     SubShader
     {
-        Tags { "RenderType"="Opaque" }
+        Tags
+        {
+            "RenderType" = "Opaque"
+            "RenderPipeline" = "UniversalPipeline"
+            "Queue" = "Geometry"
+        }
         LOD 100
+        Cull Back
 
         Pass
         {
-            CGPROGRAM
+            Name "ForwardLit"
+            Tags { "LightMode" = "UniversalForward" }
+
+            HLSLPROGRAM
             #pragma vertex vert
             #pragma fragment frag
+            #pragma prefer_hlslcc gles
+            #pragma exclude_renderers d3d11_9x
             #pragma target 2.0
-            #pragma multi_compile_fog
 
-            #include "UnityCG.cginc"
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
 
-            struct appdata
+            // ---------------------------------------------
+            //  ESTRUTURAS
+            // ---------------------------------------------
+            struct Attributes
             {
-                float4 vertex : POSITION;
-                float2 uv : TEXCOORD0;
+                float4 positionOS : POSITION;
+                float2 uv         : TEXCOORD0;
             };
 
-            struct v2f
+            struct Varyings
             {
-                float2 uv : TEXCOORD0;
-                float4 vertex : SV_POSITION;
-                UNITY_FOG_COORDS(1)
+                float4 positionCS : SV_POSITION;
+                float2 uv         : TEXCOORD0;
+                float  heightFog  : TEXCOORD1;
+                float  distFog    : TEXCOORD2;
             };
 
-            sampler2D _MainTex;
-            float4 _MainTex_ST;
-            float _VertexInaccuracy;
+            // ---------------------------------------------
+            //  VARIAVEIS DO MATERIAL
+            // ---------------------------------------------
+            TEXTURE2D(_MainTex);
+            SAMPLER(sampler_MainTex);
 
-            v2f vert (appdata v)
+            CBUFFER_START(UnityPerMaterial)
+                float4 _MainTex_ST;
+                float  _VertexInaccuracy;
+            CBUFFER_END
+
+            // ---------------------------------------------
+            //  VARIAVEIS GLOBAIS (controladas pelo DarknessManager)
+            // ---------------------------------------------
+            // declaradas fora do CBUFFER para aceitar Shader.SetGlobal
+            float  _HeightFogDensity;
+            float  _HeightFogFalloff;
+            float4 _HeightFogColor;
+            float  _DistFogDensity;
+            float  _DistFogStart;
+            float  _DistFogEnd;
+            float4 _DistFogColor;
+
+            // ---------------------------------------------
+            //  VERTEX
+            // ---------------------------------------------
+            Varyings vert(Attributes IN)
             {
-                v2f o;
-                o.vertex = UnityObjectToClipPos(v.vertex);
-                
-                // Vertex snapping (PS1 effect)
+                Varyings OUT;
+
+                OUT.positionCS = TransformObjectToHClip(IN.positionOS.xyz);
+
+                // Vertex snapping (efeito PS1)
                 if (_VertexInaccuracy > 0)
                 {
                     float gridSize = _VertexInaccuracy;
-                    o.vertex.xy = floor(o.vertex.xy * gridSize) / gridSize;
+                    OUT.positionCS.xy = floor(OUT.positionCS.xy * gridSize) / gridSize;
                 }
-                
-                o.uv = TRANSFORM_TEX(v.uv, _MainTex);
-                UNITY_TRANSFER_FOG(o, o.vertex);
-                return o;
+
+                OUT.uv = TRANSFORM_TEX(IN.uv, _MainTex);
+
+                float3 worldPos = TransformObjectToWorld(IN.positionOS.xyz);
+
+                // -- Height fog --
+                float heightAbove = worldPos.y - (-0.125);
+                float hFog = exp(-max(0.0, heightAbove) * _HeightFogFalloff);
+                OUT.heightFog = saturate(hFog * _HeightFogDensity);
+
+                // -- Distance fog --
+                float3 camPos = _WorldSpaceCameraPos;
+                float dist    = distance(float2(worldPos.x, worldPos.z), float2(camPos.x, camPos.z));
+                float dFog    = saturate((dist - _DistFogStart) / max(_DistFogEnd - _DistFogStart, 0.001));
+                OUT.distFog   = dFog * _DistFogDensity;
+
+                return OUT;
             }
 
-            fixed4 frag (v2f i) : SV_Target
+            // ---------------------------------------------
+            //  FRAGMENT
+            // ---------------------------------------------
+            half4 frag(Varyings IN) : SV_Target
             {
-                fixed4 col = tex2D(_MainTex, i.uv);
-                UNITY_APPLY_FOG(i.fogCoord, col);
+                half4 col = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, IN.uv);
+
+                // Escurecer o chao pelo Y
+                col.rgb = lerp(col.rgb, _HeightFogColor.rgb, IN.heightFog);
+
+                // Escurecer ao longe
+                col.rgb = lerp(col.rgb, _DistFogColor.rgb, IN.distFog);
+
                 return col;
             }
-            ENDCG
+            ENDHLSL
         }
     }
+
+    FallBack "Universal Render Pipeline/Unlit"
 }

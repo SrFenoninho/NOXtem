@@ -1,0 +1,129 @@
+using UnityEngine;
+
+public class LeverSystem : MonoBehaviour
+{
+    // ---------------------------------------------
+    //  SINGLETON
+    // ---------------------------------------------
+    public static LeverSystem Instance { get; private set; }
+
+    // ---------------------------------------------
+    //  INSPETOR
+    // ---------------------------------------------
+    [Header("Alavancas")]
+    [Tooltip("Arrastar aqui os 3 objetos Lever da cena")]
+    public Lever[] levers;
+
+    [Header("Luzes da Sala")]
+    [Tooltip("Luzes Unity que acendem quando as 3 alavancas estiverem ativas")]
+    public Light[] roomLights;
+
+    [Header("Audio")]
+    public AudioClip powerOnSound;  // som quando a eletricidade é restaurada
+    private AudioSource audioSource;
+
+    [Header("UI")]
+    public UnityEngine.UI.Text messageText;
+
+    // ---------------------------------------------
+    //  ESTADO PRIVADO
+    // ---------------------------------------------
+    private int leversActivated = 0;
+    private bool powerRestored = false;
+
+    // ---------------------------------------------
+    //  UNITY
+    // ---------------------------------------------
+    void Awake()
+    {
+        // Singleton simples — só deve existir um LeverSystem por cena
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
+    }
+
+    void Start()
+    {
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+            audioSource = gameObject.AddComponent<AudioSource>();
+
+        // Garantir que as luzes da sala começam desligadas
+        SetRoomLights(false);
+    }
+
+    // ---------------------------------------------
+    //  CHAMADO PELAS ALAVANCAS
+    // ---------------------------------------------
+    // Cada Lever.cs chama este método ao ser ativado
+    public void OnLeverActivated()
+    {
+        if (powerRestored) return;
+
+        leversActivated++;
+
+        int remaining = levers.Length - leversActivated;
+
+        if (messageText != null)
+        {
+            messageText.text = remaining > 0
+                ? $"Generators activated: {leversActivated}/{levers.Length}"
+                : "";
+            if (remaining > 0)
+                Invoke(nameof(ClearMessage), 3f);
+        }
+
+        Debug.Log($"Alavanca ativada! {leversActivated}/{levers.Length}");
+
+        // Verificar se todas estão ativas
+        if (leversActivated >= levers.Length)
+            RestorePower();
+    }
+
+    // ---------------------------------------------
+    //  RESTAURAR ENERGIA
+    // ---------------------------------------------
+    void RestorePower()
+    {
+        powerRestored = true;
+
+        // Som de energia a voltar
+        if (powerOnSound != null && audioSource != null)
+            audioSource.PlayOneShot(powerOnSound);
+
+        // Acender luzes da sala
+        SetRoomLights(true);
+
+        // Avisar o DarknessManager para remover a escuridão
+        if (DarknessManager.Instance != null)
+            DarknessManager.Instance.OnPowerRestored();
+
+        if (messageText != null)
+        {
+            messageText.text = "Power restored!";
+            Invoke(nameof(ClearMessage), 4f);
+        }
+
+        Debug.Log("Energia restaurada! Todas as alavancas ativas.");
+    }
+
+    // ---------------------------------------------
+    //  AUXILIARES
+    // ---------------------------------------------
+    void SetRoomLights(bool on)
+    {
+        foreach (Light l in roomLights)
+            if (l != null) l.enabled = on;
+    }
+
+    void ClearMessage()
+    {
+        if (messageText != null)
+            messageText.text = "";
+    }
+
+    public bool IsPowerRestored() => powerRestored;
+}

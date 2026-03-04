@@ -1,26 +1,35 @@
 using UnityEngine;
-using TMPro;                                    // TextMeshPro instead of legacy Text
+using TMPro;
 using System.Collections;
 
 public class PlayerComboSYS : MonoBehaviour
 {
+    // ---------------------------------------------
+    //  INSPETOR
+    // ---------------------------------------------
     [Header("UI Settings")]
-    public TMP_Text comboText;                  // Drag your TextMeshPro object here in Inspector
+    public TMP_Text comboText;                  // Arrastar o TextMeshPro aqui no Inspector
     public string comboFormat = "COMBO x{0}";
 
     [Header("Combo Settings")]
-    public float comboResetTime = 1f;           // Time without a hit before combo resets
-    public int minimumComboToShow = 2;          // Only show counter from x2 onwards
+    public float comboResetTime = 1f;           // segundos sem acertar antes do combo reiniciar
+    public int minimumComboToShow = 2;          // só mostrar o contador a partir de x2
 
     [Header("Punch Scale Effect")]
-    public float punchScale = 1.3f;             // How big the text gets on each hit
-    public float punchDuration = 0.15f;         // How fast the punch animation is
+    public float punchScale = 1.3f;             // escala máxima do texto a cada acerto
+    public float punchDuration = 0.15f;         // duração da animação de impacto
 
+    // ---------------------------------------------
+    //  ESTADO PRIVADO
+    // ---------------------------------------------
     private int currentCombo = 0;
     private float lastHitTime = 0f;
     private Vector3 originalScale;
     private Coroutine punchCoroutine;
 
+    // ---------------------------------------------
+    //  UNITY
+    // ---------------------------------------------
     void Start()
     {
         if (comboText != null)
@@ -33,12 +42,15 @@ public class PlayerComboSYS : MonoBehaviour
 
     void Update()
     {
-        // Reset combo if no hit landed within comboResetTime
+        // Reiniciar combo se não acertar dentro do comboResetTime
         if (currentCombo > 0 && Time.time - lastHitTime > comboResetTime)
             ResetCombo();
     }
 
-    // Called by PlayerCombat.OnHitLanded() when an attack connects
+    // ---------------------------------------------
+    //  REGISTO DE ACERTO
+    // ---------------------------------------------
+    // Chamado pela Hitbox quando um ataque acerta num inimigo
     public void RegisterHit()
     {
         currentCombo++;
@@ -46,6 +58,9 @@ public class PlayerComboSYS : MonoBehaviour
         UpdateComboUI();
     }
 
+    // ---------------------------------------------
+    //  UI
+    // ---------------------------------------------
     void UpdateComboUI()
     {
         if (comboText == null) return;
@@ -55,7 +70,7 @@ public class PlayerComboSYS : MonoBehaviour
             comboText.enabled = true;
             comboText.text = string.Format(comboFormat, currentCombo);
 
-            // Punch scale effect on every hit
+            // Efeito de impacto a cada acerto — cancela o anterior se ainda estiver a correr
             if (punchCoroutine != null)
                 StopCoroutine(punchCoroutine);
             punchCoroutine = StartCoroutine(PunchScale());
@@ -67,12 +82,15 @@ public class PlayerComboSYS : MonoBehaviour
         }
     }
 
-    // Simple scale punch without DOTween
+    // ---------------------------------------------
+    //  ANIMAÇÃO DE ESCALA
+    // ---------------------------------------------
+    // Escala o texto para cima e depois para baixo — sem DOTween
     IEnumerator PunchScale()
     {
         float elapsed = 0f;
 
-        // Scale up
+        // Escalar para cima
         while (elapsed < punchDuration / 2f)
         {
             elapsed += Time.deltaTime;
@@ -83,7 +101,7 @@ public class PlayerComboSYS : MonoBehaviour
 
         elapsed = 0f;
 
-        // Scale back down
+        // Escalar para baixo
         while (elapsed < punchDuration / 2f)
         {
             elapsed += Time.deltaTime;
@@ -96,6 +114,9 @@ public class PlayerComboSYS : MonoBehaviour
         punchCoroutine = null;
     }
 
+    // ---------------------------------------------
+    //  RESET
+    // ---------------------------------------------
     void ResetCombo()
     {
         currentCombo = 0;
@@ -115,6 +136,5 @@ public class PlayerComboSYS : MonoBehaviour
     }
 
     public int GetCurrentCombo() => currentCombo;
-
     public void ForceReset() => ResetCombo();
 }

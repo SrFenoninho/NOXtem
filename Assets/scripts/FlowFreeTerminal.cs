@@ -3,26 +3,31 @@ using UnityEngine.UI;
 
 public class FlowFreeTerminal : MonoBehaviour, IInteractable
 {
+    // ---------------------------------------------
+    //  INSPETOR
+    // ---------------------------------------------
     [Header("UI References")]
     public Text messageText;
-    public GameObject flowFreeUI; // Assign the Flow Free minigame UI panel here
+    public GameObject flowFreeUI; // painel do mini-jogo a mostrar/esconder
 
     [Header("Settings")]
-    public float accessTime = 3f;
-    public string sceneToLoadOnComplete = "NextLevel";
+    public float accessTime = 3f;                       // tempo de "hacking" antes de abrir o mini-jogo
+    public string sceneToLoadOnComplete = "NextLevel";  // cena a carregar após concluir o puzzle
 
-    private bool isAccessing = false;
-    private bool isGameActive = false;
+    // ---------------------------------------------
+    //  ESTADO PRIVADO
+    // ---------------------------------------------
+    private bool isAccessing = false;   // temporizador de acesso em curso
+    private bool isGameActive = false;  // mini-jogo aberto
     private float accessTimer = 0f;
 
+    // ---------------------------------------------
+    //  INTERFACE IInteractable
+    // ---------------------------------------------
     public string GetInteractMessage()
     {
-        if (isGameActive)
-            return "Game in progress...";
-
-        if (isAccessing)
-            return $"Accessing... {Mathf.Ceil(accessTime - accessTimer)}s";
-
+        if (isGameActive)  return "Game in progress...";
+        if (isAccessing)   return $"Accessing... {Mathf.Ceil(accessTime - accessTimer)}s";
         return "Press E to access terminal";
     }
 
@@ -32,80 +37,68 @@ public class FlowFreeTerminal : MonoBehaviour, IInteractable
 
         if (!isAccessing)
         {
-            // Start accessing the terminal
+            // Iniciar o temporizador de acesso
             isAccessing = true;
             accessTimer = 0f;
         }
     }
 
+    // ---------------------------------------------
+    //  TEMPORIZADOR DE ACESSO
+    // ---------------------------------------------
     void Update()
     {
-        // Handle the access timer
-        if (isAccessing && !isGameActive)
-        {
-            accessTimer += Time.deltaTime;
+        if (!isAccessing || isGameActive) return;
 
-            // Update the message text with the remaining time
-            if (messageText != null)
-            {
-                messageText.text = $"Accessing... {Mathf.Ceil(accessTime - accessTimer)}s";
-            }
+        accessTimer += Time.deltaTime;
 
-            // Check if access time is complete 
-            if (accessTimer >= accessTime)
-            {
-                OpenMinigame();
-            }
-        }
+        if (messageText != null)
+            messageText.text = $"Accessing... {Mathf.Ceil(accessTime - accessTimer)}s";
+
+        if (accessTimer >= accessTime)
+            OpenMinigame();
     }
 
+    // ---------------------------------------------
+    //  ABRIR / FECHAR MINI-JOGO
+    // ---------------------------------------------
     void OpenMinigame()
     {
         isAccessing = false;
         isGameActive = true;
 
-        // Show the Flow Free minigame UI
         if (flowFreeUI != null)
-        {
             flowFreeUI.SetActive(true);
-        }
 
-        // Pause the game while the minigame is active
+        // Pausar o jogo enquanto o mini-jogo está ativo
         Time.timeScale = 0f;
 
-        // Unlock the cursor for minigame interaction 
+        // Desbloquear o cursor para interação com a UI
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
 
         if (messageText != null)
-        {
             messageText.text = "";
-        }
 
-        Debug.Log("Flow Free minigame opened!");
+        Debug.Log("Mini-jogo Flow Free aberto!");
     }
 
-    // This method should be called by the Flow Free minigame when the player completes it
+    // Chamado pelo FlowFreeGame quando o jogador conclui o puzzle
     public void OnGameComplete()
     {
         isGameActive = false;
 
-        // Hide the Flow Free minigame UI
         if (flowFreeUI != null)
-        {
             flowFreeUI.SetActive(false);
-        }
 
-        // Resume the game
+        // Retomar o jogo
         Time.timeScale = 1f;
 
-        // Lock the cursor back for normal gameplay
+        // Voltar a bloquear o cursor
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
 
-        Debug.Log("Game completed! Loading scene: " + sceneToLoadOnComplete);
-
-        // Load the next scene or perform any other actions needed after completion
+        Debug.Log("Puzzle concluído! A carregar: " + sceneToLoadOnComplete);
         UnityEngine.SceneManagement.SceneManager.LoadScene(sceneToLoadOnComplete);
     }
 }

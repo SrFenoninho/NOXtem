@@ -1,26 +1,37 @@
-//Calling it "AI" is saying a lot, but whatever :P
+// Chamar-lhe "IA" já é dizer muito, mas pronto :P
 using UnityEngine;
 
 public class MonsterChaseAI : MonoBehaviour
 {
+    // ---------------------------------------------
+    //  INSPETOR
+    // ---------------------------------------------
     public Transform player;
     public float speed = 3f;
     public float attackDamage = 10f;
     public float attackInterval = 1f;
 
-    private bool chasing = false;
+    // ---------------------------------------------
+    //  ESTADO PRIVADO
+    // ---------------------------------------------
+    private bool chasing = false;           // só se move depois de ser ativado
     private float nextAttack = 0f;
-    private bool playerInZone = false;
+    private bool playerInZone = false;      // verdadeiro quando o jogador está dentro do trigger de ataque
     private PlayerHealth playerHealth;
 
+    // ---------------------------------------------
+    //  UNITY
+    // ---------------------------------------------
     void Update()
     {
         if (!chasing) return;
 
+        // Mover em direção ao jogador
         Vector3 direction = (player.position - transform.position).normalized;
-        transform.position += direction * speed * Time.deltaTime; // Follow the player
+        transform.position += direction * speed * Time.deltaTime;
         transform.LookAt(transform.position - (player.position - transform.position));
 
+        // Atacar se o jogador estiver na zona de dano
         if (playerInZone && Time.time >= nextAttack && playerHealth != null)
         {
             playerHealth.TakeDamage(attackDamage, transform.position);
@@ -28,25 +39,31 @@ public class MonsterChaseAI : MonoBehaviour
         }
     }
 
+    // ---------------------------------------------
+    //  ATIVAÇÃO
+    // ---------------------------------------------
+    // Chamado pelo StartChaseTrigger quando o jogador entra na zona
     public void StartChasing()
     {
         chasing = true;
     }
 
+    // ---------------------------------------------
+    //  ZONA DE ATAQUE
+    // ---------------------------------------------
     void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
             playerHealth = other.GetComponent<PlayerHealth>();
             if (playerHealth != null)
-            {
                 playerInZone = true;
-            }
         }
     }
 
     void OnTriggerStay(Collider other)
     {
+        // Fallback caso o jogador entre antes da referência estar pronta
         if (other.CompareTag("Player") && playerHealth == null)
         {
             playerHealth = other.GetComponent<PlayerHealth>();
@@ -60,7 +77,7 @@ public class MonsterChaseAI : MonoBehaviour
         {
             playerInZone = false;
             playerHealth = null;
-            Debug.Log("Player left damage zone!");
+            Debug.Log("Jogador saiu da zona de dano!");
         }
     }
 }

@@ -2,27 +2,27 @@ using UnityEngine;
 
 public class KeySpawnRandomizer : MonoBehaviour
 {
+    // ---------------------------------------------
+    //  INSPETOR
+    // ---------------------------------------------
     [Header("Key Spawn Points")]
-    public GameObject[] keyObjects;
+    public GameObject[] keyObjects; // todos os possíveis locais de spawn da chave
 
+    // ---------------------------------------------
+    //  UNITY
+    // ---------------------------------------------
     void Start()
     {
-        if (keyObjects.Length == 0)
-        {
-            return;
-        }
+        if (keyObjects.Length == 0) return;
 
-        int randomIndex = Random.Range(0, keyObjects.Length); // Select a random key
+        // Escolher aleatoriamente qual a chave que vai aparecer
+        int randomIndex = Random.Range(0, keyObjects.Length);
 
+        // Destruir todas as chaves exceto a selecionada
         for (int i = 0; i < keyObjects.Length; i++)
         {
-            if (i != randomIndex)
-            {
-                if (keyObjects[i] != null)
-                {
-                    Destroy(keyObjects[i]); // Destroy all keys except the randomly selected one
-                }
-            }
+            if (i != randomIndex && keyObjects[i] != null)
+                Destroy(keyObjects[i]);
         }
     }
 }

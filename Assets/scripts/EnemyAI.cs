@@ -1,7 +1,22 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class EnemyAI : MonoBehaviour
 {
+    // ---------------------------------------------
+    //  FASES DA IA
+    // ---------------------------------------------
+    private enum Phase
+    {
+        OrbitFar,       // estado padrão — a orbitar longe, sem se comprometer
+        ApproachClose,  // decide aproximar-se do jogador
+        ReadyToAttack,  // chega perto, à espera do token de ataque — recua se demorar demasiado
+        Attacking,      // tem o token — a investir contra o jogador
+        Reposition,     // ataque terminado ou falhado — a recuar antes de voltar a OrbitFar
+    }
+
+    // ---------------------------------------------
+    //  INSPETOR
+    // ---------------------------------------------
     [Header("Health")]
     public float maxHealth = 100f;
 
@@ -10,10 +25,32 @@ public class EnemyAI : MonoBehaviour
     public float chaseSpeed = 5f;
     public float detectionRadius = 15f;
 
+    [Header("Orbit")]
+    public float farOrbitRadius = 8f;   // círculo exterior de espera
+    public float closeOrbitRadius = 2.5f; // só entra quando se compromete a atacar
+    public float orbitSpeed = 60f;  // graus por segundo
+    private float orbitAngle;
+
+    [Header("Approach")]
+    // Probabilidade por segundo de um inimigo em OrbitFar decidir aproximar-se
+    public float approachChancePerSecond = 0.25f;
+    // Máximo de inimigos permitidos em ApproachClose+ReadyToAttack+Attacking ao mesmo tempo
+    public int maxCloseEnemies = 3;
+    // Quanto tempo esperar pelo token de ataque antes de desistir e recuar
+    public float readyToAttackTimeout = 3f;
+
     [Header("Attack")]
     public float attackDamage = 10f;
     public float attackInterval = 1f;
     public float attackRange = 1.5f;
+    public float attackLungeDuration = 0.35f;
+    public float attackFinishPause = 0.4f;
+    // Se o inimigo não conseguir alcançar o jogador durante o ataque, desiste após este tempo
+    public float attackGiveUpTimeout = 5f;
+
+    [Header("Reposition")]
+    public float repositionDistance = 5f;
+    public float repositionDuration = 2f;
 
     [Header("Knockback")]
     public float knockbackForce = 5f;
@@ -30,31 +67,35 @@ public class EnemyAI : MonoBehaviour
     public float cloneSpawnMaxRadius = 8f;
     public float cloneSpawnHeightOffset = 2f;
 
-    // Assigned at runtime by EnemySpawn or EnemyCloneSpawner
+    // ---------------------------------------------
+    //  TEMPO DE EXECUÇÃO
+    // ---------------------------------------------
     [HideInInspector] public GameObject enemyPrefab;
     [HideInInspector] public GameObject cloneSpawnerPrefab;
     [HideInInspector] public int generation = 0;
     [HideInInspector] public int maxGeneration = 3;
     [HideInInspector] public float externalKnockbackForce;
 
-    private int normalLayer;
-    private int knockbackLayer;
+    public System.Action OnDeath;
+    public bool isOriginal = false;
+
+    // ---------------------------------------------
+    //  ESTADO PRIVADO
+    // ---------------------------------------------
+    private Phase currentPhase = Phase.OrbitFar;
 
     private float currentHealth;
     private Transform player;
     private PlayerHealth playerHealth;
     private float nextAttack = 0f;
 
-    public System.Action OnDeath;
-    public bool isOriginal = false;
-
     private bool isKnockedBack = false;
     private float knockbackEndTime;
     private Vector3 knockbackDirection;
+    private float storedKnockbackForce;
 
     private bool isStunned = false;
     private float stunEndTime;
-    private Transform modelTransform;
 
     private CharacterController controller;
     private Vector3 moveDir;
@@ -63,8 +104,20 @@ public class EnemyAI : MonoBehaviour
     private Vector3 previousPosition;
     private float stuckCount = 0f;
 
+    private Transform modelTransform;
     private Vector3 modelOriginalLocalPosition;
 
+    private int normalLayer;
+    private int knockbackLayer;
+
+    private float phaseTimer = 0f;
+    private float approachCheckTimer = 0f;
+    private Vector3 repositionDir;
+    private bool hitLanded = false; // verdadeiro quando o inimigo acerta um golpe em Attacking
+
+    // ---------------------------------------------
+    //  UNITY
+    // ----------------------------------------------
     void Start()
     {
         currentHealth = maxHealth;
@@ -83,15 +136,23 @@ public class EnemyAI : MonoBehaviour
         normalLayer = gameObject.layer;
         knockbackLayer = LayerMask.NameToLayer("EnemyKnockback");
 
-        // Use first child as model for shake, fallback to self
         modelTransform = transform.childCount > 0 ? transform.GetChild(0) : transform;
         modelOriginalLocalPosition = modelTransform.localPosition;
+
+        // Ângulo inicial aleatório para que os inimigos se espalhem imediatamente
+        orbitAngle = Random.Range(0f, 360f);
+
+        EnemyCombatManager.Register(this);
+    }
+
+    void OnDestroy()
+    {
+        EnemyCombatManager.Unregister(this);
     }
 
     void Update()
     {
-        if (isOriginal) return;
-        if (player == null) return;
+        if (isOriginal || player == null) return;
 
         if (isStunned)
         {
@@ -99,32 +160,274 @@ public class EnemyAI : MonoBehaviour
             return;
         }
 
-        HandleAttack();
+        UpdatePhase();
     }
 
     void FixedUpdate()
     {
-        if (isOriginal) return;
-        if (player == null) return;
-
+        if (isOriginal || player == null) return;
         if (isStunned) return;
 
         HandleMovement();
     }
 
-    void HandleAttack()
+    // ---------------------------------------------
+    //  MÁQUINA DE ESTADOS DAS FASES
+    // ---------------------------------------------
+    void UpdatePhase()
     {
-        if (playerHealth == null) return;
-        if (Time.time < nextAttack) return;
+        float distToPlayer = Vector3.Distance(transform.position, player.position);
 
-        float dist = Vector3.Distance(transform.position, player.position);
-        if (dist <= attackRange)
+        switch (currentPhase)
         {
-            playerHealth.TakeDamage(attackDamage, transform.position);
-            nextAttack = Time.time + attackInterval;
+            // -- ÓRBITA DISTANTE ----------------------------------------------
+            // Estado padrão. O inimigo orbita à distância e ocasionalmente decide aproximar-se.
+            case Phase.OrbitFar:
+
+                orbitAngle += orbitSpeed * 0.5f * Time.deltaTime;
+
+                approachCheckTimer += Time.deltaTime;
+                if (approachCheckTimer >= 1f)
+                {
+                    approachCheckTimer = 0f;
+                    if (CountCommittedEnemies() < maxCloseEnemies
+                        && Random.value < approachChancePerSecond)
+                    {
+                        SetPhase(Phase.ApproachClose);
+                    }
+                }
+                break;
+
+            // -- APROXIMAÇÃO -----------------------------------------------
+            // O inimigo está a aproximar-se. Quando atinge o raio próximo, entra em ReadyToAttack.
+            // Se nunca chegar (ex: o jogador está a mover-se), desiste após algum tempo.
+            case Phase.ApproachClose:
+
+                orbitAngle += orbitSpeed * Time.deltaTime;
+                phaseTimer += Time.deltaTime;
+
+                if (distToPlayer <= closeOrbitRadius + 0.3f)
+                {
+                    SetPhase(Phase.ReadyToAttack);
+                    break;
+                }
+
+                // Não conseguiu alcançar — recua e espera em OrbitFar
+                if (phaseTimer >= readyToAttackTimeout)
+                {
+                    orbitAngle += Random.Range(60f, 120f);
+                    SetPhase(Phase.OrbitFar);
+                }
+                break;
+
+            // -- PRONTO PARA ATACAR ----------------------------------------
+            // O inimigo está perto e quer atacar. Solicita um token.
+            // Se o token demorar demasiado, recua para OrbitFar — não vai aglomerar-se para sempre.
+            case Phase.ReadyToAttack:
+
+                phaseTimer += Time.deltaTime;
+
+                // Obteve o token — atacar agora
+                if (Time.time >= nextAttack && EnemyCombatManager.RequestAttackToken(this))
+                {
+                    SetPhase(Phase.Attacking);
+                    break;
+                }
+
+                // Esperou demasiado tempo sem token — retirar para OrbitFar
+                if (phaseTimer >= readyToAttackTimeout)
+                {
+                    orbitAngle += Random.Range(60f, 120f);
+                    SetPhase(Phase.OrbitFar);
+                }
+                break;
+
+            // -- A ATACAR ----------------------------------------------
+            // Tem o token. Investe contra o jogador e continua a tentar até acertar,
+            // falhar a janela de investida, ou esgotar o tempo completamente.
+            case Phase.Attacking:
+
+                phaseTimer += Time.deltaTime;
+
+                // Desistiu — não conseguiu alcançar o jogador a tempo
+                if (phaseTimer >= attackGiveUpTimeout)
+                {
+                    EnemyCombatManager.ReleaseToken(this);
+                    nextAttack = Time.time + attackInterval;
+                    orbitAngle += Random.Range(120f, 240f);
+                    SetPhase(Phase.OrbitFar);
+                    break;
+                }
+
+                // Verificar acerto em cada frame enquanto estiver perto o suficiente — não apenas durante a janela de investida
+                if (distToPlayer <= attackRange && !hitLanded)
+                {
+                    playerHealth?.TakeDamage(attackDamage, transform.position);
+                    nextAttack = Time.time + attackInterval;
+                    hitLanded = true; // acertar apenas uma vez por tentativa de ataque
+                }
+
+                // Após a duração da investida: se acertou, termina de forma limpa; se não, continua a perseguir até expirar o tempo
+                if (phaseTimer >= attackLungeDuration + attackFinishPause && hitLanded)
+                {
+                    EnemyCombatManager.ReleaseToken(this);
+                    SetPhase(Phase.Reposition);
+                }
+                break;
+
+            // -- REPOSICIONAMENTO ---------------------------------------------
+            // Afasta-se do jogador antes de voltar a OrbitFar.
+            case Phase.Reposition:
+
+                phaseTimer += Time.deltaTime;
+
+                if (phaseTimer >= repositionDuration)
+                {
+                    orbitAngle += Random.Range(90f, 180f);
+                    SetPhase(Phase.OrbitFar);
+                }
+                break;
         }
     }
 
+    void SetPhase(Phase next)
+    {
+        phaseTimer = 0f;
+
+        if (next == Phase.Attacking)
+            hitLanded = false;
+
+        if (next == Phase.Reposition)
+        {
+            repositionDir = (transform.position - player.position).normalized;
+            repositionDir.y = 0;
+        }
+
+        currentPhase = next;
+    }
+
+    // ---------------------------------------------
+    //  MOVIMENTO
+    // ---------------------------------------------
+    void HandleMovement()
+    {
+        if (isKnockedBack)
+        {
+            ApplyKnockbackMove();
+            return;
+        }
+
+        Vector3 targetPos = GetTargetPosition();
+        Vector3 toTarget = targetPos - transform.position;
+        toTarget.y = 0;
+
+        float speedMult = currentPhase == Phase.Attacking ? 2.5f
+                        : currentPhase == Phase.ApproachClose ? 1.2f
+                        : currentPhase == Phase.Reposition ? 1.0f
+                        : 0.7f; // OrbitFar + ReadyToAttack drift slowly
+
+        if (toTarget.magnitude > 0.15f)
+        {
+            moveDir.x = toTarget.normalized.x * currentSpeed * speedMult;
+            moveDir.z = toTarget.normalized.z * currentSpeed * speedMult;
+        }
+        else
+        {
+            moveDir.x = 0;
+            moveDir.z = 0;
+        }
+
+        // Estar sempre virado para o jogador
+        Vector3 lookDir = player.position - transform.position;
+        lookDir.y = 0;
+        if (lookDir != Vector3.zero)
+            transform.rotation = Quaternion.LookRotation(lookDir);
+
+        ApplyGravity();
+        controller.Move(moveDir * Time.fixedDeltaTime);
+        CheckStuck();
+    }
+
+    Vector3 GetTargetPosition()
+    {
+        float rad;
+
+        switch (currentPhase)
+        {
+            case Phase.OrbitFar:
+            case Phase.ReadyToAttack: // ReadyToAttack desliza no raio distante enquanto espera
+                rad = orbitAngle * Mathf.Deg2Rad;
+                return player.position + new Vector3(
+                    Mathf.Cos(rad) * farOrbitRadius, 0,
+                    Mathf.Sin(rad) * farOrbitRadius);
+
+            case Phase.ApproachClose:
+                // Espiral para dentro — interpola entre o raio distante e o próximo
+                float t = Mathf.Clamp01(phaseTimer / readyToAttackTimeout);
+                float radius = Mathf.Lerp(farOrbitRadius, closeOrbitRadius, t);
+                rad = orbitAngle * Mathf.Deg2Rad;
+                return player.position + new Vector3(
+                    Mathf.Cos(rad) * radius, 0,
+                    Mathf.Sin(rad) * radius);
+
+            case Phase.Attacking:
+                return player.position;
+
+            case Phase.Reposition:
+                return transform.position + repositionDir * repositionDistance;
+
+            default:
+                return transform.position;
+        }
+    }
+
+    void ApplyKnockbackMove()
+    {
+        moveDir.x = knockbackDirection.x * storedKnockbackForce;
+        moveDir.z = knockbackDirection.z * storedKnockbackForce;
+
+        if (Time.time >= knockbackEndTime)
+        {
+            isKnockedBack = false;
+            if (stunEndTime > Time.time)
+                isStunned = true;
+        }
+
+        ApplyGravity();
+        controller.Move(moveDir * Time.fixedDeltaTime);
+    }
+
+    void ApplyGravity()
+    {
+        if (controller.isGrounded)
+            moveDir.y = -2f;
+        else
+            moveDir.y += Physics.gravity.y * 2f * Time.fixedDeltaTime;
+    }
+
+    void CheckStuck()
+    {
+        if (Vector3.Distance(previousPosition, transform.position) < 0.01f)
+        {
+            stuckCount++;
+            if (stuckCount >= stuckCountMax)
+            {
+                stuckCount = 0f;
+                Vector3 randomDir = new Vector3(
+                    Random.Range(-1f, 1f), 0, Random.Range(-1f, 1f)).normalized;
+                controller.Move(randomDir * currentSpeed * Time.fixedDeltaTime * 5f);
+            }
+        }
+        else
+        {
+            stuckCount = 0f;
+        }
+        previousPosition = transform.position;
+    }
+
+    // ---------------------------------------------
+    //  ATORDOAMENTO
+    // ---------------------------------------------
     void HandleStun()
     {
         modelTransform.localPosition = modelOriginalLocalPosition + new Vector3(
@@ -141,64 +444,9 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
-    void HandleMovement()
-    {
-        Vector3 playerPos = player.position;
-        playerPos.y = transform.position.y;
-        transform.LookAt(playerPos);
-
-        float distanceToPlayer = Vector3.Distance(playerPos, transform.position);
-
-        if (isKnockedBack)
-        {
-            moveDir.x = knockbackDirection.x * knockbackForce;
-            moveDir.z = knockbackDirection.z * knockbackForce;
-            if (Time.time >= knockbackEndTime)
-            {
-                isKnockedBack = false;
-                if (stunEndTime > Time.time)
-                    isStunned = true;
-            }
-        }
-        else if (distanceToPlayer <= detectionRadius)
-        {
-            float speedToUse = distanceToPlayer < 7.5f ? chaseSpeed : currentSpeed;
-            Vector3 direction = (player.position - transform.position).normalized;
-            direction.y = 0;
-            moveDir.x = direction.x * speedToUse;
-            moveDir.z = direction.z * speedToUse;
-        }
-        else
-        {
-            moveDir.x = 0;
-            moveDir.z = 0;
-        }
-
-        if (controller.isGrounded)
-            moveDir.y = -2f;
-        else
-            moveDir.y += Physics.gravity.y * 2f * Time.fixedDeltaTime;
-
-        controller.Move(moveDir * Time.fixedDeltaTime);
-
-        if (Vector3.Distance(previousPosition, transform.position) < 0.01f)
-        {
-            stuckCount++;
-            if (stuckCount >= stuckCountMax)
-            {
-                stuckCount = 0f;
-                Vector3 randomDir = new Vector3(Random.Range(-1f, 1f), 0, Random.Range(-1f, 1f)).normalized;
-                controller.Move(randomDir * currentSpeed * Time.fixedDeltaTime * 5f);
-            }
-        }
-        else
-        {
-            stuckCount = 0f;
-        }
-
-        previousPosition = transform.position;
-    }
-
+    // ---------------------------------------------
+    //  DANO E MORTE
+    // ---------------------------------------------
     public void TakeDamage(float damage, float knockback = 0f, float stunDuration = 0f)
     {
         currentHealth -= damage;
@@ -208,14 +456,18 @@ public class EnemyAI : MonoBehaviour
             gameObject.layer = knockbackLayer;
             knockbackDirection = (transform.position - player.position).normalized;
             knockbackDirection.y = 0;
+            storedKnockbackForce = knockback > 0f ? knockback : knockbackForce;
             isKnockedBack = true;
             knockbackEndTime = Time.time + knockbackDuration;
-            knockbackForce = knockback > 0f ? knockback : knockbackForce;
 
-            // Stun begins after knockback ends
             if (stunDuration > 0f)
-            {
                 stunEndTime = Time.time + knockbackDuration + stunDuration;
+
+            // Interromper o ataque se for atingido durante o mesmo
+            if (currentPhase == Phase.Attacking)
+            {
+                EnemyCombatManager.ReleaseToken(this);
+                SetPhase(Phase.Reposition);
             }
         }
 
@@ -238,20 +490,52 @@ public class EnemyAI : MonoBehaviour
             GameObject spawnerObj = Instantiate(cloneSpawnerPrefab, clonePos, Quaternion.identity);
             EnemyCloneSpawner spawner = spawnerObj.GetComponent<EnemyCloneSpawner>();
             if (spawner != null)
-            {
-                spawner.Initialize(enemyPrefab, cloneSpawnerPrefab, generation + 1, maxGeneration, () => OnDeath?.Invoke());
-            }
+                spawner.Initialize(enemyPrefab, cloneSpawnerPrefab, generation + 1,
+                                   maxGeneration, () => OnDeath?.Invoke());
         }
 
         OnDeath?.Invoke();
         Destroy(gameObject);
     }
 
+    // ---------------------------------------------
+    //  AUXILIARES
+    // ---------------------------------------------
+
+    // Conta os inimigos que se comprometeram a aproximar-se ou atacar
+    int CountCommittedEnemies()
+    {
+        int count = 0;
+        Collider[] hits = Physics.OverlapSphere(player.position, farOrbitRadius + 1f);
+        foreach (var h in hits)
+        {
+            if (h.gameObject == gameObject) continue;
+            EnemyAI other = h.GetComponent<EnemyAI>();
+            if (other != null &&
+                (other.currentPhase == Phase.ApproachClose ||
+                 other.currentPhase == Phase.ReadyToAttack ||
+                 other.currentPhase == Phase.Attacking))
+                count++;
+        }
+        return count;
+    }
+
+    // ---------------------------------------------
+    //  DESENHOS DE DEPURAÇÃO
+    // ---------------------------------------------
     void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, detectionRadius);
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, attackRange);
+
+        if (player != null)
+        {
+            Gizmos.color = new Color(1f, 0.5f, 0f, 0.3f);
+            Gizmos.DrawWireSphere(player.position, farOrbitRadius);
+            Gizmos.color = new Color(1f, 0f, 0f, 0.3f);
+            Gizmos.DrawWireSphere(player.position, closeOrbitRadius);
+        }
     }
 }

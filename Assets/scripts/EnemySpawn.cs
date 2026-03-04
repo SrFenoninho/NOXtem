@@ -2,30 +2,41 @@ using UnityEngine;
 
 public class EnemySpawn : MonoBehaviour
 {
+    // ---------------------------------------------
+    //  INSPETOR
+    // ---------------------------------------------
     [Header("Spawn Settings")]
     public GameObject enemyPrefab;
-    public GameObject cloneSpawnerPrefab;       // Assign the CloneSpawner prefab here
-    public int enemyCount = 20;                 // How many enemies to spawn at start
-    public float spawnRadius = 10f;             // Radius around spawner
-    public float spawnHeightOffset = 2f;        // Slightly above ground so CharacterController lands naturally
+    public GameObject cloneSpawnerPrefab;   // prefab do CloneSpawner para passar aos inimigos
+    public int enemyCount = 20;             // número de inimigos a criar no início
+    public float spawnRadius = 10f;         // raio à volta do spawner
+    public float spawnHeightOffset = 2f;    // ligeiramente acima do chão para o CharacterController aterrar
 
+    // ---------------------------------------------
+    //  ESTADO PRIVADO
+    // ---------------------------------------------
     private int currentEnemies = 0;
 
+    // ---------------------------------------------
+    //  UNITY
+    // ---------------------------------------------
     void Start()
     {
         SpawnAllEnemies();
     }
 
+    // ---------------------------------------------
+    //  SPAWN
+    // ---------------------------------------------
     void SpawnAllEnemies()
     {
         for (int i = 0; i < enemyCount; i++)
-        {
             SpawnEnemy();
-        }
     }
 
     void SpawnEnemy()
     {
+        // Posição aleatória dentro do raio de spawn
         float angle = Random.Range(0f, Mathf.PI * 2f);
         float distance = Random.Range(spawnRadius * 0.3f, spawnRadius);
 
@@ -49,16 +60,22 @@ public class EnemySpawn : MonoBehaviour
         }
     }
 
+    // ---------------------------------------------
+    //  MORTE DE INIMIGO
+    // ---------------------------------------------
     void HandleEnemyDeath()
     {
         currentEnemies--;
     }
 
+    // ---------------------------------------------
+    //  DESENHOS DE DEPURAÇÃO
+    // ---------------------------------------------
     void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, spawnRadius);
         Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(transform.position, spawnRadius * 0.3f);
+        Gizmos.DrawWireSphere(transform.position, spawnRadius * 0.3f); // raio mínimo
     }
 }

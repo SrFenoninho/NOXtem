@@ -2,9 +2,12 @@ using UnityEngine;
 
 public class OrbitCam : MonoBehaviour
 {
+    // ---------------------------------------------
+    //  INSPETOR
+    // ---------------------------------------------
     [Header("Target")]
-    public Transform target; // O jogador
-    public Vector3 targetOffset = new Vector3(0, 1.6f, 0); // Altura dos olhos
+    public Transform target;                            // o jogador
+    public Vector3 targetOffset = new Vector3(0, 1.6f, 0); // altura dos olhos
 
     [Header("Camera Settings")]
     public float distance = 5f;
@@ -14,11 +17,17 @@ public class OrbitCam : MonoBehaviour
 
     [Header("Collision")]
     public LayerMask collisionMask;
-    public float collisionRadius = 0.3f;
+    public float collisionRadius = 0.3f;                // raio do SphereCast para evitar penetração
 
-    private float yaw = 0f;
-    private float pitch = 20f;
+    // ---------------------------------------------
+    //  ESTADO PRIVADO
+    // ---------------------------------------------
+    private float yaw = 0f;     // rotação horizontal
+    private float pitch = 20f;  // rotação vertical (fixa — só roda horizontalmente)
 
+    // ---------------------------------------------
+    //  UNITY
+    // ---------------------------------------------
     void Start()
     {
         if (target == null)
@@ -28,7 +37,7 @@ public class OrbitCam : MonoBehaviour
             return;
         }
 
-        // Inicia atr�s do jogador
+        // Iniciar atrás do jogador
         yaw = target.eulerAngles.y;
 
         Cursor.lockState = CursorLockMode.Locked;
@@ -41,28 +50,34 @@ public class OrbitCam : MonoBehaviour
         UpdateCameraPosition();
     }
 
+    // ---------------------------------------------
+    //  INPUT
+    // ---------------------------------------------
     void HandleInput()
     {
         float mouseX = Input.GetAxis("Mouse X") * sensitivity * Time.deltaTime;
-
         yaw += mouseX;
-        // Pitch removido - c�mera s� roda horizontalmente
+        // Pitch removido — câmera só roda horizontalmente (design intencional)
     }
 
+    // ---------------------------------------------
+    //  POSICIONAMENTO
+    // ---------------------------------------------
     void UpdateCameraPosition()
     {
         Vector3 targetPosition = target.position + targetOffset;
 
-        // Calcula a posi��o desejada da c�mera (s� horizontal)
+        // Calcular posição desejada com base na rotação horizontal
         Quaternion rotation = Quaternion.Euler(pitch, yaw, 0);
         Vector3 desiredPosition = targetPosition - rotation * Vector3.forward * distance;
 
-        // Verifica colis�es
+        // SphereCast para detetar colisões entre o alvo e a câmera
         Vector3 direction = desiredPosition - targetPosition;
         RaycastHit hit;
 
         if (Physics.SphereCast(targetPosition, collisionRadius, direction.normalized, out hit, distance, collisionMask))
         {
+            // Aproximar a câmera ao ponto de colisão
             transform.position = targetPosition + direction.normalized * (hit.distance - collisionRadius);
         }
         else
@@ -70,7 +85,6 @@ public class OrbitCam : MonoBehaviour
             transform.position = desiredPosition;
         }
 
-        // Olha para o alvo
         transform.LookAt(targetPosition);
     }
 }

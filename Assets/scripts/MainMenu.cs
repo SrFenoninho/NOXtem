@@ -3,6 +3,9 @@ using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
+    // ---------------------------------------------
+    //  BOTÕES DO MENU PRINCIPAL
+    // ---------------------------------------------
     public void PlayGame()
     {
         SceneManager.LoadScene("Floor1");

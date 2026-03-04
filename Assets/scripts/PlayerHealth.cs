@@ -1,21 +1,34 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+
 public class PlayerHealth : MonoBehaviour
 {
+    // ---------------------------------------------
+    //  INSPETOR
+    // ---------------------------------------------
     [Header("Health Settings")]
     public float maxHealth = 100f;
     public float currentHealth;
+
     [Header("Damage Settings")]
-    public float damageCooldown = 1f; // this is the cooldown time between damages
+    public float damageCooldown = 1f;   // tempo de invencibilidade entre danos consecutivos
     private float nextDamage = 0f;
+
     [Header("Knockback Settings")]
     public float knockbackForce = 5f;
     public float knockbackDuration = 0.3f;
 
+    // ---------------------------------------------
+    //  ESTADO PRIVADO
+    // ---------------------------------------------
     private bool isKnockedBack = false;
     private float knockbackEndTime;
     private Vector3 knockbackDirection;
     private CharacterController characterController;
+
+    // ---------------------------------------------
+    //  UNITY
+    // ---------------------------------------------
     void Start()
     {
         currentHealth = maxHealth;
@@ -24,38 +37,51 @@ public class PlayerHealth : MonoBehaviour
 
     void Update()
     {
+        // Aplicar knockback horizontal enquanto ativo
         if (isKnockedBack && characterController != null)
         {
             characterController.Move(knockbackDirection * knockbackForce * Time.deltaTime);
             if (Time.time >= knockbackEndTime)
-            {
                 isKnockedBack = false;
-            }
         }
     }
+
+    // ---------------------------------------------
+    //  DANO
+    // ---------------------------------------------
     public void TakeDamage(float damageAmount, Vector3 damageSourcePosition)
     {
-        if (Time.time < nextDamage)
-            return;
+        // Ignorar dano durante o período de invencibilidade
+        if (Time.time < nextDamage) return;
+
         currentHealth -= damageAmount;
         nextDamage = Time.time + damageCooldown;
         Debug.Log("Player took " + damageAmount + " damage. Health: " + currentHealth);
 
+        // Calcular direção do knockback (sempre horizontal)
         knockbackDirection = (transform.position - damageSourcePosition).normalized;
-        knockbackDirection.y = 0; // keep knockback horizontal
+        knockbackDirection.y = 0;
         isKnockedBack = true;
         knockbackEndTime = Time.time + knockbackDuration;
 
         if (currentHealth <= 0)
-        {
             Die();
-        }
     }
+
+    // ---------------------------------------------
+    //  MORTE
+    // ---------------------------------------------
     void Die()
     {
+        // Recarregar a cena atual ao morrer
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
-    void OnGUI() // is a simple way to display health on screen, but actually, I like it :D
+
+    // ---------------------------------------------
+    //  HUD DE VIDA
+    // ---------------------------------------------
+    // Solução simples com OnGUI — funciona bem para protótipo :D
+    void OnGUI()
     {
         float boxWidth = 200;
         float boxHeight = 25;
@@ -64,6 +90,7 @@ public class PlayerHealth : MonoBehaviour
         float xPos = Screen.width - boxWidth - margin;
         float yPos = Screen.height - boxHeight - margin;
 
-        GUI.Box(new Rect(xPos, yPos, boxWidth, boxHeight), "Health: " + currentHealth.ToString("F0") + " / " + maxHealth);
+        GUI.Box(new Rect(xPos, yPos, boxWidth, boxHeight),
+            "Health: " + currentHealth.ToString("F0") + " / " + maxHealth);
     }
 }

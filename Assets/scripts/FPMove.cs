@@ -3,13 +3,16 @@ using UnityEngine;
 
 public class FPMove : MonoBehaviour
 {
+    // ---------------------------------------------
+    //  INSPETOR
+    // ---------------------------------------------
     [Header("Movement Settings")]
     public float speed = 5f;
     public float sprintSpeed = 8f;
     public float gravity = -9.81f;
     public float jumpHeight = 1.2f;
-    public float stickToGroundForce = 10f;      // Force to keep player grounded on slopes
-    public float gravityMultiplier = 3f;         // Multiplier for heavier fall gravity
+    public float stickToGroundForce = 10f;      // força para manter o jogador no chão em rampas
+    public float gravityMultiplier = 3f;         // queda mais pesada e natural
 
     [Header("Ground Check")]
     public float groundDistance = 0.3f;
@@ -36,11 +39,13 @@ public class FPMove : MonoBehaviour
     public float footstepInterval = 0.5f;
 
     [Header("Stuck Detection")]
-    public bool useStuckDetection = true;       // Detects and recovers when player gets stuck
+    public bool useStuckDetection = true;       // deteta e recupera quando o jogador fica preso
     public float stuckThreshold = 0.01f;
     public float stuckTimeLimit = 2f;
 
-    // Private variables
+    // ---------------------------------------------
+    //  ESTADO PRIVADO
+    // ---------------------------------------------
     CharacterController controller;
     Transform playerCamera;
     Camera cam;
@@ -54,17 +59,19 @@ public class FPMove : MonoBehaviour
     bool isJumping;
     bool jumpInput;
 
-    // Head bob
+    // Balanço da câmera ao andar
     private float defaultCameraY;
     private float bobTimer = 0f;
 
-    // Footsteps
     private float nextFootstep = 0f;
 
-    // Stuck detection
+    // Deteção de bloqueio na geometria
     private Vector3 previousPosition;
     private float stuckTimer = 0f;
 
+    // ---------------------------------------------
+    //  UNITY
+    // ---------------------------------------------
     void Start()
     {
         controller = GetComponent<CharacterController>();
@@ -90,47 +97,46 @@ public class FPMove : MonoBehaviour
     void Update()
     {
         wasGrounded = isGrounded;
-        isGrounded = controller.isGrounded; // Use CharacterController built-in ground check
+        isGrounded = controller.isGrounded;
 
-        // Landing sound
+        // Som de aterragem
         if (isGrounded && !wasGrounded)
         {
-            if (landSound != null)
-                audioSource.PlayOneShot(landSound);
-
+            if (landSound != null) audioSource.PlayOneShot(landSound);
             isJumping = false;
         }
 
-        // Jump input stored here, applied in FixedUpdate for physics consistency
+        // Input de salto guardado aqui, aplicado no FixedUpdate
         if (Input.GetButtonDown("Jump") && isGrounded && !isJumping)
         {
             jumpInput = true;
-            if (jumpSound != null)
-                audioSource.PlayOneShot(jumpSound);
+            if (jumpSound != null) audioSource.PlayOneShot(jumpSound);
         }
 
-        // Head bob
+        // Balanço da cabeça ao andar
         if (useHeadBob && isGrounded)
         {
             bool isMoving = Input.GetAxisRaw("Horizontal") != 0 || Input.GetAxisRaw("Vertical") != 0;
             HandleHeadBob(isMoving ? (Input.GetKey(KeyCode.LeftShift) ? sprintSpeed : speed) : 0);
         }
 
-        // FOV kick
+        // Aumento de FOV ao correr
         if (useFovKick)
         {
             bool isSprinting = Input.GetKey(KeyCode.LeftShift) && isGrounded && Input.GetAxisRaw("Vertical") > 0f;
             HandleFOVKick(isSprinting);
         }
 
-        // Stuck detection
+        // Deteção de bloqueio na geometria
         if (useStuckDetection)
             HandleStuckDetection();
     }
 
+    // ---------------------------------------------
+    //  VISÃO DO RATO
+    // ---------------------------------------------
     void LateUpdate()
     {
-        // Mouse look
         float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
         float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
 
@@ -141,7 +147,10 @@ public class FPMove : MonoBehaviour
         transform.Rotate(Vector3.up * mouseX);
     }
 
-    void FixedUpdate() // Physics handled in FixedUpdate for consistent framerate
+    // ---------------------------------------------
+    //  MOVIMENTO
+    // ---------------------------------------------
+    void FixedUpdate()
     {
         float x = Input.GetAxisRaw("Horizontal");
         float z = Input.GetAxisRaw("Vertical");
@@ -149,15 +158,14 @@ public class FPMove : MonoBehaviour
         float currentSpeed = isSprinting ? sprintSpeed : speed;
 
         Vector3 inputDir = transform.right * x + transform.forward * z;
-        if (inputDir.magnitude > 1f)
-            inputDir.Normalize();
+        if (inputDir.magnitude > 1f) inputDir.Normalize();
 
         moveDir.x = inputDir.x * currentSpeed;
         moveDir.z = inputDir.z * currentSpeed;
 
         if (isGrounded)
         {
-            moveDir.y = -stickToGroundForce; // Keep player grounded on slopes
+            moveDir.y = -stickToGroundForce; // manter colado ao chão
 
             if (jumpInput)
             {
@@ -168,17 +176,19 @@ public class FPMove : MonoBehaviour
         }
         else
         {
-            // Apply heavier gravity while airborne for more natural fall
+            // Gravidade mais pesada no ar para queda mais natural
             moveDir += Physics.gravity * gravityMultiplier * Time.fixedDeltaTime;
         }
 
         controller.Move(moveDir * Time.fixedDeltaTime);
 
-        // Footsteps
         if (isGrounded && inputDir.magnitude > 0)
             HandleFootsteps();
     }
 
+    // ---------------------------------------------
+    //  EFEITOS VISUAIS / AUDIO
+    // ---------------------------------------------
     void HandleHeadBob(float speed)
     {
         if (speed > 0)
@@ -206,18 +216,21 @@ public class FPMove : MonoBehaviour
 
     void HandleFootsteps()
     {
-        if (Time.time >= nextFootstep)
+        if (Time.time >= nextFootstep && footstepSounds.Length > 0)
         {
-            if (footstepSounds.Length > 0)
-            {
-                int randomIndex = Random.Range(0, footstepSounds.Length);
-                audioSource.PlayOneShot(footstepSounds[randomIndex]);
-            }
-            nextFootstep = Time.time + (Input.GetKey(KeyCode.LeftShift) && Input.GetAxisRaw("Vertical") > 0f ? footstepInterval * 0.6f : footstepInterval);
+            int randomIndex = Random.Range(0, footstepSounds.Length);
+            audioSource.PlayOneShot(footstepSounds[randomIndex]);
+            // Intervalo mais curto a correr
+            nextFootstep = Time.time + (Input.GetKey(KeyCode.LeftShift) && Input.GetAxisRaw("Vertical") > 0f
+                ? footstepInterval * 0.6f
+                : footstepInterval);
         }
     }
 
-    // Detects if the player is stuck in geometry and attempts recovery
+    // ---------------------------------------------
+    //  DETEÇÃO DE BLOQUEIO
+    // ---------------------------------------------
+    // Deteta se o jogador está preso na geometria e aplica impulso para libertar
     void HandleStuckDetection()
     {
         if (Vector3.Distance(previousPosition, transform.position) < stuckThreshold && !isGrounded)
@@ -225,10 +238,9 @@ public class FPMove : MonoBehaviour
             stuckTimer += Time.deltaTime;
             if (stuckTimer >= stuckTimeLimit)
             {
-                // Apply upward impulse to free the player
                 moveDir.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
                 stuckTimer = 0f;
-                Debug.Log("Player stuck - attempting recovery!");
+                Debug.Log("Jogador preso — a tentar recuperar!");
             }
         }
         else

@@ -3,21 +3,27 @@ using UnityEngine.UI;
 
 public class CardReaderInteraction : MonoBehaviour, IInteractable
 {
+    // ---------------------------------------------
+    //  INSPETOR
+    // ---------------------------------------------
     [Header("Door Settings")]
-    public SimpleLockedDoor doorToUnlock;
-    public string keyName = "Keycard";
+    public SimpleLockedDoor doorToUnlock;   // porta que este leitor controla
+    public string keyName = "Keycard";      // ID do cartão necessário
 
     [Header("UI")]
     public Text messageText;
 
+    // ---------------------------------------------
+    //  ESTADO PRIVADO
+    // ---------------------------------------------
     private bool isUnlocked = false;
 
+    // ---------------------------------------------
+    //  INTERFACE IInteractable
+    // ---------------------------------------------
     public string GetInteractMessage()
     {
-        if (isUnlocked)
-            return "Already unlocked";
-
-        return "Press E to use card reader";
+        return isUnlocked ? "Already unlocked" : "Press E to use card reader";
     }
 
     public void Interact(GameObject player)
@@ -25,7 +31,6 @@ public class CardReaderInteraction : MonoBehaviour, IInteractable
         if (isUnlocked) return;
 
         PlayerKeys playerKeys = player.GetComponent<PlayerKeys>();
-
         if (playerKeys == null) return;
 
         if (playerKeys.HasKey(keyName))
@@ -49,19 +54,25 @@ public class CardReaderInteraction : MonoBehaviour, IInteractable
         }
     }
 
+    // ---------------------------------------------
+    //  DESBLOQUEIO
+    // ---------------------------------------------
     void UnlockDoor()
     {
         if (doorToUnlock != null)
         {
             doorToUnlock.Unlock();
-            Debug.Log("Door unlocked by card reader!");
+            Debug.Log("Porta destrancada pelo leitor de cartão!");
         }
         else
         {
-            Debug.LogWarning("No door assigned to card reader!");
+            Debug.LogWarning("Nenhuma porta atribuída ao leitor de cartão!");
         }
     }
 
+    // ---------------------------------------------
+    //  UI
+    // ---------------------------------------------
     void ClearMessage()
     {
         if (messageText != null)

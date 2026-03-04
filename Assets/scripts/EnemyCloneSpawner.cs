@@ -3,14 +3,20 @@ using System.Collections;
 
 public class EnemyCloneSpawner : MonoBehaviour
 {
+    // ---------------------------------------------
+    //  DADOS PASSADOS PELO ENEMYAI AO MORRER
+    // ---------------------------------------------
     [HideInInspector] public GameObject enemyPrefab;
     [HideInInspector] public GameObject cloneSpawnerPrefab;
     [HideInInspector] public int generation;
     [HideInInspector] public int maxGeneration;
     [HideInInspector] public System.Action OnCloneDeath;
 
+    // ---------------------------------------------
+    //  INSPETOR
+    // ---------------------------------------------
     [Header("Spawn Settings")]
-    public float spawnDelay = 1.5f;
+    public float spawnDelay = 1.5f;     // tempo de espera antes de criar o clone
 
     [Header("Particle Circle")]
     public float circleRadius = 1.2f;
@@ -19,8 +25,15 @@ public class EnemyCloneSpawner : MonoBehaviour
     [Range(5, 50)]
     public int emissionRate = 30;
 
+    // ---------------------------------------------
+    //  ESTADO PRIVADO
+    // ---------------------------------------------
     private ParticleSystem particles;
 
+    // ---------------------------------------------
+    //  INICIALIZAÇÃO
+    // ---------------------------------------------
+    // Chamado pelo EnemyAI ao morrer — configura e inicia o processo de spawn
     public void Initialize(GameObject prefab, GameObject spawnerPrefab, int gen, int maxGen, System.Action onCloneDeath)
     {
         enemyPrefab = prefab;
@@ -33,6 +46,9 @@ public class EnemyCloneSpawner : MonoBehaviour
         StartCoroutine(SpawnCloneAfterDelay());
     }
 
+    // ---------------------------------------------
+    //  EFEITO DE PARTÍCULAS
+    // ---------------------------------------------
     void CreateCircleEffect()
     {
         GameObject particleObj = new GameObject("CloneCircle");
@@ -53,12 +69,14 @@ public class EnemyCloneSpawner : MonoBehaviour
         var emission = particles.emission;
         emission.rateOverTime = emissionRate;
 
+        // Círculo horizontal no chão
         var shape = particles.shape;
         shape.shapeType = ParticleSystemShapeType.Circle;
         shape.radius = circleRadius;
         shape.radiusThickness = 0.05f;
         shape.rotation = new Vector3(90f, 0f, 0f);
 
+        // Gradiente de cor ao longo da vida da partícula
         var colorOverLifetime = particles.colorOverLifetime;
         colorOverLifetime.enabled = true;
         Gradient gradient = new Gradient();
@@ -76,6 +94,7 @@ public class EnemyCloneSpawner : MonoBehaviour
         );
         colorOverLifetime.color = new ParticleSystem.MinMaxGradient(gradient);
 
+        // Diminuir ao longo do tempo
         var sizeOverLifetime = particles.sizeOverLifetime;
         sizeOverLifetime.enabled = true;
         AnimationCurve sizeCurve = new AnimationCurve();
@@ -91,6 +110,9 @@ public class EnemyCloneSpawner : MonoBehaviour
         particles.Play();
     }
 
+    // ---------------------------------------------
+    //  SPAWN DO CLONE
+    // ---------------------------------------------
     IEnumerator SpawnCloneAfterDelay()
     {
         yield return new WaitForSeconds(spawnDelay);
@@ -100,7 +122,7 @@ public class EnemyCloneSpawner : MonoBehaviour
 
         if (enemyPrefab == null) yield break;
 
-        // Spawn clone at this object's position (already set to the correct spot by EnemyAI)
+        // Criar clone na posição deste objeto (já calculada pelo EnemyAI antes de morrer)
         GameObject clone = Instantiate(enemyPrefab, transform.position, Quaternion.identity);
 
         EnemyAI ai = clone.GetComponent<EnemyAI>();
@@ -110,7 +132,7 @@ public class EnemyCloneSpawner : MonoBehaviour
             ai.generation = generation;
             ai.maxGeneration = maxGeneration;
             ai.enemyPrefab = enemyPrefab;
-            ai.cloneSpawnerPrefab = cloneSpawnerPrefab; // pass it forward for future generations
+            ai.cloneSpawnerPrefab = cloneSpawnerPrefab; // passar adiante para gerações futuras
             ai.OnDeath += () => OnCloneDeath?.Invoke();
         }
 

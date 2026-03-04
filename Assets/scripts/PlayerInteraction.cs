@@ -3,6 +3,9 @@ using UnityEngine.UI;
 
 public class PlayerInteraction : MonoBehaviour
 {
+    // ---------------------------------------------
+    //  INSPETOR
+    // ---------------------------------------------
     [Header("Raycast Settings")]
     public Camera playerCamera;
     public float interactionDistance = 3f;
@@ -12,18 +15,26 @@ public class PlayerInteraction : MonoBehaviour
     public CrosshairUI crosshairUI;
     public Text messageText;
 
+    // ---------------------------------------------
+    //  ESTADO PRIVADO
+    // ---------------------------------------------
     private IInteractable currentInteractable;
 
+    // ---------------------------------------------
+    //  UNITY
+    // ---------------------------------------------
     void Update()
     {
         CheckForInteractable();
 
         if (Input.GetKeyDown(KeyCode.E) && currentInteractable != null)
-        {
             currentInteractable.Interact(gameObject);
-        }
     }
 
+    // ---------------------------------------------
+    //  DETEÇÃO DE INTERAGÍVEIS
+    // ---------------------------------------------
+    // Raycast do centro do ecrã para detetar objetos interagíveis
     void CheckForInteractable()
     {
         Ray ray = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
@@ -37,6 +48,7 @@ public class PlayerInteraction : MonoBehaviour
             {
                 if (currentInteractable != interactable)
                 {
+                    // Novo interagível encontrado — atualizar UI
                     currentInteractable = interactable;
                     crosshairUI.SetInteract();
 
@@ -47,6 +59,7 @@ public class PlayerInteraction : MonoBehaviour
             }
         }
 
+        // Sem interagível à frente — repor UI normal
         if (currentInteractable != null)
         {
             currentInteractable = null;

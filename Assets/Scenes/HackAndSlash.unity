@@ -343,12 +343,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 100
-  speed: 6
-  chaseSpeed: 10
+  speed: 8
+  chaseSpeed: 15
   detectionRadius: 100
+  farOrbitRadius: 8
+  closeOrbitRadius: 2.5
+  orbitSpeed: 60
+  approachChancePerSecond: 0.25
+  maxCloseEnemies: 3
+  readyToAttackTimeout: 3
   attackDamage: 10
   attackInterval: 1
   attackRange: 1.5
+  attackLungeDuration: 0.35
+  attackFinishPause: 0.4
+  attackGiveUpTimeout: 5
+  repositionDistance: 5
+  repositionDuration: 2
   knockbackForce: 0
   knockbackDuration: 0.3
   stunShakeIntensity: 0.05
@@ -381,7 +392,7 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.5
+  m_Radius: 1
   m_Height: 3.88
   m_Direction: 1
   m_Center: {x: 0, y: 1.9, z: 0}

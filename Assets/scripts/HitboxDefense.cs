@@ -2,19 +2,31 @@ using UnityEngine;
 
 public class HitboxDefense : MonoBehaviour
 {
+    // ---------------------------------------------
+    //  INSPETOR
+    // ---------------------------------------------
     [Header("Defense Settings")]
-    public GameObject defenseWallPrefab; // I need to vent, this was such a difficult solution to reach, I really spent a lot of time on this, and I know there are still bugs but I'm getting closer to making a good defense, BTW IDK what I doing!
-    public Transform spawnPoint; 
+    // Prefab do "muro" de defesa instanciado à frente do jogador ao defender
+    // Nota: esta solução demorou muito a chegar, ainda tem bugs — trabalho em progresso!
+    public GameObject defenseWallPrefab;
+    public Transform spawnPoint;            // ponto de origem da parede de defesa
 
+    // ---------------------------------------------
+    //  ESTADO PRIVADO
+    // ---------------------------------------------
     private GameObject currentDefenseWall;
 
+    // ---------------------------------------------
+    //  ATIVAR / DESATIVAR
+    // ---------------------------------------------
     public void ActivateDefense()
     {
-        if (currentDefenseWall != null) return;
+        if (currentDefenseWall != null) return; // já existe uma parede ativa
+
         if (defenseWallPrefab != null && spawnPoint != null)
         {
             currentDefenseWall = Instantiate(defenseWallPrefab, spawnPoint.position, spawnPoint.rotation);
-            Debug.Log("Defense wall created!");
+            Debug.Log("Parede de defesa criada!");
         }
     }
 
@@ -24,7 +36,7 @@ public class HitboxDefense : MonoBehaviour
         {
             Destroy(currentDefenseWall);
             currentDefenseWall = null;
-            Debug.Log("Defense wall destroyed!");
+            Debug.Log("Parede de defesa destruída!");
         }
     }
 }

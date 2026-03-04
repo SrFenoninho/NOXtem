@@ -3,20 +3,33 @@ using UnityEngine.UI;
 
 public class FlowFreeUI : MonoBehaviour
 {
+    // ---------------------------------------------
+    //  INSPETOR
+    // ---------------------------------------------
     [Header("Grid Settings")]
-    public GameObject cellPrefab;
-    public Transform gridContainer;
+    public GameObject cellPrefab;       // prefab de cada célula da grelha
+    public Transform gridContainer;     // contentor pai das células na UI
     public float cellSize = 80f;
     public float cellSpacing = 10f;
 
+    // ---------------------------------------------
+    //  ESTADO PRIVADO
+    // ---------------------------------------------
     private FlowFreeCell[,] cells = new FlowFreeCell[5, 5];
     private FlowFreeGame game;
 
+    // ---------------------------------------------
+    //  UNITY
+    // ---------------------------------------------
     void Awake()
     {
         game = GetComponent<FlowFreeGame>();
     }
 
+    // ---------------------------------------------
+    //  CONSTRUÇÃO DA GRELHA
+    // ---------------------------------------------
+    // Chamado pelo FlowFreeGame ao iniciar um novo puzzle
     public void DrawGrid(PuzzleData puzzle)
     {
         ClearGrid();
@@ -28,6 +41,7 @@ public class FlowFreeUI : MonoBehaviour
         {
             for (int x = 0; x < 5; x++)
             {
+                // Criar e posicionar cada célula
                 GameObject cellObj = Instantiate(cellPrefab, gridContainer);
                 RectTransform rect = cellObj.GetComponent<RectTransform>();
 
@@ -39,6 +53,7 @@ public class FlowFreeUI : MonoBehaviour
                 Image bg = cellObj.GetComponent<Image>();
                 if (bg != null) bg.color = Color.white;
 
+                // Criar filho para a forma (círculo ou quadrado)
                 GameObject shapeObj = new GameObject("Shape", typeof(RectTransform), typeof(Image));
                 shapeObj.transform.SetParent(cellObj.transform, false);
                 RectTransform shapeRect = shapeObj.GetComponent<RectTransform>();
@@ -51,13 +66,14 @@ public class FlowFreeUI : MonoBehaviour
 
                 cell.bgImage = bg;
                 cell.shapeImage = shapeObj.GetComponent<Image>();
-                cell.shapeImage.raycastTarget = false;
+                cell.shapeImage.raycastTarget = false; // só a célula pai recebe raycasts
 
                 cell.Initialize(x, y, game);
                 cells[x, y] = cell;
             }
         }
 
+        // Forçar atualização visual dos endpoints do puzzle
         foreach (ColorPair pair in puzzle.pairs)
         {
             cells[pair.start.x, pair.start.y].UpdateVisual();
@@ -65,6 +81,9 @@ public class FlowFreeUI : MonoBehaviour
         }
     }
 
+    // ---------------------------------------------
+    //  LIMPAR
+    // ---------------------------------------------
     void ClearGrid()
     {
         if (gridContainer == null) return;

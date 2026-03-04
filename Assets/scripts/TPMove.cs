@@ -2,13 +2,16 @@ using UnityEngine;
 
 public class TPMove : MonoBehaviour
 {
+    // ---------------------------------------------
+    //  INSPETOR
+    // ---------------------------------------------
     [Header("Movement Settings")]
     public float speed = 5f;
     public float sprintSpeed = 8f;
     public float gravity = -9.81f;
     public float jumpHeight = 1.2f;
     public float gravityMultiplier = 2.5f;
-    public float stickToGroundForce = 10f;
+    public float stickToGroundForce = 10f;  // força para manter o jogador no chão em rampas
     public float rotationSpeed = 10f;
 
     [Header("Ground Check")]
@@ -21,6 +24,9 @@ public class TPMove : MonoBehaviour
     public AudioClip landSound;
     public float footstepInterval = 0.4f;
 
+    // ---------------------------------------------
+    //  ESTADO PRIVADO
+    // ---------------------------------------------
     private CharacterController controller;
     private Vector3 moveDir;
     private bool isGrounded;
@@ -31,17 +37,20 @@ public class TPMove : MonoBehaviour
     private float currentSpeed;
     private float nextFootstep = 0f;
 
+    // Impulso de ataque — aplicado separadamente do movimento normal
     private Vector3 attackImpulseDir;
     private float attackImpulseForce;
     private float attackImpulseEndTime;
 
     private PlayerCombat playerCombat;
+    public bool IsGrounded => isGrounded; // exposto para PlayerCombat verificar se pode defender
 
-
+    // ---------------------------------------------
+    //  UNITY
+    // ---------------------------------------------
     void Start()
     {
         playerCombat = GetComponent<PlayerCombat>();
-
         controller = GetComponent<CharacterController>();
 
         if (groundMask == 0)
@@ -54,11 +63,13 @@ public class TPMove : MonoBehaviour
 
     void Update()
     {
+        // Bloquear movimento enquanto defende ou carrega ataque pesado
         if (playerCombat != null && (playerCombat.IsDefending || playerCombat.IsHeavyCharging)) return;
 
         wasGrounded = isGrounded;
         isGrounded = controller.isGrounded;
 
+        // Som de aterragem
         if (isGrounded && !wasGrounded)
         {
             isJumping = false;
@@ -66,6 +77,7 @@ public class TPMove : MonoBehaviour
                 audioSource.PlayOneShot(landSound);
         }
 
+        // Input de salto guardado aqui, aplicado no FixedUpdate para consistência física
         if (Input.GetButtonDown("Jump") && isGrounded && !isJumping)
         {
             jumpInput = true;
@@ -73,13 +85,16 @@ public class TPMove : MonoBehaviour
                 audioSource.PlayOneShot(jumpSound);
         }
 
-        // Apply attack impulse directly, same approach as PlayerHealth knockback
+        // Aplicar impulso de ataque diretamente, mesma abordagem que o knockback do PlayerHealth
         if (Time.time < attackImpulseEndTime)
         {
             controller.Move(attackImpulseDir * attackImpulseForce * Time.deltaTime);
         }
     }
 
+    // ---------------------------------------------
+    //  MOVIMENTO
+    // ---------------------------------------------
     void FixedUpdate()
     {
         if (playerCombat != null && (playerCombat.IsDefending || playerCombat.IsHeavyCharging)) return;
@@ -88,6 +103,7 @@ public class TPMove : MonoBehaviour
         float v = Input.GetAxisRaw("Vertical");
         bool isSprinting = Input.GetKey(KeyCode.LeftShift);
 
+        // Calcular direção relativa à câmera
         Transform cam = Camera.main.transform;
         Vector3 forward = cam.forward;
         Vector3 right = cam.right;
@@ -97,10 +113,10 @@ public class TPMove : MonoBehaviour
         right.Normalize();
 
         Vector3 inputDir = (forward * v) + (right * h);
-
         if (inputDir.magnitude > 1f)
             inputDir.Normalize();
 
+        // Rodar o jogador na direção do movimento
         if (inputDir.magnitude > 0.1f)
         {
             Quaternion targetRotation = Quaternion.LookRotation(inputDir);
@@ -113,7 +129,7 @@ public class TPMove : MonoBehaviour
         if (isGrounded)
         {
             currentSpeed = isSprinting ? sprintSpeed : speed;
-            moveDir.y = -stickToGroundForce;
+            moveDir.y = -stickToGroundForce; // manter colado ao chão em rampas
 
             if (jumpInput)
             {
@@ -124,6 +140,7 @@ public class TPMove : MonoBehaviour
         }
         else
         {
+            // Aplicar gravidade mais pesada no ar para queda mais natural
             moveDir += Physics.gravity * gravityMultiplier * Time.fixedDeltaTime;
         }
 
@@ -133,16 +150,25 @@ public class TPMove : MonoBehaviour
             HandleFootsteps();
     }
 
+    // ---------------------------------------------
+    //  PASSOS
+    // ---------------------------------------------
     void HandleFootsteps()
     {
         if (Time.time >= nextFootstep && footstepSounds.Length > 0)
         {
             int randomIndex = Random.Range(0, footstepSounds.Length);
             audioSource.PlayOneShot(footstepSounds[randomIndex]);
-            nextFootstep = Time.time + (Input.GetKey(KeyCode.LeftShift) && Input.GetAxisRaw("Vertical") > 0f ? footstepInterval * 0.6f : footstepInterval);
+            // Intervalo mais curto a correr
+            nextFootstep = Time.time + (Input.GetKey(KeyCode.LeftShift) && Input.GetAxisRaw("Vertical") > 0f
+                ? footstepInterval * 0.6f
+                : footstepInterval);
         }
     }
 
+    // ---------------------------------------------
+    //  IMPULSO DE ATAQUE
+    // ---------------------------------------------
     public void AddImpulse(Vector3 direction, float force)
     {
         attackImpulseDir = direction;

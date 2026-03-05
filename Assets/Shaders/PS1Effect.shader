@@ -4,8 +4,7 @@ Shader "Custom/PS1Effect"
     {
         _MainTex ("Texture", 2D) = "white" {}
         _VertexInaccuracy ("Vertex Inaccuracy", Range(0, 200)) = 50
-        // os parametros de fog sao controlados pelo DarknessManager via Shader.SetGlobal
-        // nao os expor aqui evita que o Inspector os sobrescreva
+        // fog controlada via Shader.SetGlobal pelo DarknessManager
     }
 
     SubShader
@@ -46,8 +45,7 @@ Shader "Custom/PS1Effect"
             {
                 float4 positionCS : SV_POSITION;
                 float2 uv         : TEXCOORD0;
-                float  heightFog  : TEXCOORD1;
-                float  distFog    : TEXCOORD2;
+                float3 worldPos   : TEXCOORD1; // posicao mundo passada ao fragment
             };
 
             // ---------------------------------------------
@@ -62,9 +60,9 @@ Shader "Custom/PS1Effect"
             CBUFFER_END
 
             // ---------------------------------------------
-            //  VARIAVEIS GLOBAIS (controladas pelo DarknessManager)
+            //  VARIAVEIS GLOBAIS (DarknessManager)
             // ---------------------------------------------
-            // declaradas fora do CBUFFER para aceitar Shader.SetGlobal
+            float  _GlobalDarkness;
             float  _HeightFogDensity;
             float  _HeightFogFalloff;
             float4 _HeightFogColor;
@@ -91,18 +89,8 @@ Shader "Custom/PS1Effect"
 
                 OUT.uv = TRANSFORM_TEX(IN.uv, _MainTex);
 
-                float3 worldPos = TransformObjectToWorld(IN.positionOS.xyz);
-
-                // -- Height fog --
-                float heightAbove = worldPos.y - (-0.125);
-                float hFog = exp(-max(0.0, heightAbove) * _HeightFogFalloff);
-                OUT.heightFog = saturate(hFog * _HeightFogDensity);
-
-                // -- Distance fog --
-                float3 camPos = _WorldSpaceCameraPos;
-                float dist    = distance(float2(worldPos.x, worldPos.z), float2(camPos.x, camPos.z));
-                float dFog    = saturate((dist - _DistFogStart) / max(_DistFogEnd - _DistFogStart, 0.001));
-                OUT.distFog   = dFog * _DistFogDensity;
+                // passar posicao mundo ao fragment para calcular fog por pixel
+                OUT.worldPos = TransformObjectToWorld(IN.positionOS.xyz);
 
                 return OUT;
             }
@@ -114,11 +102,26 @@ Shader "Custom/PS1Effect"
             {
                 half4 col = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, IN.uv);
 
-                // Escurecer o chao pelo Y
-                col.rgb = lerp(col.rgb, _HeightFogColor.rgb, IN.heightFog);
+                // -- Escuridao base (por pixel) --
+                col.rgb *= (1.0 - _GlobalDarkness);
 
-                // Escurecer ao longe
-                col.rgb = lerp(col.rgb, _DistFogColor.rgb, IN.distFog);
+                // -- Height fog (por pixel) --
+                // maximo no chao, dissipa para cima
+                float heightAbove = IN.worldPos.y - (-0.125);
+                float hFog = exp(-max(0.0, heightAbove) * _HeightFogFalloff);
+                float heightFogFactor = saturate(hFog * _HeightFogDensity);
+                col.rgb = lerp(col.rgb, _HeightFogColor.rgb, heightFogFactor);
+
+                // -- Distance fog (por pixel) --
+                // distancia horizontal da camara
+                float dist = distance(
+                    float2(IN.worldPos.x, IN.worldPos.z),
+                    float2(_WorldSpaceCameraPos.x, _WorldSpaceCameraPos.z)
+                );
+                float normDist = max(dist - _DistFogStart, 0.0) / max(_DistFogEnd - _DistFogStart, 0.001);
+                float dFog = 1.0 - exp(-normDist * normDist * 1.0);
+                float distFogFactor = dFog * _DistFogDensity;
+                col.rgb = lerp(col.rgb, _DistFogColor.rgb, distFogFactor);
 
                 return col;
             }

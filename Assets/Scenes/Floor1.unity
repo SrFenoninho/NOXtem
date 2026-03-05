@@ -15862,6 +15862,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1301594727}
+  - component: {fileID: 1301594729}
   m_Layer: 0
   m_Name: TPFLOOR1
   m_TagString: Untagged
@@ -15884,6 +15885,27 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &1301594729
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1301594726}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2.35, y: 1, z: 1.47}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!64 &1307279586
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -19384,21 +19406,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   startWithDarkness: 1
-  darkGlobalDarkness: 0.85
-  darkHeightFogDensity: 0.97
-  darkHeightFogFalloff: 8
-  darkFogColor: {r: 0, g: 0, b: 0, a: 1}
-  darkDistFogDensity: 1
-  darkDistFogStart: 0
-  darkDistFogEnd: 1
-  lightGlobalDarkness: 0.1
-  lightHeightFogDensity: 0.1
-  lightHeightFogFalloff: 2
-  lightFogColor: {r: 0.40392157, g: 0.40392157, b: 0.40392157, a: 1}
-  lightDistFogDensity: 0.2
-  lightDistFogStart: 1
-  lightDistFogEnd: 12
-  transitionSpeed: 0.4
+  darknessColor: {r: 0, g: 0, b: 0, a: 1}
+  ambientLight: 0
+  darkRadius: 0.5
+  darkSoftness: 0.5
+  lightRadius: 30
+  lightSoftness: 10
+  lightAmbient: 0.3
+  transitionSpeed: 0.5
   darkZones: []
 --- !u!1 &1756449457
 GameObject:
@@ -21871,9 +21886,15 @@ MonoBehaviour:
   toggleKey: 102
   lighterModel: {fileID: 206294870}
   hiddenPosition: {x: 0, y: -30, z: 0}
-  visiblePosition: {x: 0.25, y: 2.7, z: 1}
+  visiblePosition: {x: 0.27, y: 3, z: 0.9}
+  drawSpeed: 8
   igniteSound: {fileID: 8300000, guid: 34bf09aec6911644f8170ea495a3bf99, type: 3}
   extinguishSound: {fileID: 8300000, guid: fb67501be87145f478cfc1ec420d1e5b, type: 3}
+  radiusOff: 0.5
+  radiusOn: 4
+  softnessOff: 0.1
+  softnessOn: 2.5
+  lerpSpeed: 3
   vignetteImage: {fileID: 0}
   darkVignetteAlpha: 0.95
   litVignetteAlpha: 0.55
@@ -21881,13 +21902,8 @@ MonoBehaviour:
   vignetteSpeed: 3
   tintImage: {fileID: 904396883}
   tintColor: {r: 1, g: 0.7294118, b: 0.3137255, a: 0}
-  tintMaxAlpha: 0.01
+  tintMaxAlpha: 0.025
   tintLerpSpeed: 4
-  fogStartOff: 0
-  fogEndOff: 0.5
-  fogStartOn: 3
-  fogEndOn: 4
-  fogLerpSpeed: 3
 --- !u!64 &1953562422
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -23041,6 +23057,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2086739011}
+  - component: {fileID: 2086739013}
   m_Layer: 0
   m_Name: TPBASEMENT
   m_TagString: Untagged
@@ -23063,6 +23080,27 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &2086739013
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2086739010}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2.35, y: 1, z: 1.47}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!64 &2095063730
 MeshCollider:
   m_ObjectHideFlags: 0

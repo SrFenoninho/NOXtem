@@ -10,22 +10,28 @@ public class Lighter : MonoBehaviour
     public KeyCode toggleKey = KeyCode.F;
 
     [Header("Viewmodel")]
-    [Tooltip("Arraste o modelo 3D do isqueiro aqui. Ele deve ser filho da Camera do Player!")]
     public GameObject lighterModel;
-
-    [Tooltip("Posicao para onde o isqueiro vai quando esta escondido (ex: -30m para baixo)")]
-    public Vector3 hiddenPosition = new Vector3(0f, -30f, 0f);
-
-    [Tooltip("Posicao exata na frente da camara quando esta visivel")]
+    public Vector3 hiddenPosition = new Vector3(0.4f, -0.5f, 0.6f);
     public Vector3 visiblePosition = new Vector3(0.25f, -0.25f, 0.5f);
+    public float drawSpeed = 8f;
 
     [Header("Audio")]
     public AudioClip igniteSound;
     public AudioClip extinguishSound;
     private AudioSource audioSource;
 
+    [Header("Raio de Visibilidade")]
+    [Tooltip("Raio em metros quando o isqueiro esta apagado")]
+    public float radiusOff = 0.5f;
+    [Tooltip("Raio em metros quando o isqueiro esta aceso")]
+    public float radiusOn = 4f;
+    [Tooltip("Softness quando apagado - fade mais duro")]
+    public float softnessOff = 0.3f;
+    [Tooltip("Softness quando aceso - fade mais suave")]
+    public float softnessOn = 2.5f;
+    public float lerpSpeed = 3f;
+
     [Header("Vinheta UI")]
-    [Tooltip("Image no Canvas com textura de vinheta escura nas bordas")]
     public Image vignetteImage;
     public float darkVignetteAlpha = 0.95f;
     public float litVignetteAlpha = 0.55f;
@@ -33,21 +39,12 @@ public class Lighter : MonoBehaviour
     public float vignetteSpeed = 3f;
 
     [Header("Filtro Amarelado UI")]
-    [Tooltip("Image no Canvas com cor amarela - cobre o ecra inteiro com alpha baixo")]
+    [Tooltip("Image no Canvas cor solida amarela a cobrir o ecra")]
     public Image tintImage;
-    [Tooltip("Cor do filtro - amarelo quente por defeito")]
-    public Color tintColor = new Color(1f, 0.8f, 0.3f, 0f); // alpha comeca a 0
-    [Tooltip("Alpha maximo do filtro quando o isqueiro esta aceso")]
+    public Color tintColor = new Color(1f, 0.8f, 0.3f, 0f);
     [Range(0f, 1f)]
-    public float tintMaxAlpha = 0.15f;
+    public float tintMaxAlpha = 0.12f;
     public float tintLerpSpeed = 4f;
-
-    [Header("Fog do Isqueiro")]
-    public float fogStartOff = 1f;
-    public float fogEndOff = 1f;
-    public float fogStartOn = 3f;
-    public float fogEndOn = 4f;
-    public float fogLerpSpeed = 3f;
 
     // ---------------------------------------------
     //  ESTADO PRIVADO
@@ -55,14 +52,15 @@ public class Lighter : MonoBehaviour
     private bool isLit = false;
     private float targetVignetteAlpha;
     private float targetTintAlpha;
+    private Vector3 targetModelPos;
 
-    private float currentFogStart;
-    private float currentFogEnd;
-    private float targetFogStart;
-    private float targetFogEnd;
+    private float currentRadius;
+    private float currentSoftness;
+    private float targetRadius;
+    private float targetSoftness;
 
-    private static readonly int ID_DistStart = Shader.PropertyToID("_DistFogStart");
-    private static readonly int ID_DistEnd = Shader.PropertyToID("_DistFogEnd");
+    private static readonly int ID_Radius = Shader.PropertyToID("_DarknessRadius");
+    private static readonly int ID_Softness = Shader.PropertyToID("_DarknessSoftness");
 
     // ---------------------------------------------
     //  UNITY
@@ -73,46 +71,40 @@ public class Lighter : MonoBehaviour
         if (audioSource == null)
             audioSource = gameObject.AddComponent<AudioSource>();
 
-        // Garante que o isqueiro comeca escondido (TP para -30 metros)
         if (lighterModel != null)
         {
-            lighterModel.SetActive(true); // Mantem ativo na hierarquia
+            lighterModel.SetActive(true);
             lighterModel.transform.localPosition = hiddenPosition;
         }
 
-        // Fog comeca fechada
-        currentFogStart = fogStartOff;
-        currentFogEnd = fogEndOff;
-        targetFogStart = fogStartOff;
-        targetFogEnd = fogEndOff;
-        Shader.SetGlobalFloat(ID_DistStart, currentFogStart);
-        Shader.SetGlobalFloat(ID_DistEnd, currentFogEnd);
+        targetModelPos = hiddenPosition;
 
-        // Vinheta comeca cheia
+        // comecar com raio pequeno (isqueiro apagado)
+        currentRadius = radiusOff;
+        currentSoftness = softnessOff;
+        targetRadius = radiusOff;
+        targetSoftness = softnessOff;
+
+        // vinheta cheia
         targetVignetteAlpha = darkVignetteAlpha;
         SetVignetteAlpha(darkVignetteAlpha);
 
-        // Filtro amarelo comeca invisivel
+        // tint invisivel
         targetTintAlpha = 0f;
-        if (tintImage != null)
-        {
-            Color c = tintColor;
-            c.a = 0f;
-            tintImage.color = c;
-        }
+        SetTintAlpha(0f);
     }
 
     void Update()
     {
         HandleInput();
-        // O HandleModelAnimation foi removido, agora o movimento e instantaneo
+        HandleModelAnimation();
         HandleVignette();
         HandleTint();
-        HandleFogTransition();
+        HandleRadiusTransition();
     }
 
     // ---------------------------------------------
-    //  INPUT & TOGGLE
+    //  INPUT
     // ---------------------------------------------
     void HandleInput()
     {
@@ -124,23 +116,17 @@ public class Lighter : MonoBehaviour
     {
         isLit = !isLit;
 
-        // Teleporta o modelo instantaneamente (para a frente da camara ou para baixo do chao)
-        if (lighterModel != null)
-        {
-            lighterModel.transform.localPosition = isLit ? visiblePosition : hiddenPosition;
-        }
+        targetModelPos = isLit ? visiblePosition : hiddenPosition;
 
-        // Fog - so altera quando escuro
+        // so altera o raio quando escuro
         if (DarknessManager.Instance == null || DarknessManager.Instance.IsDark())
         {
-            targetFogStart = isLit ? fogStartOn : fogStartOff;
-            targetFogEnd = isLit ? fogEndOn : fogEndOff;
+            targetRadius = isLit ? radiusOn : radiusOff;
+            targetSoftness = isLit ? softnessOn : softnessOff;
         }
 
-        // Filtro amarelo
         targetTintAlpha = isLit ? tintMaxAlpha : 0f;
 
-        // Vinheta
         UpdateVignetteTarget();
 
         if (isLit && igniteSound != null)
@@ -152,29 +138,30 @@ public class Lighter : MonoBehaviour
     }
 
     // ---------------------------------------------
-    //  FILTRO AMARELADO (Canvas Image)
+    //  TRANSICAO DO RAIO
     // ---------------------------------------------
-    void HandleTint()
-    {
-        if (tintImage == null) return;
-
-        Color c = tintColor;
-        c.a = Mathf.Lerp(tintImage.color.a, targetTintAlpha, Time.deltaTime * tintLerpSpeed);
-        tintImage.color = c;
-    }
-
-    // ---------------------------------------------
-    //  TRANSICAO DA FOG
-    // ---------------------------------------------
-    void HandleFogTransition()
+    void HandleRadiusTransition()
     {
         if (DarknessManager.Instance != null && !DarknessManager.Instance.IsDark()) return;
 
-        currentFogStart = Mathf.Lerp(currentFogStart, targetFogStart, Time.deltaTime * fogLerpSpeed);
-        currentFogEnd = Mathf.Lerp(currentFogEnd, targetFogEnd, Time.deltaTime * fogLerpSpeed);
+        currentRadius = Mathf.Lerp(currentRadius, targetRadius, Time.deltaTime * lerpSpeed);
+        currentSoftness = Mathf.Lerp(currentSoftness, targetSoftness, Time.deltaTime * lerpSpeed);
 
-        Shader.SetGlobalFloat(ID_DistStart, currentFogStart);
-        Shader.SetGlobalFloat(ID_DistEnd, currentFogEnd);
+        Shader.SetGlobalFloat(ID_Radius, currentRadius);
+        Shader.SetGlobalFloat(ID_Softness, currentSoftness);
+    }
+
+    // ---------------------------------------------
+    //  ANIMACAO DO MODELO
+    // ---------------------------------------------
+    void HandleModelAnimation()
+    {
+        if (lighterModel == null) return;
+
+        lighterModel.transform.localPosition = Vector3.Lerp(
+            lighterModel.transform.localPosition,
+            targetModelPos,
+            Time.deltaTime * drawSpeed);
     }
 
     // ---------------------------------------------
@@ -198,12 +185,31 @@ public class Lighter : MonoBehaviour
         targetVignetteAlpha = isLit ? litVignetteAlpha : darkVignetteAlpha;
     }
 
+    // ---------------------------------------------
+    //  FILTRO AMARELADO
+    // ---------------------------------------------
+    void HandleTint()
+    {
+        if (tintImage == null) return;
+        Color c = tintColor;
+        c.a = Mathf.Lerp(tintImage.color.a, targetTintAlpha, Time.deltaTime * tintLerpSpeed);
+        tintImage.color = c;
+    }
+
     void SetVignetteAlpha(float alpha)
     {
         if (vignetteImage == null) return;
         Color c = vignetteImage.color;
         c.a = alpha;
         vignetteImage.color = c;
+    }
+
+    void SetTintAlpha(float alpha)
+    {
+        if (tintImage == null) return;
+        Color c = tintColor;
+        c.a = alpha;
+        tintImage.color = c;
     }
 
     // ---------------------------------------------

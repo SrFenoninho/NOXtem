@@ -14,22 +14,15 @@ public class DarknessManager : MonoBehaviour
     public bool startWithDarkness = true;
 
     [Header("Estado Escuro (sem energia)")]
-    public float darkGlobalDarkness = 0.85f;  // escuridao base - chao fica escuro
-    public float darkHeightFogDensity = 0.9f;
-    public float darkHeightFogFalloff = 5.0f;
-    public Color darkFogColor = new Color(0.02f, 0.02f, 0.02f);
-    public float darkDistFogDensity = 0.95f;
-    public float darkDistFogStart = 1f;
-    public float darkDistFogEnd = 1f;
+    public Color darknessColor = new Color(0.02f, 0.02f, 0.02f); // quase preto
+    public float ambientLight = 0.0f;   // 0 = preto total
+    public float darkRadius = 0.5f;   // raio de visibilidade sem isqueiro
+    public float darkSoftness = 0.5f;   // fade do circulo
 
     [Header("Estado Iluminado (com energia)")]
-    public float lightGlobalDarkness = 0.1f;
-    public float lightHeightFogDensity = 0.15f;
-    public float lightHeightFogFalloff = 2.0f;
-    public Color lightFogColor = new Color(0.05f, 0.05f, 0.08f);
-    public float lightDistFogDensity = 0.4f;
-    public float lightDistFogStart = 10f;
-    public float lightDistFogEnd = 25f;
+    public float lightRadius = 30f;    // raio grande - ve tudo
+    public float lightSoftness = 10f;
+    public float lightAmbient = 0.3f;   // alguma luz ambiente com energia
 
     [Header("Transicao")]
     public float transitionSpeed = 1.5f;
@@ -44,14 +37,14 @@ public class DarknessManager : MonoBehaviour
     private bool inTransition = false;
     private float transitionT = 0f;
 
-    private static readonly int ID_GlobalDarkness = Shader.PropertyToID("_GlobalDarkness");
-    private static readonly int ID_HeightDensity = Shader.PropertyToID("_HeightFogDensity");
-    private static readonly int ID_HeightFalloff = Shader.PropertyToID("_HeightFogFalloff");
-    private static readonly int ID_HeightColor = Shader.PropertyToID("_HeightFogColor");
-    private static readonly int ID_DistDensity = Shader.PropertyToID("_DistFogDensity");
-    private static readonly int ID_DistStart = Shader.PropertyToID("_DistFogStart");
-    private static readonly int ID_DistEnd = Shader.PropertyToID("_DistFogEnd");
-    private static readonly int ID_DistColor = Shader.PropertyToID("_DistFogColor");
+    private float currentRadius;
+    private float currentSoftness;
+    private float currentAmbient;
+
+    private static readonly int ID_DarknessColor = Shader.PropertyToID("_DarknessColor");
+    private static readonly int ID_AmbientLight = Shader.PropertyToID("_AmbientLight");
+    private static readonly int ID_DarknessRadius = Shader.PropertyToID("_DarknessRadius");
+    private static readonly int ID_DarknessSoftness = Shader.PropertyToID("_DarknessSoftness");
 
     // ---------------------------------------------
     //  UNITY
@@ -64,15 +57,23 @@ public class DarknessManager : MonoBehaviour
 
     void Start()
     {
+        Shader.SetGlobalColor(ID_DarknessColor, darknessColor);
+
         if (startWithDarkness)
-            ApplyShader(darkGlobalDarkness, darkHeightFogDensity, darkHeightFogFalloff, darkFogColor,
-                        darkDistFogDensity, darkDistFogStart, darkDistFogEnd, darkFogColor);
+        {
+            currentRadius = darkRadius;
+            currentSoftness = darkSoftness;
+            currentAmbient = ambientLight;
+        }
         else
         {
-            ApplyShader(lightGlobalDarkness, lightHeightFogDensity, lightHeightFogFalloff, lightFogColor,
-                        lightDistFogDensity, lightDistFogStart, lightDistFogEnd, lightFogColor);
+            currentRadius = lightRadius;
+            currentSoftness = lightSoftness;
+            currentAmbient = lightAmbient;
             powerRestored = true;
         }
+
+        ApplyShader(currentRadius, currentSoftness, currentAmbient);
     }
 
     void Update()
@@ -82,16 +83,11 @@ public class DarknessManager : MonoBehaviour
         transitionT += Time.deltaTime * transitionSpeed;
         float t = Mathf.Clamp01(transitionT);
 
-        ApplyShader(
-            Mathf.Lerp(darkGlobalDarkness, lightGlobalDarkness, t),
-            Mathf.Lerp(darkHeightFogDensity, lightHeightFogDensity, t),
-            Mathf.Lerp(darkHeightFogFalloff, lightHeightFogFalloff, t),
-            Color.Lerp(darkFogColor, lightFogColor, t),
-            Mathf.Lerp(darkDistFogDensity, lightDistFogDensity, t),
-            Mathf.Lerp(darkDistFogStart, lightDistFogStart, t),
-            Mathf.Lerp(darkDistFogEnd, lightDistFogEnd, t),
-            Color.Lerp(darkFogColor, lightFogColor, t)
-        );
+        currentRadius = Mathf.Lerp(darkRadius, lightRadius, t);
+        currentSoftness = Mathf.Lerp(darkSoftness, lightSoftness, t);
+        currentAmbient = Mathf.Lerp(ambientLight, lightAmbient, t);
+
+        ApplyShader(currentRadius, currentSoftness, currentAmbient);
 
         if (t >= 1f) inTransition = false;
     }
@@ -109,19 +105,13 @@ public class DarknessManager : MonoBehaviour
     }
 
     // ---------------------------------------------
-    //  APLICAR AO SHADER
+    //  AUXILIARES
     // ---------------------------------------------
-    void ApplyShader(float gDark, float hDensity, float hFalloff, Color hColor,
-                     float dDensity, float dStart, float dEnd, Color dColor)
+    void ApplyShader(float radius, float softness, float ambient)
     {
-        Shader.SetGlobalFloat(ID_GlobalDarkness, gDark);
-        Shader.SetGlobalFloat(ID_HeightDensity, hDensity);
-        Shader.SetGlobalFloat(ID_HeightFalloff, hFalloff);
-        Shader.SetGlobalColor(ID_HeightColor, hColor);
-        Shader.SetGlobalFloat(ID_DistDensity, dDensity);
-        Shader.SetGlobalFloat(ID_DistStart, dStart);
-        Shader.SetGlobalFloat(ID_DistEnd, dEnd);
-        Shader.SetGlobalColor(ID_DistColor, dColor);
+        Shader.SetGlobalFloat(ID_DarknessRadius, radius);
+        Shader.SetGlobalFloat(ID_DarknessSoftness, softness);
+        Shader.SetGlobalFloat(ID_AmbientLight, ambient);
     }
 
     // ---------------------------------------------
@@ -137,6 +127,8 @@ public class DarknessManager : MonoBehaviour
     //  ACESSO PUBLICO
     // ---------------------------------------------
     public bool IsDark() => !powerRestored;
+    public float GetRadius() => currentRadius;
+    public float GetSoftness() => currentSoftness;
 }
 
 // ---------------------------------------------

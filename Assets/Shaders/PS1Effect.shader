@@ -4,7 +4,7 @@ Shader "Custom/PS1Effect"
     {
         _MainTex ("Texture", 2D) = "white" {}
         _VertexInaccuracy ("Vertex Inaccuracy", Range(0, 200)) = 50
-        // fog controlada via Shader.SetGlobal pelo DarknessManager
+        // escuridao controlada via Shader.SetGlobal pelo DarknessManager e Lighter
     }
 
     SubShader
@@ -45,7 +45,7 @@ Shader "Custom/PS1Effect"
             {
                 float4 positionCS : SV_POSITION;
                 float2 uv         : TEXCOORD0;
-                float3 worldPos   : TEXCOORD1; // posicao mundo passada ao fragment
+                float3 worldPos   : TEXCOORD1;
             };
 
             // ---------------------------------------------
@@ -60,16 +60,25 @@ Shader "Custom/PS1Effect"
             CBUFFER_END
 
             // ---------------------------------------------
-            //  VARIAVEIS GLOBAIS (DarknessManager)
+            //  VARIAVEIS GLOBAIS
+            //  DarknessManager: _DarknessColor, _AmbientLight
+            //  Lighter:         _DarknessRadius, _DarknessSoftness
             // ---------------------------------------------
-            float  _GlobalDarkness;
-            float  _HeightFogDensity;
-            float  _HeightFogFalloff;
-            float4 _HeightFogColor;
-            float  _DistFogDensity;
-            float  _DistFogStart;
-            float  _DistFogEnd;
-            float4 _DistFogColor;
+
+            // cor da escuridao (preto por defeito)
+            float4 _DarknessColor;
+
+            // luz ambiente minima mesmo no escuro - evita preto absoluto
+            // 0 = preto total, 0.05 = ligeiramente visivel
+            float  _AmbientLight;
+
+            // raio de visibilidade em metros a volta da camara
+            // Lighter controla este valor: pequeno sem isqueiro, maior com isqueiro
+            float  _DarknessRadius;
+
+            // quao suave e o fade no limite do raio
+            // valores maiores = fade mais gradual
+            float  _DarknessSoftness;
 
             // ---------------------------------------------
             //  VERTEX
@@ -87,9 +96,7 @@ Shader "Custom/PS1Effect"
                     OUT.positionCS.xy = floor(OUT.positionCS.xy * gridSize) / gridSize;
                 }
 
-                OUT.uv = TRANSFORM_TEX(IN.uv, _MainTex);
-
-                // passar posicao mundo ao fragment para calcular fog por pixel
+                OUT.uv      = TRANSFORM_TEX(IN.uv, _MainTex);
                 OUT.worldPos = TransformObjectToWorld(IN.positionOS.xyz);
 
                 return OUT;
@@ -102,26 +109,22 @@ Shader "Custom/PS1Effect"
             {
                 half4 col = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, IN.uv);
 
-                // -- Escuridao base (por pixel) --
-                col.rgb *= (1.0 - _GlobalDarkness);
+                // distancia 3D deste pixel a camara
+                float dist = distance(IN.worldPos, _WorldSpaceCameraPos);
 
-                // -- Height fog (por pixel) --
-                // maximo no chao, dissipa para cima
-                float heightAbove = IN.worldPos.y - (-0.125);
-                float hFog = exp(-max(0.0, heightAbove) * _HeightFogFalloff);
-                float heightFogFactor = saturate(hFog * _HeightFogDensity);
-                col.rgb = lerp(col.rgb, _HeightFogColor.rgb, heightFogFactor);
-
-                // -- Distance fog (por pixel) --
-                // distancia horizontal da camara
-                float dist = distance(
-                    float2(IN.worldPos.x, IN.worldPos.z),
-                    float2(_WorldSpaceCameraPos.x, _WorldSpaceCameraPos.z)
+                // visibilidade: 1.0 dentro do raio, 0.0 fora
+                // smoothstep faz o fade suave automaticamente - sem circulo abrupto
+                float visibility = 1.0 - smoothstep(
+                    _DarknessRadius - _DarknessSoftness,
+                    _DarknessRadius,
+                    dist
                 );
-                float normDist = max(dist - _DistFogStart, 0.0) / max(_DistFogEnd - _DistFogStart, 0.001);
-                float dFog = 1.0 - exp(-normDist * normDist * 1.0);
-                float distFogFactor = dFog * _DistFogDensity;
-                col.rgb = lerp(col.rgb, _DistFogColor.rgb, distFogFactor);
+
+                // garantir luz ambiente minima mesmo fora do raio
+                visibility = max(visibility, _AmbientLight);
+
+                // aplicar escuridao - pixels fora do raio ficam com a cor de escuridao
+                col.rgb = lerp(_DarknessColor.rgb, col.rgb, visibility);
 
                 return col;
             }

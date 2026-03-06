@@ -3,9 +3,6 @@ using UnityEngine.UI;
 
 public class RadialMenuManager : MonoBehaviour
 {
-    // ---------------------------------------------
-    //  INSPETOR
-    // ---------------------------------------------
     [Header("UI")]
     public GameObject radialMenuUI;
 
@@ -16,13 +13,13 @@ public class RadialMenuManager : MonoBehaviour
     public Button button4;
 
     [Header("Audio")]
-    public AudioClip[] voiceLines;      // linha de voz aleatória ao abrir o menu
-    public AudioClip[] optionAudios;    // áudio reproduzido ao selecionar cada opção
+    public AudioClip[] voiceLines;
+    public AudioClip[] optionAudios;
     private AudioSource audioSource;
 
     [Header("Menu State")]
     public bool isMenuOpen = false;
-    public string currentContext = "default"; // controla qual handler de opções usar
+    public string currentContext = "default";
     private bool isVoicelinePlaying = false;
     private bool isOptionAudioPlaying = false;
 
@@ -32,16 +29,12 @@ public class RadialMenuManager : MonoBehaviour
     public string option3 = "Option 3";
     public string option4 = "Option 4";
 
-    // ---------------------------------------------
-    //  UNITY
-    // ---------------------------------------------
     void Start()
     {
         audioSource = GetComponent<AudioSource>();
         if (audioSource == null)
             audioSource = gameObject.AddComponent<AudioSource>();
 
-        // Ligar botões às funções de clique
         button1.onClick.AddListener(ClickOption1);
         button2.onClick.AddListener(ClickOption2);
         button3.onClick.AddListener(ClickOption3);
@@ -49,7 +42,6 @@ public class RadialMenuManager : MonoBehaviour
 
         radialMenuUI.SetActive(false);
 
-        // Definir texto dos botões com as opções configuradas
         button1.GetComponentInChildren<Text>().text = option1;
         button2.GetComponentInChildren<Text>().text = option2;
         button3.GetComponentInChildren<Text>().text = option3;
@@ -58,31 +50,28 @@ public class RadialMenuManager : MonoBehaviour
 
     void Update()
     {
-        // Voiceline terminou — mostrar UI do menu
         if (isVoicelinePlaying && !audioSource.isPlaying)
         {
             isVoicelinePlaying = false;
             Cursor.visible = true;
             Cursor.lockState = CursorLockMode.None;
             radialMenuUI.SetActive(true);
-            Time.timeScale = 0; // pausar o jogo
+            Time.timeScale = 0;
         }
 
-        // Áudio de opção terminou — fechar menu completamente
         if (isOptionAudioPlaying && !audioSource.isPlaying)
         {
             isOptionAudioPlaying = false;
             FullCloseMenu();
         }
 
-        // Q — abrir/fechar menu
         if (Input.GetKeyDown(KeyCode.Q))
         {
-            if (!isMenuOpen)
+            if (!isMenuOpen && GameStateManager.Instance.CanOpenRadialMenu())
             {
                 OpenMenu();
             }
-            else if (!isVoicelinePlaying)
+            else if (isMenuOpen && !isVoicelinePlaying)
             {
                 if (isOptionAudioPlaying)
                 {
@@ -93,7 +82,6 @@ public class RadialMenuManager : MonoBehaviour
             }
         }
 
-        // Seleção por teclado (1-4) — só quando a UI está visível
         if (isMenuOpen && !isVoicelinePlaying && !isOptionAudioPlaying && radialMenuUI.activeSelf)
         {
             if (Input.GetKeyDown(KeyCode.Alpha1) || Input.GetKeyDown(KeyCode.Keypad1)) SelectOption(1);
@@ -103,13 +91,11 @@ public class RadialMenuManager : MonoBehaviour
         }
     }
 
-    // ---------------------------------------------
-    //  ABRIR / FECHAR
-    // ---------------------------------------------
     void OpenMenu()
     {
+        GameStateManager.Instance.PushState(GameState.RadialMenu);
         isMenuOpen = true;
-        radialMenuUI.SetActive(false); // esconder até a voiceline terminar
+        radialMenuUI.SetActive(false);
 
         if (voiceLines.Length > 0)
         {
@@ -119,7 +105,6 @@ public class RadialMenuManager : MonoBehaviour
         }
         else
         {
-            // Sem voiceline — abrir imediatamente
             Cursor.visible = true;
             Cursor.lockState = CursorLockMode.None;
             radialMenuUI.SetActive(true);
@@ -129,25 +114,22 @@ public class RadialMenuManager : MonoBehaviour
 
     void FullCloseMenu()
     {
+        GameStateManager.Instance.PopState();
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
         radialMenuUI.SetActive(false);
         isMenuOpen = false;
         isVoicelinePlaying = false;
         isOptionAudioPlaying = false;
-        Time.timeScale = 1; // retomar o jogo
+        Time.timeScale = 1;
     }
 
-    // ---------------------------------------------
-    //  SELEÇÃO DE OPÇÕES
-    // ---------------------------------------------
     void SelectOption(int optionNumber)
     {
         radialMenuUI.SetActive(false);
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
 
-        // Reproduzir áudio da opção antes de executar a ação
         if (optionAudios.Length >= optionNumber && optionAudios[optionNumber - 1] != null)
         {
             audioSource.PlayOneShot(optionAudios[optionNumber - 1]);
@@ -160,20 +142,16 @@ public class RadialMenuManager : MonoBehaviour
         }
     }
 
-    // Direcionar para o handler certo conforme o contexto atual
     void ExecuteOption(int optionNumber)
     {
         switch (currentContext)
         {
-            case "default":  HandleDefaultOption(optionNumber);  break;
-            case "door":     HandleDoorOption(optionNumber);     break;
+            case "default": HandleDefaultOption(optionNumber); break;
+            case "door": HandleDoorOption(optionNumber); break;
             case "terminal": HandleTerminalOption(optionNumber); break;
         }
     }
 
-    // ---------------------------------------------
-    //  HANDLERS DE CONTEXTO
-    // ---------------------------------------------
     void HandleDefaultOption(int option)
     {
         switch (option)
@@ -190,9 +168,9 @@ public class RadialMenuManager : MonoBehaviour
         switch (option)
         {
             case 1: Debug.Log("Try to open door"); break;
-            case 2: Debug.Log("Examine door");     break;
-            case 3: Debug.Log("Use key on door");  break;
-            case 4: Debug.Log("Cancel");           break;
+            case 2: Debug.Log("Examine door"); break;
+            case 3: Debug.Log("Use key on door"); break;
+            case 4: Debug.Log("Cancel"); break;
         }
     }
 
@@ -201,21 +179,17 @@ public class RadialMenuManager : MonoBehaviour
         switch (option)
         {
             case 1: Debug.Log("Access system"); break;
-            case 2: Debug.Log("Check logs");    break;
-            case 3: Debug.Log("Shutdown");      break;
-            case 4: Debug.Log("Cancel");        break;
+            case 2: Debug.Log("Check logs"); break;
+            case 3: Debug.Log("Shutdown"); break;
+            case 4: Debug.Log("Cancel"); break;
         }
     }
 
-    // ---------------------------------------------
-    //  PÚBLICO
-    // ---------------------------------------------
     public void ClickOption1() { SelectOption(1); }
     public void ClickOption2() { SelectOption(2); }
     public void ClickOption3() { SelectOption(3); }
     public void ClickOption4() { SelectOption(4); }
 
-    // Alterar contexto e rótulos dos botões dinamicamente
     public void SetContext(string newContext, string opt1, string opt2, string opt3, string opt4)
     {
         currentContext = newContext;

@@ -92,7 +92,7 @@ public class DarknessManager : MonoBehaviour
 
     void ApplyToShader()
     {
-        Shader.SetGlobalColor("_GlobalDarknessColor", darknessColor);
+        Shader.SetGlobalColor("_DarknessColor", darknessColor);
         Shader.SetGlobalFloat("_DarknessRadius", currentRadius);
         Shader.SetGlobalFloat("_DarknessSoftness", currentSoftness);
         Shader.SetGlobalFloat("_AmbientLight", currentAmbient);

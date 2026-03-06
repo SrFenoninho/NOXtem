@@ -26,8 +26,8 @@ public class FlowFreeTerminal : MonoBehaviour, IInteractable
     // ---------------------------------------------
     public string GetInteractMessage()
     {
-        if (isGameActive)  return "Game in progress...";
-        if (isAccessing)   return $"Accessing... {Mathf.Ceil(accessTime - accessTimer)}s";
+        if (isGameActive) return "Game in progress...";
+        if (isAccessing) return $"Accessing... {Mathf.Ceil(accessTime - accessTimer)}s";
         return "Press E to access terminal";
     }
 
@@ -72,6 +72,7 @@ public class FlowFreeTerminal : MonoBehaviour, IInteractable
 
         // Pausar o jogo enquanto o mini-jogo está ativo
         Time.timeScale = 0f;
+        GameStateManager.Instance?.PushState(GameState.Minigame);
 
         // Desbloquear o cursor para interação com a UI
         Cursor.visible = true;
@@ -93,6 +94,7 @@ public class FlowFreeTerminal : MonoBehaviour, IInteractable
 
         // Retomar o jogo
         Time.timeScale = 1f;
+        GameStateManager.Instance?.PopState();
 
         // Voltar a bloquear o cursor
         Cursor.visible = false;

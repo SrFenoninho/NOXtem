@@ -1657,10 +1657,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -3175704190233633510, guid: b1a5c0074d4dab646b496a0df00ca82e, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 9815b501c39434e46963bd8f8ff54739, type: 2}
     - target: {fileID: 919132149155446097, guid: b1a5c0074d4dab646b496a0df00ca82e, type: 3}
       propertyPath: m_Name
       value: Lighter
       objectReference: {fileID: 0}
+    - target: {fileID: 1364974133809703462, guid: b1a5c0074d4dab646b496a0df00ca82e, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 9815b501c39434e46963bd8f8ff54739, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -12089,7 +12097,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 1920, y: 1080}
+  m_SizeDelta: {x: 192000, y: 108000}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &904396883
 MonoBehaviour:
@@ -19405,16 +19413,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e4943559ea721e438518edebe3915e1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startWithDarkness: 1
   darknessColor: {r: 0, g: 0, b: 0, a: 1}
   ambientLight: 0
   darkRadius: 0.5
   darkSoftness: 0.5
-  lightRadius: 30
+  lightRadius: 50
   lightSoftness: 10
   lightAmbient: 0.3
   transitionSpeed: 0.5
-  darkZones: []
+  startWithDarkness: 1
 --- !u!1 &1756449457
 GameObject:
   m_ObjectHideFlags: 0
@@ -21902,7 +21909,7 @@ MonoBehaviour:
   vignetteSpeed: 3
   tintImage: {fileID: 904396883}
   tintColor: {r: 1, g: 0.7294118, b: 0.3137255, a: 0}
-  tintMaxAlpha: 0.025
+  tintMaxAlpha: 0.015
   tintLerpSpeed: 4
 --- !u!64 &1953562422
 MeshCollider:
@@ -23058,6 +23065,8 @@ GameObject:
   m_Component:
   - component: {fileID: 2086739011}
   - component: {fileID: 2086739013}
+  - component: {fileID: 2086739014}
+  - component: {fileID: 2086739015}
   m_Layer: 0
   m_Name: TPBASEMENT
   m_TagString: Untagged
@@ -23099,8 +23108,48 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 2.35, y: 1, z: 1.47}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 20, y: 10, z: 15}
+  m_Center: {x: 8, y: 0, z: 0}
+--- !u!114 &2086739014
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2086739010}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2cd8401c071ee414ca2c0380c5eaedf5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  zoneID: DarkZone_1
+--- !u!54 &2086739015
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2086739010}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!64 &2095063730
 MeshCollider:
   m_ObjectHideFlags: 0

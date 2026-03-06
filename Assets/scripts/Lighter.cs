@@ -3,9 +3,6 @@ using UnityEngine.UI;
 
 public class Lighter : MonoBehaviour
 {
-    // ---------------------------------------------
-    //  INSPETOR
-    // ---------------------------------------------
     [Header("Input")]
     public KeyCode toggleKey = KeyCode.F;
 
@@ -21,13 +18,9 @@ public class Lighter : MonoBehaviour
     private AudioSource audioSource;
 
     [Header("Raio de Visibilidade")]
-    [Tooltip("Raio em metros quando o isqueiro esta apagado")]
     public float radiusOff = 0.5f;
-    [Tooltip("Raio em metros quando o isqueiro esta aceso")]
     public float radiusOn = 4f;
-    [Tooltip("Softness quando apagado - fade mais duro")]
     public float softnessOff = 0.3f;
-    [Tooltip("Softness quando aceso - fade mais suave")]
     public float softnessOn = 2.5f;
     public float lerpSpeed = 3f;
 
@@ -39,37 +32,30 @@ public class Lighter : MonoBehaviour
     public float vignetteSpeed = 3f;
 
     [Header("Filtro Amarelado UI")]
-    [Tooltip("Image no Canvas cor solida amarela a cobrir o ecra")]
     public Image tintImage;
     public Color tintColor = new Color(1f, 0.8f, 0.3f, 0f);
     [Range(0f, 1f)]
     public float tintMaxAlpha = 0.12f;
     public float tintLerpSpeed = 4f;
 
-    // ---------------------------------------------
-    //  ESTADO PRIVADO
-    // ---------------------------------------------
     private bool isLit = false;
-    private float targetVignetteAlpha;
-    private float targetTintAlpha;
-    private Vector3 targetModelPos;
-
     private float currentRadius;
     private float currentSoftness;
     private float targetRadius;
     private float targetSoftness;
+    private float origRadiusOff;
+    private float origRadiusOn;
+    private float origSoftnessOff;
+    private float origSoftnessOn;
 
-    private static readonly int ID_Radius = Shader.PropertyToID("_DarknessRadius");
-    private static readonly int ID_Softness = Shader.PropertyToID("_DarknessSoftness");
-
-    // ---------------------------------------------
-    //  UNITY
-    // ---------------------------------------------
     void Start()
     {
-        audioSource = GetComponent<AudioSource>();
-        if (audioSource == null)
-            audioSource = gameObject.AddComponent<AudioSource>();
+        audioSource = GetComponent<AudioSource>() ?? gameObject.AddComponent<AudioSource>();
+
+        origRadiusOff = radiusOff;
+        origRadiusOn = radiusOn;
+        origSoftnessOff = softnessOff;
+        origSoftnessOn = softnessOn;
 
         if (lighterModel != null)
         {
@@ -77,143 +63,110 @@ public class Lighter : MonoBehaviour
             lighterModel.transform.localPosition = hiddenPosition;
         }
 
-        targetModelPos = hiddenPosition;
-
-        // comecar com raio pequeno (isqueiro apagado)
         currentRadius = radiusOff;
         currentSoftness = softnessOff;
         targetRadius = radiusOff;
         targetSoftness = softnessOff;
 
-        // vinheta cheia
-        targetVignetteAlpha = darkVignetteAlpha;
-        SetVignetteAlpha(darkVignetteAlpha);
-
-        // tint invisivel
-        targetTintAlpha = 0f;
-        SetTintAlpha(0f);
+        if (vignetteImage != null) SetAlpha(vignetteImage, darkVignetteAlpha);
+        if (tintImage != null) SetAlpha(tintImage, 0f);
     }
 
     void Update()
     {
-        HandleInput();
-        HandleModelAnimation();
-        HandleVignette();
-        HandleTint();
-        HandleRadiusTransition();
-    }
+        if (Input.GetKeyDown(toggleKey)) Toggle();
 
-    // ---------------------------------------------
-    //  INPUT
-    // ---------------------------------------------
-    void HandleInput()
-    {
-        if (Input.GetKeyDown(toggleKey))
-            Toggle();
+        currentRadius = Mathf.Lerp(currentRadius, targetRadius, Time.deltaTime * lerpSpeed);
+        currentSoftness = Mathf.Lerp(currentSoftness, targetSoftness, Time.deltaTime * lerpSpeed);
+
+        UpdateVignette();
+        UpdateTint();
+        UpdateModel();
     }
 
     void Toggle()
     {
         isLit = !isLit;
 
-        targetModelPos = isLit ? visiblePosition : hiddenPosition;
+        targetRadius = isLit ? radiusOn : radiusOff;
+        targetSoftness = isLit ? softnessOn : softnessOff;
 
-        // so altera o raio quando escuro
-        if (DarknessManager.Instance == null || DarknessManager.Instance.IsDark())
-        {
-            targetRadius = isLit ? radiusOn : radiusOff;
-            targetSoftness = isLit ? softnessOn : softnessOff;
-        }
-
-        targetTintAlpha = isLit ? tintMaxAlpha : 0f;
-
-        UpdateVignetteTarget();
-
-        if (isLit && igniteSound != null)
-            audioSource.PlayOneShot(igniteSound);
-        else if (!isLit && extinguishSound != null)
-            audioSource.PlayOneShot(extinguishSound);
+        if (isLit && igniteSound != null) audioSource.PlayOneShot(igniteSound);
+        if (!isLit && extinguishSound != null) audioSource.PlayOneShot(extinguishSound);
 
         Debug.Log(isLit ? "Isqueiro aceso" : "Isqueiro apagado");
     }
 
-    // ---------------------------------------------
-    //  TRANSICAO DO RAIO
-    // ---------------------------------------------
-    void HandleRadiusTransition()
+    void UpdateVignette()
     {
-        if (DarknessManager.Instance != null && !DarknessManager.Instance.IsDark()) return;
+        if (vignetteImage == null) return;
 
-        currentRadius = Mathf.Lerp(currentRadius, targetRadius, Time.deltaTime * lerpSpeed);
-        currentSoftness = Mathf.Lerp(currentSoftness, targetSoftness, Time.deltaTime * lerpSpeed);
+        bool powered = DarknessManager.Instance != null
+            && !DarknessManager.Instance.IsDark()
+            && !DarknessManager.Instance.IsInDarkZone();
 
-        Shader.SetGlobalFloat(ID_Radius, currentRadius);
-        Shader.SetGlobalFloat(ID_Softness, currentSoftness);
+        float target = powered ? poweredVignetteAlpha
+                     : isLit ? litVignetteAlpha
+                     : darkVignetteAlpha;
+
+        Color c = vignetteImage.color;
+        c.a = Mathf.Lerp(c.a, target, Time.deltaTime * vignetteSpeed);
+        vignetteImage.color = c;
     }
 
-    // ---------------------------------------------
-    //  ANIMACAO DO MODELO
-    // ---------------------------------------------
-    void HandleModelAnimation()
+    void UpdateTint()
+    {
+        if (tintImage == null) return;
+        Color c = tintColor;
+        c.a = Mathf.Lerp(tintImage.color.a, isLit ? tintMaxAlpha : 0f, Time.deltaTime * tintLerpSpeed);
+        tintImage.color = c;
+    }
+
+    void UpdateModel()
     {
         if (lighterModel == null) return;
-
+        Vector3 target = isLit ? visiblePosition : hiddenPosition;
         lighterModel.transform.localPosition = Vector3.Lerp(
-            lighterModel.transform.localPosition,
-            targetModelPos,
-            Time.deltaTime * drawSpeed);
+            lighterModel.transform.localPosition, target, Time.deltaTime * drawSpeed);
     }
 
-    // ---------------------------------------------
-    //  VINHETA
-    // ---------------------------------------------
-    void HandleVignette()
+    // chamado pelo DarkZone ao entrar
+    public void SetZoneValues(float darkRad, float darkSoft)
     {
-        if (vignetteImage == null) return;
+        // CORREÇÃO: O isqueiro quando ACESO usa sempre a sua força original (ex: 4f)
+        radiusOn = origRadiusOn;
+        softnessOn = origSoftnessOn;
 
-        if (DarknessManager.Instance != null && !DarknessManager.Instance.IsDark())
-            targetVignetteAlpha = poweredVignetteAlpha;
+        // O isqueiro quando APAGADO passa a usar a escuridão da zona (ex: 0.5f)
+        radiusOff = darkRad;
+        softnessOff = darkSoft;
 
-        Color c = vignetteImage.color;
-        c.a = Mathf.Lerp(c.a, targetVignetteAlpha, Time.deltaTime * vignetteSpeed);
-        vignetteImage.color = c;
+        targetRadius = isLit ? radiusOn : radiusOff;
+        targetSoftness = isLit ? softnessOn : softnessOff;
+
+        // Forçamos a variável current para que a escuridão caia imediatamente se ele estiver apagado
+        currentRadius = targetRadius;
+        currentSoftness = targetSoftness;
     }
 
-    void UpdateVignetteTarget()
+    // chamado pelo DarkZone ao sair
+    public void ClearZoneValues()
     {
-        if (DarknessManager.Instance != null && !DarknessManager.Instance.IsDark()) return;
-        targetVignetteAlpha = isLit ? litVignetteAlpha : darkVignetteAlpha;
+        radiusOff = origRadiusOff;
+        radiusOn = origRadiusOn;
+        softnessOff = origSoftnessOff;
+        softnessOn = origSoftnessOn;
+
+        targetRadius = isLit ? radiusOn : radiusOff;
+        targetSoftness = isLit ? softnessOn : softnessOff;
+
+        currentRadius = targetRadius;
+        currentSoftness = targetSoftness;
     }
 
-    // ---------------------------------------------
-    //  FILTRO AMARELADO
-    // ---------------------------------------------
-    void HandleTint()
-    {
-        if (tintImage == null) return;
-        Color c = tintColor;
-        c.a = Mathf.Lerp(tintImage.color.a, targetTintAlpha, Time.deltaTime * tintLerpSpeed);
-        tintImage.color = c;
-    }
+    void SetAlpha(Image img, float a) { Color c = img.color; c.a = a; img.color = c; }
 
-    void SetVignetteAlpha(float alpha)
-    {
-        if (vignetteImage == null) return;
-        Color c = vignetteImage.color;
-        c.a = alpha;
-        vignetteImage.color = c;
-    }
-
-    void SetTintAlpha(float alpha)
-    {
-        if (tintImage == null) return;
-        Color c = tintColor;
-        c.a = alpha;
-        tintImage.color = c;
-    }
-
-    // ---------------------------------------------
-    //  ACESSO PUBLICO
-    // ---------------------------------------------
+    public float GetCurrentRadius() => currentRadius;
+    public float GetCurrentSoftness() => currentSoftness;
     public bool IsLit() => isLit;
 }

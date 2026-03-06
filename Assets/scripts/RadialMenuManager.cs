@@ -65,6 +65,7 @@ public class RadialMenuManager : MonoBehaviour
             Cursor.visible = true;
             Cursor.lockState = CursorLockMode.None;
             radialMenuUI.SetActive(true);
+            Time.timeScale = 0; // pausar o jogo
         }
 
         // Áudio de opção terminou — fechar menu completamente
@@ -123,8 +124,6 @@ public class RadialMenuManager : MonoBehaviour
             Cursor.lockState = CursorLockMode.None;
             radialMenuUI.SetActive(true);
         }
-
-        Time.timeScale = 0; // pausar o jogo
         audioSource.pitch = 1f;
     }
 

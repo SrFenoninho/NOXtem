@@ -2,62 +2,43 @@ using UnityEngine;
 
 public class DarknessManager : MonoBehaviour
 {
-    // ---------------------------------------------
-    //  SINGLETON
-    // ---------------------------------------------
     public static DarknessManager Instance { get; private set; }
 
-    // ---------------------------------------------
-    //  INSPETOR
-    // ---------------------------------------------
-    [Header("Controlo")]
+    [Header("Darkness Settings")]
+    public Color darknessColor = new Color(0.02f, 0.02f, 0.02f);
+    public float ambientLight = 0f;
+
+    [Header("Dark State Values")]
+    public float darkRadius = 0.5f;
+    public float darkSoftness = 0.5f;
+
+    [Header("Light State Values")]
+    public float lightRadius = 15f;
+    public float lightSoftness = 5f;
+    public float lightAmbient = 1f;
+
+    [Header("Transition")]
+    public float transitionSpeed = 1.5f;
     public bool startWithDarkness = true;
 
-    [Header("Estado Escuro (sem energia)")]
-    public Color darknessColor = new Color(0.02f, 0.02f, 0.02f); // quase preto
-    public float ambientLight = 0.0f;   // 0 = preto total
-    public float darkRadius = 0.5f;   // raio de visibilidade sem isqueiro
-    public float darkSoftness = 0.5f;   // fade do circulo
-
-    [Header("Estado Iluminado (com energia)")]
-    public float lightRadius = 30f;    // raio grande - ve tudo
-    public float lightSoftness = 10f;
-    public float lightAmbient = 0.3f;   // alguma luz ambiente com energia
-
-    [Header("Transicao")]
-    public float transitionSpeed = 1.5f;
-
-    [Header("Zonas Escuras Configuráveis")]
-    public DarkZone[] darkZones;
-
-    // ---------------------------------------------
-    //  ESTADO PRIVADO
-    // ---------------------------------------------
     private bool powerRestored = false;
-    private bool inTransition = false;
-    private float transitionT = 0f;
+    private bool inDarkZone = false;
 
     private float currentRadius;
     private float currentSoftness;
     private float currentAmbient;
 
-    private static readonly int ID_DarknessColor = Shader.PropertyToID("_DarknessColor");
-    private static readonly int ID_AmbientLight = Shader.PropertyToID("_AmbientLight");
-    private static readonly int ID_DarknessRadius = Shader.PropertyToID("_DarknessRadius");
-    private static readonly int ID_DarknessSoftness = Shader.PropertyToID("_DarknessSoftness");
+    private Lighter lighter;
 
-    // ---------------------------------------------
-    //  UNITY
-    // ---------------------------------------------
     void Awake()
     {
-        if (Instance != null && Instance != this) { Destroy(gameObject); return; }
-        Instance = this;
+        if (Instance == null) Instance = this;
+        else Destroy(gameObject);
     }
 
     void Start()
     {
-        Shader.SetGlobalColor(ID_DarknessColor, darknessColor);
+        lighter = Object.FindFirstObjectByType<Lighter>();
 
         if (startWithDarkness)
         {
@@ -73,76 +54,73 @@ public class DarknessManager : MonoBehaviour
             powerRestored = true;
         }
 
-        ApplyShader(currentRadius, currentSoftness, currentAmbient);
+        ApplyToShader();
     }
 
     void Update()
     {
-        if (!inTransition) return;
+        // Se a energia estiver desligada OU o jogador estiver numa DarkZone,
+        // o isqueiro assume o controlo do raio de visão!
+        if (!powerRestored || inDarkZone)
+        {
+            if (lighter != null)
+            {
+                // Vamos ler os valores matemáticos que o Lighter.cs está a calcular
+                currentRadius = lighter.GetCurrentRadius();
+                currentSoftness = lighter.GetCurrentSoftness();
+            }
+            else
+            {
+                currentRadius = darkRadius;
+                currentSoftness = darkSoftness;
+            }
 
-        transitionT += Time.deltaTime * transitionSpeed;
-        float t = Mathf.Clamp01(transitionT);
+            // O ambiente em geral continua escuro
+            currentAmbient = ambientLight;
+        }
+        else
+        {
+            // A energia voltou E estamos fora da DarkZone (Tudo fica claro gradualmente)
+            currentRadius = Mathf.Lerp(currentRadius, lightRadius, Time.deltaTime * transitionSpeed);
+            currentSoftness = Mathf.Lerp(currentSoftness, lightSoftness, Time.deltaTime * transitionSpeed);
+            currentAmbient = Mathf.Lerp(currentAmbient, lightAmbient, Time.deltaTime * transitionSpeed);
+        }
 
-        currentRadius = Mathf.Lerp(darkRadius, lightRadius, t);
-        currentSoftness = Mathf.Lerp(darkSoftness, lightSoftness, t);
-        currentAmbient = Mathf.Lerp(ambientLight, lightAmbient, t);
-
-        ApplyShader(currentRadius, currentSoftness, currentAmbient);
-
-        if (t >= 1f) inTransition = false;
+        // AGORA SIM: Aplica ao shader todos os frames para vermos o isqueiro a iluminar!
+        ApplyToShader();
     }
 
-    // ---------------------------------------------
-    //  CHAMADO PELO LeverSystem
-    // ---------------------------------------------
+    void ApplyToShader()
+    {
+        Shader.SetGlobalColor("_GlobalDarknessColor", darknessColor);
+        Shader.SetGlobalFloat("_DarknessRadius", currentRadius);
+        Shader.SetGlobalFloat("_DarknessSoftness", currentSoftness);
+        Shader.SetGlobalFloat("_AmbientLight", currentAmbient);
+    }
+
     public void OnPowerRestored()
     {
-        if (powerRestored) return;
         powerRestored = true;
-        transitionT = 0f;
-        inTransition = true;
-        Debug.Log("DarknessManager: a iluminar a cena...");
+        Debug.Log("DarknessManager: Power restored, illuminating scene...");
     }
 
-    // ---------------------------------------------
-    //  AUXILIARES
-    // ---------------------------------------------
-    void ApplyShader(float radius, float softness, float ambient)
+    public void SetInDarkZone(bool state)
     {
-        Shader.SetGlobalFloat(ID_DarknessRadius, radius);
-        Shader.SetGlobalFloat(ID_DarknessSoftness, softness);
-        Shader.SetGlobalFloat(ID_AmbientLight, ambient);
+        inDarkZone = state;
+
+        if (!inDarkZone && powerRestored)
+        {
+            Debug.Log("DarknessManager: Exited Dark Zone, restoring light transition...");
+        }
     }
 
-    // ---------------------------------------------
-    //  ZONAS ESCURAS MANUAIS
-    // ---------------------------------------------
-    public void SetDarkZone(string zoneID, bool dark)
+    public bool IsDark()
     {
-        foreach (DarkZone zone in darkZones)
-            if (zone.zoneID == zoneID) { zone.SetDark(dark); return; }
+        return !powerRestored;
     }
 
-    // ---------------------------------------------
-    //  ACESSO PUBLICO
-    // ---------------------------------------------
-    public bool IsDark() => !powerRestored;
-    public float GetRadius() => currentRadius;
-    public float GetSoftness() => currentSoftness;
-}
-
-// ---------------------------------------------
-//  ESTRUTURA DE ZONA ESCURA
-// ---------------------------------------------
-[System.Serializable]
-public class DarkZone
-{
-    public string zoneID = "Zone_A";
-    public Light[] zoneLights;
-
-    public void SetDark(bool dark)
+    public bool IsInDarkZone()
     {
-        foreach (Light l in zoneLights)
-            if (l != null) l.enabled = !dark;
+        return inDarkZone;
     }
 }

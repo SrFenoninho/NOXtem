@@ -3,7 +3,7 @@
 -----LINE 1-----
 
 Will: Miss B?
-B: don't call me Miss B.
+B: ah... Will, Please... don't call me Miss B.
 Will: As you wish.
 
 ----------------
@@ -39,8 +39,11 @@ Will: B?
 ----------------
 -----LINE 7-----
 
-Will: B?
-B: Will.
+Will: Still rather vexed with J.?
+B: Yeah.
+Will: He wished to speak with you.
+B: Well, I don't want to talk to him.
+Will: Fair... I think...
 
 ----------------
 -----LINE 8-----

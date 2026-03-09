@@ -20,7 +20,6 @@ public class DarkZone : MonoBehaviour
         zoneCollider = GetComponent<Collider>();
         zoneCollider.isTrigger = true;
 
-        // AVISO CORRIGIDO AQUI TAMBÉM
         lighter = Object.FindFirstObjectByType<Lighter>();
     }
 
@@ -33,7 +32,6 @@ public class DarkZone : MonoBehaviour
 
         if (containsPlayer && !playerInZone)
         {
-            // O jogador ACABOU DE ENTRAR na zona
             playerInZone = true;
             Debug.Log($"Entered Dark Zone: {zoneID}");
 

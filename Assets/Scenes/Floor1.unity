@@ -910,11 +910,11 @@ PrefabInstance:
     - target: {fileID: -3015180397169782839, guid: a96e16f3757bd39439d3f805139be862, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: 75c8a26159d34d643916d2e19244be19, type: 2}
+      objectReference: {fileID: 2100000, guid: d85f4a4f8539e14489cb6451823f2896, type: 2}
     - target: {fileID: 705525777829356259, guid: a96e16f3757bd39439d3f805139be862, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: bc67dd93b7da64942a834e3377d1eb00, type: 2}
+      objectReference: {fileID: 2100000, guid: d85f4a4f8539e14489cb6451823f2896, type: 2}
     - target: {fileID: 919132149155446097, guid: a96e16f3757bd39439d3f805139be862, type: 3}
       propertyPath: m_Name
       value: shelves (13)
@@ -922,7 +922,7 @@ PrefabInstance:
     - target: {fileID: 6809794263854553803, guid: a96e16f3757bd39439d3f805139be862, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: 16313628627c682439db810d14f28ae4, type: 2}
+      objectReference: {fileID: 2100000, guid: c8dbd0fc61b8c9143a5a04ce74c13443, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1720,11 +1720,11 @@ PrefabInstance:
     - target: {fileID: -3015180397169782839, guid: a96e16f3757bd39439d3f805139be862, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: 75c8a26159d34d643916d2e19244be19, type: 2}
+      objectReference: {fileID: 2100000, guid: d85f4a4f8539e14489cb6451823f2896, type: 2}
     - target: {fileID: 705525777829356259, guid: a96e16f3757bd39439d3f805139be862, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: bc67dd93b7da64942a834e3377d1eb00, type: 2}
+      objectReference: {fileID: 2100000, guid: d85f4a4f8539e14489cb6451823f2896, type: 2}
     - target: {fileID: 919132149155446097, guid: a96e16f3757bd39439d3f805139be862, type: 3}
       propertyPath: m_Name
       value: shelves (17)
@@ -1732,7 +1732,7 @@ PrefabInstance:
     - target: {fileID: 6809794263854553803, guid: a96e16f3757bd39439d3f805139be862, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: 16313628627c682439db810d14f28ae4, type: 2}
+      objectReference: {fileID: 2100000, guid: c8dbd0fc61b8c9143a5a04ce74c13443, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2879,7 +2879,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b1a5c0074d4dab646b496a0df00ca82e, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 1
+      value: 0.9848078
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b1a5c0074d4dab646b496a0df00ca82e, type: 3}
       propertyPath: m_LocalRotation.x
@@ -2887,7 +2887,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b1a5c0074d4dab646b496a0df00ca82e, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0.17364825
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b1a5c0074d4dab646b496a0df00ca82e, type: 3}
       propertyPath: m_LocalRotation.z
@@ -2899,7 +2899,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b1a5c0074d4dab646b496a0df00ca82e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
+      value: -20
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b1a5c0074d4dab646b496a0df00ca82e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
@@ -4297,7 +4297,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: a96e16f3757bd39439d3f805139be862, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 10.61
+      value: 10.81
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: a96e16f3757bd39439d3f805139be862, type: 3}
       propertyPath: m_LocalPosition.y
@@ -4338,11 +4338,11 @@ PrefabInstance:
     - target: {fileID: -3015180397169782839, guid: a96e16f3757bd39439d3f805139be862, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: 75c8a26159d34d643916d2e19244be19, type: 2}
+      objectReference: {fileID: 2100000, guid: d85f4a4f8539e14489cb6451823f2896, type: 2}
     - target: {fileID: 705525777829356259, guid: a96e16f3757bd39439d3f805139be862, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: bc67dd93b7da64942a834e3377d1eb00, type: 2}
+      objectReference: {fileID: 2100000, guid: d85f4a4f8539e14489cb6451823f2896, type: 2}
     - target: {fileID: 919132149155446097, guid: a96e16f3757bd39439d3f805139be862, type: 3}
       propertyPath: m_Name
       value: shelves (14)
@@ -4350,7 +4350,7 @@ PrefabInstance:
     - target: {fileID: 6809794263854553803, guid: a96e16f3757bd39439d3f805139be862, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: 16313628627c682439db810d14f28ae4, type: 2}
+      objectReference: {fileID: 2100000, guid: c8dbd0fc61b8c9143a5a04ce74c13443, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -16643,7 +16643,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: a96e16f3757bd39439d3f805139be862, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 12.746
+      value: 12.91
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: a96e16f3757bd39439d3f805139be862, type: 3}
       propertyPath: m_LocalPosition.y
@@ -16684,11 +16684,11 @@ PrefabInstance:
     - target: {fileID: -3015180397169782839, guid: a96e16f3757bd39439d3f805139be862, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: 75c8a26159d34d643916d2e19244be19, type: 2}
+      objectReference: {fileID: 2100000, guid: d85f4a4f8539e14489cb6451823f2896, type: 2}
     - target: {fileID: 705525777829356259, guid: a96e16f3757bd39439d3f805139be862, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: bc67dd93b7da64942a834e3377d1eb00, type: 2}
+      objectReference: {fileID: 2100000, guid: d85f4a4f8539e14489cb6451823f2896, type: 2}
     - target: {fileID: 919132149155446097, guid: a96e16f3757bd39439d3f805139be862, type: 3}
       propertyPath: m_Name
       value: shelves (16)
@@ -16696,7 +16696,7 @@ PrefabInstance:
     - target: {fileID: 6809794263854553803, guid: a96e16f3757bd39439d3f805139be862, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: 16313628627c682439db810d14f28ae4, type: 2}
+      objectReference: {fileID: 2100000, guid: c8dbd0fc61b8c9143a5a04ce74c13443, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -17452,7 +17452,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: a96e16f3757bd39439d3f805139be862, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 12.746
+      value: 12.91
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: a96e16f3757bd39439d3f805139be862, type: 3}
       propertyPath: m_LocalPosition.y
@@ -17493,11 +17493,11 @@ PrefabInstance:
     - target: {fileID: -3015180397169782839, guid: a96e16f3757bd39439d3f805139be862, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: 75c8a26159d34d643916d2e19244be19, type: 2}
+      objectReference: {fileID: 2100000, guid: d85f4a4f8539e14489cb6451823f2896, type: 2}
     - target: {fileID: 705525777829356259, guid: a96e16f3757bd39439d3f805139be862, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: bc67dd93b7da64942a834e3377d1eb00, type: 2}
+      objectReference: {fileID: 2100000, guid: d85f4a4f8539e14489cb6451823f2896, type: 2}
     - target: {fileID: 919132149155446097, guid: a96e16f3757bd39439d3f805139be862, type: 3}
       propertyPath: m_Name
       value: shelves (15)
@@ -17505,7 +17505,7 @@ PrefabInstance:
     - target: {fileID: 6809794263854553803, guid: a96e16f3757bd39439d3f805139be862, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: 16313628627c682439db810d14f28ae4, type: 2}
+      objectReference: {fileID: 2100000, guid: c8dbd0fc61b8c9143a5a04ce74c13443, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -20076,11 +20076,11 @@ PrefabInstance:
     - target: {fileID: -3015180397169782839, guid: a96e16f3757bd39439d3f805139be862, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: 75c8a26159d34d643916d2e19244be19, type: 2}
+      objectReference: {fileID: 2100000, guid: d85f4a4f8539e14489cb6451823f2896, type: 2}
     - target: {fileID: 705525777829356259, guid: a96e16f3757bd39439d3f805139be862, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: bc67dd93b7da64942a834e3377d1eb00, type: 2}
+      objectReference: {fileID: 2100000, guid: d85f4a4f8539e14489cb6451823f2896, type: 2}
     - target: {fileID: 919132149155446097, guid: a96e16f3757bd39439d3f805139be862, type: 3}
       propertyPath: m_Name
       value: shelves (18)
@@ -20088,7 +20088,7 @@ PrefabInstance:
     - target: {fileID: 6809794263854553803, guid: a96e16f3757bd39439d3f805139be862, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: 16313628627c682439db810d14f28ae4, type: 2}
+      objectReference: {fileID: 2100000, guid: c8dbd0fc61b8c9143a5a04ce74c13443, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

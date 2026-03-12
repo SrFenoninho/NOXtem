@@ -69,6 +69,9 @@ public class FPMove : MonoBehaviour
     private Vector3 previousPosition;
     private float stuckTimer = 0f;
 
+    // bloqueado pelo IntroManager durante a intro
+    [HideInInspector] public bool inputBlocked = false;
+
     // ---------------------------------------------
     //  UNITY
     // ---------------------------------------------
@@ -107,7 +110,7 @@ public class FPMove : MonoBehaviour
         }
 
         // Input de salto guardado aqui, aplicado no FixedUpdate
-        if (Input.GetButtonDown("Jump") && isGrounded && !isJumping)
+        if (!inputBlocked && Input.GetButtonDown("Jump") && isGrounded && !isJumping)
         {
             jumpInput = true;
             if (jumpSound != null) audioSource.PlayOneShot(jumpSound);
@@ -137,6 +140,8 @@ public class FPMove : MonoBehaviour
     // ---------------------------------------------
     void LateUpdate()
     {
+        if (inputBlocked) return;
+
         float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
         float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
 
@@ -152,6 +157,8 @@ public class FPMove : MonoBehaviour
     // ---------------------------------------------
     void FixedUpdate()
     {
+        if (inputBlocked) return;
+
         float x = Input.GetAxisRaw("Horizontal");
         float z = Input.GetAxisRaw("Vertical");
         bool isSprinting = Input.GetKey(KeyCode.LeftShift) && isGrounded && z > 0f;

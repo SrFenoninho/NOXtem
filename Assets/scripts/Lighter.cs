@@ -166,6 +166,17 @@ public class Lighter : MonoBehaviour
 
     void SetAlpha(Image img, float a) { Color c = img.color; c.a = a; img.color = c; }
 
+    // chamado pelo IntroManager para acender/apagar o isqueiro programaticamente
+    public void ForceLight(bool state)
+    {
+        if (isLit == state) return;
+        isLit = state;
+        targetRadius = isLit ? radiusOn : radiusOff;
+        targetSoftness = isLit ? softnessOn : softnessOff;
+        if (isLit && igniteSound != null) audioSource.PlayOneShot(igniteSound);
+        if (!isLit && extinguishSound != null) audioSource.PlayOneShot(extinguishSound);
+    }
+
     public float GetCurrentRadius() => currentRadius;
     public float GetCurrentSoftness() => currentSoftness;
     public bool IsLit() => isLit;

@@ -324,7 +324,7 @@ public class EnemyAI : MonoBehaviour
         float speedMult = currentPhase == Phase.Attacking ? 2.5f
                         : currentPhase == Phase.ApproachClose ? 1.2f
                         : currentPhase == Phase.Reposition ? 1.0f
-                        : 0.7f; // OrbitFar + ReadyToAttack drift slowly
+                        : 0.7f; // OrbitFar + ReadyToAttack deslizam lentamente
 
         if (toTarget.magnitude > 0.15f)
         {

@@ -1,4 +1,3 @@
-// Chamar-lhe "IA" já é dizer muito, mas pronto :P
 using UnityEngine;
 
 public class MonsterChaseAI : MonoBehaviour

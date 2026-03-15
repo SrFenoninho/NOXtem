@@ -3,6 +3,9 @@ using UnityEngine.UI;
 
 public class Lighter : MonoBehaviour
 {
+    // ---------------------------------------------
+    //  INSPETOR
+    // ---------------------------------------------
     [Header("Input")]
     public KeyCode toggleKey = KeyCode.F;
 
@@ -38,6 +41,9 @@ public class Lighter : MonoBehaviour
     public float tintMaxAlpha = 0.12f;
     public float tintLerpSpeed = 4f;
 
+    // ---------------------------------------------
+    //  ESTADO PRIVADO
+    // ---------------------------------------------
     private bool isLit = false;
     private float currentRadius;
     private float currentSoftness;
@@ -48,6 +54,9 @@ public class Lighter : MonoBehaviour
     private float origSoftnessOff;
     private float origSoftnessOn;
 
+    // ---------------------------------------------
+    //  UNITY
+    // ---------------------------------------------
     void Start()
     {
         audioSource = GetComponent<AudioSource>() ?? gameObject.AddComponent<AudioSource>();
@@ -84,6 +93,9 @@ public class Lighter : MonoBehaviour
         UpdateModel();
     }
 
+    // ---------------------------------------------
+    //  LIGAR / DESLIGAR
+    // ---------------------------------------------
     void Toggle()
     {
         isLit = !isLit;
@@ -97,6 +109,9 @@ public class Lighter : MonoBehaviour
         Debug.Log(isLit ? "Isqueiro aceso" : "Isqueiro apagado");
     }
 
+    // ---------------------------------------------
+    //  EFEITOS VISUAIS
+    // ---------------------------------------------
     void UpdateVignette()
     {
         if (vignetteImage == null) return;
@@ -130,26 +145,29 @@ public class Lighter : MonoBehaviour
             lighterModel.transform.localPosition, target, Time.deltaTime * drawSpeed);
     }
 
-    // chamado pelo DarkZone ao entrar
+    // ---------------------------------------------
+    //  VALORES DE ZONA
+    // ---------------------------------------------
+    // Chamado pelo DarkZone ao entrar
     public void SetZoneValues(float darkRad, float darkSoft)
     {
-        // CORREÇÃO: O isqueiro quando ACESO usa sempre a sua força original (ex: 4f)
+        // O isqueiro quando aceso usa sempre a sua força original
         radiusOn = origRadiusOn;
         softnessOn = origSoftnessOn;
 
-        // O isqueiro quando APAGADO passa a usar a escuridão da zona (ex: 0.5f)
+        // O isqueiro quando apagado passa a usar a escuridão da zona
         radiusOff = darkRad;
         softnessOff = darkSoft;
 
         targetRadius = isLit ? radiusOn : radiusOff;
         targetSoftness = isLit ? softnessOn : softnessOff;
 
-        // Forçamos a variável current para que a escuridão caia imediatamente se ele estiver apagado
+        // Forçar os valores atuais para que a escuridão caia imediatamente se estiver apagado
         currentRadius = targetRadius;
         currentSoftness = targetSoftness;
     }
 
-    // chamado pelo DarkZone ao sair
+    // Chamado pelo DarkZone ao sair
     public void ClearZoneValues()
     {
         radiusOff = origRadiusOff;
@@ -164,9 +182,12 @@ public class Lighter : MonoBehaviour
         currentSoftness = targetSoftness;
     }
 
+    // ---------------------------------------------
+    //  AUXILIARES
+    // ---------------------------------------------
     void SetAlpha(Image img, float a) { Color c = img.color; c.a = a; img.color = c; }
 
-    // chamado pelo IntroManager para acender/apagar o isqueiro programaticamente
+    // Chamado pelo IntroManager para acender/apagar o isqueiro programaticamente
     public void ForceLight(bool state)
     {
         if (isLit == state) return;
@@ -177,6 +198,9 @@ public class Lighter : MonoBehaviour
         if (!isLit && extinguishSound != null) audioSource.PlayOneShot(extinguishSound);
     }
 
+    // ---------------------------------------------
+    //  CONSULTAS
+    // ---------------------------------------------
     public float GetCurrentRadius() => currentRadius;
     public float GetCurrentSoftness() => currentSoftness;
     public bool IsLit() => isLit;

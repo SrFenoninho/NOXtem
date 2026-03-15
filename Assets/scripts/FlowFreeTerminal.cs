@@ -3,6 +3,9 @@ using UnityEngine.UI;
 
 public class FlowFreeTerminal : MonoBehaviour, IInteractable
 {
+    // ---------------------------------------------
+    //  INSPETOR
+    // ---------------------------------------------
     [Header("UI References")]
     public Text messageText;
     public GameObject flowFreeUI;
@@ -10,8 +13,14 @@ public class FlowFreeTerminal : MonoBehaviour, IInteractable
     [Header("Settings")]
     public string sceneToLoadOnComplete = "NextLevel";
 
+    // ---------------------------------------------
+    //  ESTADO PRIVADO
+    // ---------------------------------------------
     private bool isGameActive = false;
 
+    // ---------------------------------------------
+    //  INTERFACE IInteractable
+    // ---------------------------------------------
     public string GetInteractMessage()
     {
         if (isGameActive) return "Game in progress...";
@@ -24,6 +33,9 @@ public class FlowFreeTerminal : MonoBehaviour, IInteractable
         OpenMinigame();
     }
 
+    // ---------------------------------------------
+    //  MINIJOGO
+    // ---------------------------------------------
     void OpenMinigame()
     {
         isGameActive = true;
@@ -43,6 +55,9 @@ public class FlowFreeTerminal : MonoBehaviour, IInteractable
         Debug.Log("Mini-jogo Flow Free aberto!");
     }
 
+    // ---------------------------------------------
+    //  CONCLUSÃO
+    // ---------------------------------------------
     public void OnGameComplete()
     {
         isGameActive = false;

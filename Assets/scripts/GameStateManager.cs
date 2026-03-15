@@ -3,23 +3,32 @@ using UnityEngine;
 
 public enum GameState
 {
-    Gameplay,       // estado normal - tudo permitido
+    Gameplay,       // estado normal — tudo permitido
     RadialMenu,     // menu radial aberto
-    Dialogue,       // dialogo a decorrer
+    Dialogue,       // diálogo a decorrer
     Minigame,       // minijogo ativo
     Cutscene,       // cutscene
-    Inventory,      // inventario aberto
+    Inventory,      // inventário aberto
     Paused          // pausado
 }
 
 public class GameStateManager : MonoBehaviour
 {
+    // ---------------------------------------------
+    //  SINGLETON
+    // ---------------------------------------------
     public static GameStateManager Instance { get; private set; }
 
+    // ---------------------------------------------
+    //  ESTADO PRIVADO
+    // ---------------------------------------------
     private Stack<GameState> stateStack = new Stack<GameState>();
 
     public GameState CurrentState => stateStack.Count > 0 ? stateStack.Peek() : GameState.Gameplay;
 
+    // ---------------------------------------------
+    //  UNITY
+    // ---------------------------------------------
     void Awake()
     {
         if (Instance == null) Instance = this;
@@ -28,14 +37,17 @@ public class GameStateManager : MonoBehaviour
         stateStack.Push(GameState.Gameplay);
     }
 
-    // entra num novo estado (empilha por cima)
+    // ---------------------------------------------
+    //  GESTÃO DE ESTADOS
+    // ---------------------------------------------
+    // Entra num novo estado (empilha por cima)
     public void PushState(GameState state)
     {
         stateStack.Push(state);
         Debug.Log($"[GameState] Push: {state} | Stack: {stateStack.Count}");
     }
 
-    // sai do estado atual (volta ao anterior)
+    // Sai do estado atual (volta ao anterior)
     public void PopState()
     {
         if (stateStack.Count > 1)
@@ -45,12 +57,15 @@ public class GameStateManager : MonoBehaviour
         }
     }
 
-    // verifica se um estado especifico esta ativo
+    // ---------------------------------------------
+    //  CONSULTAS
+    // ---------------------------------------------
+    // Verifica se um estado específico está ativo
     public bool Is(GameState state) => CurrentState == state;
 
-    // o menu radial so pode abrir se estivermos em Gameplay
+    // O menu radial só pode abrir se estivermos em Gameplay
     public bool CanOpenRadialMenu() => CurrentState == GameState.Gameplay;
 
-    // o jogador pode mover-se?
+    // O jogador pode mover-se?
     public bool CanMove() => CurrentState == GameState.Gameplay;
 }

@@ -80,7 +80,7 @@ public class PlayerHealth : MonoBehaviour
     // ---------------------------------------------
     //  HUD DE VIDA
     // ---------------------------------------------
-    // Solução simples com OnGUI — funciona bem para protótipo :D
+    // Desenha a barra de vida no ecrã com OnGUI
     void OnGUI()
     {
         float boxWidth = 200;

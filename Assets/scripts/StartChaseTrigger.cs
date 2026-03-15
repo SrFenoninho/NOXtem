@@ -5,7 +5,6 @@ public class StartChaseTrigger : MonoBehaviour
     // ---------------------------------------------
     //  INSPETOR
     // ---------------------------------------------
-    // Outra vez, chamar-lhe "IA" já é dizer muito, mas pronto :)
     public MonsterChaseAI monster;
 
     // ---------------------------------------------

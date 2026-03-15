@@ -3,6 +3,9 @@ using UnityEngine.UI;
 
 public class RadialMenuManager : MonoBehaviour
 {
+    // ---------------------------------------------
+    //  INSPETOR
+    // ---------------------------------------------
     [Header("UI")]
     public GameObject radialMenuUI;
 
@@ -29,6 +32,9 @@ public class RadialMenuManager : MonoBehaviour
     public string option3 = "Option 3";
     public string option4 = "Option 4";
 
+    // ---------------------------------------------
+    //  UNITY
+    // ---------------------------------------------
     void Start()
     {
         audioSource = GetComponent<AudioSource>();
@@ -91,6 +97,9 @@ public class RadialMenuManager : MonoBehaviour
         }
     }
 
+    // ---------------------------------------------
+    //  ABRIR / FECHAR MENU
+    // ---------------------------------------------
     void OpenMenu()
     {
         GameStateManager.Instance.PushState(GameState.RadialMenu);
@@ -124,6 +133,9 @@ public class RadialMenuManager : MonoBehaviour
         Time.timeScale = 1;
     }
 
+    // ---------------------------------------------
+    //  SELEÇÃO DE OPÇÕES
+    // ---------------------------------------------
     void SelectOption(int optionNumber)
     {
         radialMenuUI.SetActive(false);
@@ -142,6 +154,9 @@ public class RadialMenuManager : MonoBehaviour
         }
     }
 
+    // ---------------------------------------------
+    //  EXECUÇÃO DE OPÇÕES
+    // ---------------------------------------------
     void ExecuteOption(int optionNumber)
     {
         switch (currentContext)
@@ -185,11 +200,17 @@ public class RadialMenuManager : MonoBehaviour
         }
     }
 
+    // ---------------------------------------------
+    //  CLIQUES DOS BOTÕES
+    // ---------------------------------------------
     public void ClickOption1() { SelectOption(1); }
     public void ClickOption2() { SelectOption(2); }
     public void ClickOption3() { SelectOption(3); }
     public void ClickOption4() { SelectOption(4); }
 
+    // ---------------------------------------------
+    //  CONTEXTO
+    // ---------------------------------------------
     public void SetContext(string newContext, string opt1, string opt2, string opt3, string opt4)
     {
         currentContext = newContext;

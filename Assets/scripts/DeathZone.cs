@@ -2,12 +2,18 @@ using UnityEngine;
 
 public class DeathZone : MonoBehaviour
 {
+    // ---------------------------------------------
+    //  INSPETOR
+    // ---------------------------------------------
     [Header("Respawn")]
     public Transform respawnPoint;
 
+    // ---------------------------------------------
+    //  TRIGGER
+    // ---------------------------------------------
     void OnTriggerEnter(Collider other)
     {
-        // player
+        // jogador
         if (other.CompareTag("Player"))
         {
             Teleport(other.gameObject);
@@ -21,6 +27,9 @@ public class DeathZone : MonoBehaviour
         }
     }
 
+    // ---------------------------------------------
+    //  TELETRANSPORTE
+    // ---------------------------------------------
     void Teleport(GameObject obj)
     {
         CharacterController cc = obj.GetComponent<CharacterController>();

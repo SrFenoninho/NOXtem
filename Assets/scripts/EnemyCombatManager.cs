@@ -1,9 +1,12 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-// Apos TODOS terminarem, um breve tempo de espera antes do proximo grupo se formar.
+// Após todos terminarem, um breve tempo de espera antes do próximo grupo se formar.
 public static class EnemyCombatManager
 {
+    // ---------------------------------------------
+    //  ESTADO
+    // ---------------------------------------------
     private static List<EnemyAI> registeredEnemies = new List<EnemyAI>();
     private static List<EnemyAI> currentAttackers = new List<EnemyAI>();
 
@@ -12,6 +15,9 @@ public static class EnemyCombatManager
     public static float groupCooldownMax = 1.2f;
     private static float nextGroupTime = 0f;
 
+    // ---------------------------------------------
+    //  REGISTO
+    // ---------------------------------------------
     public static void Register(EnemyAI enemy)
     {
         if (!registeredEnemies.Contains(enemy))
@@ -24,6 +30,9 @@ public static class EnemyCombatManager
         currentAttackers.Remove(enemy);
     }
 
+    // ---------------------------------------------
+    //  TOKENS DE ATAQUE
+    // ---------------------------------------------
     // Conceder token se houver vagas abertas e o tempo de espera tiver passado
     public static bool RequestAttackToken(EnemyAI requester)
     {
@@ -39,11 +48,14 @@ public static class EnemyCombatManager
     {
         if (!currentAttackers.Remove(attacker)) return;
 
-        // O tempo de espera so comeca quando o ultimo atacante do grupo termina
+        // O tempo de espera só começa quando o último atacante do grupo termina
         if (currentAttackers.Count == 0)
             nextGroupTime = Time.time + Random.Range(groupCooldownMin, groupCooldownMax);
     }
 
+    // ---------------------------------------------
+    //  CONSULTAS
+    // ---------------------------------------------
     public static bool HasToken(EnemyAI enemy) => currentAttackers.Contains(enemy);
     public static int AttackerCount => currentAttackers.Count;
     public static int EnemyCount => registeredEnemies.Count;

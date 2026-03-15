@@ -4,6 +4,9 @@ using UnityEngine.UI;
 
 public class IntroManager : MonoBehaviour
 {
+    // ---------------------------------------------
+    //  INSPETOR
+    // ---------------------------------------------
     [Header("Audio")]
     public AudioClip introAudio;
     private AudioSource audioSource;
@@ -15,10 +18,13 @@ public class IntroManager : MonoBehaviour
     [Header("Timings")]
     public float moveUnlockTime = 6f;
 
-    [Header("Referencias")]
+    [Header("Referências")]
     public FPMove playerMovement;
     public Lighter lighter;
 
+    // ---------------------------------------------
+    //  UNITY
+    // ---------------------------------------------
     void Start()
     {
         audioSource = GetComponent<AudioSource>() ?? gameObject.AddComponent<AudioSource>();
@@ -27,7 +33,7 @@ public class IntroManager : MonoBehaviour
 
         if (playerMovement != null) playerMovement.inputBlocked = true;
 
-        // bloquear menu radial durante a intro
+        // Bloquear menu radial durante a intro
         GameStateManager.Instance?.PushState(GameState.Cutscene);
 
         if (introAudio != null)
@@ -36,6 +42,9 @@ public class IntroManager : MonoBehaviour
         StartCoroutine(IntroSequence());
     }
 
+    // ---------------------------------------------
+    //  SEQUÊNCIA DA INTRO
+    // ---------------------------------------------
     IEnumerator IntroSequence()
     {
         StartCoroutine(FadeIn());
@@ -45,10 +54,13 @@ public class IntroManager : MonoBehaviour
         if (playerMovement != null) playerMovement.inputBlocked = false;
         if (lighter != null) lighter.ForceLight(true);
 
-        // libertar o menu radial
+        // Libertar o menu radial
         GameStateManager.Instance?.PopState();
     }
 
+    // ---------------------------------------------
+    //  FADE
+    // ---------------------------------------------
     IEnumerator FadeIn()
     {
         float elapsed = 0f;
@@ -62,6 +74,9 @@ public class IntroManager : MonoBehaviour
         if (fadeImage != null) fadeImage.gameObject.SetActive(false);
     }
 
+    // ---------------------------------------------
+    //  AUXILIARES
+    // ---------------------------------------------
     void SetAlpha(float a)
     {
         if (fadeImage == null) return;

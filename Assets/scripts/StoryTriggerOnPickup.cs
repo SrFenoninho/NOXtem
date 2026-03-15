@@ -1,22 +1,25 @@
-ï»¿using System.Collections;
+using System.Collections;
 using UnityEngine;
 
-public class StoryTrigger : MonoBehaviour
+public class StoryTriggerOnPickup : MonoBehaviour
 {
     // ---------------------------------------------
     //  INSPETOR
     // ---------------------------------------------
+    [Header("Monitoring object")]
+    public GameObject watchObject; // o objeto da chave — quando for destruido dispara
+
     [Header("Look At")]
     public Transform lookTarget;
     public float lookSpeed = 3f;
+    public float lookDuration = 4f;
 
     [Header("Audio")]
     public AudioClip voiceLine;
 
-    [Header("Referencias")]
+    [Header("References")]
     public FPMove playerMovement;
-    public float slowMultiplier = 0f; // 0 = velocidade normal, sem alteracao
-    public float lookDuration = 6f;
+    public float slowMultiplier = 0f; // 0 = velocidade normal
     public bool triggerInDarkZone = false;
 
     // ---------------------------------------------
@@ -24,18 +27,23 @@ public class StoryTrigger : MonoBehaviour
     // ---------------------------------------------
     private float origSpeed;
     private float origSprintSpeed;
+    private bool triggered = false;
 
     // ---------------------------------------------
-    //  TRIGGER
+    //  UNITY
     // ---------------------------------------------
-    void OnTriggerEnter(Collider other)
+    void Update()
     {
-        if (!other.CompareTag("Player")) return;
+        if (triggered) return;
 
-        if (!triggerInDarkZone && DarknessManager.Instance != null && DarknessManager.Instance.IsDark()) return;
+        if (watchObject == null)
+        {
+            triggered = true;
 
-        Destroy(GetComponent<Collider>());
-        StartCoroutine(RunSequence());
+            if (!triggerInDarkZone && DarknessManager.Instance != null && DarknessManager.Instance.IsDark()) return;
+
+            StartCoroutine(RunSequence());
+        }
     }
 
     // ---------------------------------------------
@@ -62,17 +70,15 @@ public class StoryTrigger : MonoBehaviour
             audio.PlayOneShot(voiceLine);
 
         float elapsed = 0f;
-        float lookDuration = 6f;
-
         Transform playerT = playerMovement != null ? playerMovement.transform : null;
         Camera cam = playerMovement != null ? playerMovement.GetComponentInChildren<Camera>() : null;
         Transform camT = cam != null ? cam.transform : null;
 
-        while (elapsed < lookDuration)
+        while (elapsed < lookDuration && lookTarget != null)
         {
             elapsed += Time.deltaTime;
 
-            if (lookTarget != null && playerT != null)
+            if (playerT != null)
             {
                 Vector3 dir = lookTarget.position - playerT.position;
                 dir.y = 0f;
@@ -86,7 +92,6 @@ public class StoryTrigger : MonoBehaviour
                 {
                     Vector3 dirCam = lookTarget.position - camT.position;
                     float pitch = -Mathf.Asin(Mathf.Clamp(dirCam.normalized.y, -1f, 1f)) * Mathf.Rad2Deg;
-
                     camT.localRotation = Quaternion.Slerp(
                         camT.localRotation,
                         Quaternion.Euler(pitch, 0f, 0f),
@@ -115,19 +120,5 @@ public class StoryTrigger : MonoBehaviour
             yield return new WaitForSeconds(Mathf.Max(0f, voiceLine.length - lookDuration));
 
         GameStateManager.Instance?.PopState();
-        Destroy(gameObject);
-    }
-
-    // ---------------------------------------------
-    //  DESENHOS DE DEPURACAO
-    // ---------------------------------------------
-    void OnDrawGizmosSelected()
-    {
-        if (lookTarget != null)
-        {
-            Gizmos.color = Color.cyan;
-            Gizmos.DrawLine(transform.position, lookTarget.position);
-            Gizmos.DrawSphere(lookTarget.position, 0.2f);
-        }
     }
 }

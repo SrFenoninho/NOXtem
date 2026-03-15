@@ -2,24 +2,23 @@
 
 -----LINE: Gas-----
 
-B: Ah… cough… cough…
-Will: You don't look good
-B: It's just this gas… he developed it to stop us from transforming. From healing.
-Will: Like when Nocturne resorted to that syringe to stop J. from using his powers?
-B: Basically… Yeah.
-Will: So you're vulnerable? Perfect.
-B: haha… Shut up, Willy… I'Il be fine.
+B: Ah... coof... coof...
+Will: Não pareces bem.
+B: É só este gás... ele desenvolveu-o para nos impedir de transformar. Mas porque está em todo o lugar?
+Will: Então estás vulnerável? Perfeito... (preocupado)
+B: haha... Cala-te, Willy... eu vou ficar bem.
 
 ----------------
 -----LINE: After Hack and Slash-----
 
-Will: B, are you alright?
-B: I'm fine.
-Will: That great creature back there... and those others… they seem as though they were fashioned from the Storm energy.
-B: How? J. defeated the Storm Emperor.
-Will: You said your father was unwell, and that he sought some means of extending his life… you said he was hunting for the fragments of the Storm Emperor. It appears… he succeeded.
-B: I left in 2019. I thought J. had taken care of all the remaining pieces… 
-Will: J. also thought he had destroyed them all… I'm afraid we shall have to investigate this matter more thoroughly… Miss B
+Will: B, estás bem?
+B: Estou.
+Will: Aquela coisa que te mandou para ai... e as outras mais pequenas... pareciam ter sido feitas pela energia da Tempestade.
+B: Como? O J. derrotou o Imperador da Tempestade.
+Will: Disseste que o teu pai estava doente, e que procurava algum meio de prolongar a sua vida... disseste que andava à procura dos fragmentos da tempestade. Ao que parece... ele conseguiu.
+B: Eu bazei em 2019... pensei que o J. tinha destruído tudo o que sobrou...
+Will: Temo que o J. também pensava isso... de qualquer forma, temos de investigar mais a fundo... Senhorita B.
+B: (suspira)
 
 ----------------
 

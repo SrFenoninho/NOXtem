@@ -9,11 +9,11 @@ public class IntroManager : MonoBehaviour
     private AudioSource audioSource;
 
     [Header("Fade")]
-    public Image fadeImage;          // Image preta no Canvas que cobre o ecra
-    public float fadeDuration = 4f;  // duração do fade in
+    public Image fadeImage;
+    public float fadeDuration = 4f;
 
     [Header("Timings")]
-    public float moveUnlockTime = 6f; // segundos até o player se poder mover
+    public float moveUnlockTime = 6f;
 
     [Header("Referencias")]
     public FPMove playerMovement;
@@ -23,11 +23,12 @@ public class IntroManager : MonoBehaviour
     {
         audioSource = GetComponent<AudioSource>() ?? gameObject.AddComponent<AudioSource>();
 
-        // ecra completamente preto no inicio
         if (fadeImage != null) SetAlpha(1f);
 
-        // bloquear movimento
         if (playerMovement != null) playerMovement.inputBlocked = true;
+
+        // bloquear menu radial durante a intro
+        GameStateManager.Instance?.PushState(GameState.Cutscene);
 
         if (introAudio != null)
             audioSource.PlayOneShot(introAudio);
@@ -37,16 +38,15 @@ public class IntroManager : MonoBehaviour
 
     IEnumerator IntroSequence()
     {
-        // fade in imediato — 4 segundos de preto para gameplay
         StartCoroutine(FadeIn());
 
-        // aguardar 6 segundos antes de libertar o movimento
         yield return new WaitForSeconds(moveUnlockTime);
 
         if (playerMovement != null) playerMovement.inputBlocked = false;
-
-        // acender o isqueiro automaticamente
         if (lighter != null) lighter.ForceLight(true);
+
+        // libertar o menu radial
+        GameStateManager.Instance?.PopState();
     }
 
     IEnumerator FadeIn()

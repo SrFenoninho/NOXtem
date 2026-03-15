@@ -71,6 +71,7 @@ public class FPMove : MonoBehaviour
 
     // bloqueado pelo IntroManager durante a intro
     [HideInInspector] public bool inputBlocked = false;
+    [HideInInspector] public bool cameraBlocked = false;
 
     // ---------------------------------------------
     //  UNITY
@@ -140,7 +141,7 @@ public class FPMove : MonoBehaviour
     // ---------------------------------------------
     void LateUpdate()
     {
-        if (inputBlocked) return;
+        if (inputBlocked || cameraBlocked) return;
 
         float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
         float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
@@ -255,5 +256,11 @@ public class FPMove : MonoBehaviour
             stuckTimer = 0f;
         }
         previousPosition = transform.position;
+    }
+    public void SyncCameraRotation()
+    {
+        xRotation = playerCamera.localEulerAngles.x;
+        if (xRotation > 180f) xRotation -= 360f;
+        xRotation = Mathf.Clamp(xRotation, -70f, 70f);
     }
 }

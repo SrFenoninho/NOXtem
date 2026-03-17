@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Collections.Generic;
@@ -6,7 +6,7 @@ using System.Collections.Generic;
 public class GameMenuManager : MonoBehaviour
 {
     // ---------------------------------------------
-    //  INSPETOR — REFERENCIAS
+    //  INSPETOR ï¿½ REFERENCIAS
     // ---------------------------------------------
     [Header("Referencias")]
     public FPMove fPMove;
@@ -25,9 +25,9 @@ public class GameMenuManager : MonoBehaviour
     [Range(0f, 1f)] public float defaultVolume = 1f;
 
     // ---------------------------------------------
-    //  INSPETOR — CORES
+    //  INSPETOR ï¿½ CORES
     // ---------------------------------------------
-    [Header("Cores — Fundo")]
+    [Header("Cores - Fundo")]
     public Color corFundoEscuro = new Color(0f, 0f, 0f, 0.88f);
     public Color corJanela = new Color(0.08f, 0.08f, 0.08f, 1f);
     public Color corBarraTabs = new Color(0.05f, 0.05f, 0.05f, 1f);
@@ -37,38 +37,38 @@ public class GameMenuManager : MonoBehaviour
     public Color corSlot = new Color(0.15f, 0.15f, 0.15f, 1f);
     public Color corImagemVazia = new Color(0.12f, 0.12f, 0.12f, 1f);
 
-    [Header("Cores — Botoes")]
+    [Header("Cores - Botoes")]
     public Color corBotaoSair = new Color(0.6f, 0.1f, 0.1f, 1f);
     public Color corBotaoVoltar = new Color(0.15f, 0.15f, 0.15f, 1f);
     public Color corBotaoQualidade = new Color(0.2f, 0.2f, 0.2f, 1f);
 
-    [Header("Cores — Slider")]
+    [Header("Cores - Slider")]
     public Color corSliderBg = new Color(0.3f, 0.3f, 0.3f, 1f);
     public Color corSliderFill = new Color(0.2f, 0.6f, 1f, 1f);
 
-    [Header("Cores — Texto")]
+    [Header("Cores - Texto")]
     public Color corTextoNormal = Color.white;
     public Color corTextoLabels = new Color(0.3f, 1f, 0.3f);
     public Color corTextoVazio = new Color(0.5f, 0.5f, 0.5f);
 
-    [Header("Cores — Tipos de Item")]
+    [Header("Cores - Tipos de Item")]
     public Color corItemChave = new Color(1f, 0.85f, 0.3f);
     public Color corItemNota = new Color(0.9f, 0.9f, 0.9f);
     public Color corItemFerramenta = new Color(0.5f, 0.8f, 1f);
     public Color corItemDesconhecido = new Color(0.5f, 0.5f, 0.5f);
 
     // ---------------------------------------------
-    //  INSPETOR — TAMANHOS
+    //  INSPETOR - TAMANHOS
     // ---------------------------------------------
-    [Header("Tamanhos — Janela (0 a 1)")]
+    [Header("Tamanhos - Janela (0 a 1)")]
     public Vector2 janelaMargem = new Vector2(0.05f, 0.05f); // margem em cada lado
 
-    [Header("Tamanhos — Slots de Inventario")]
+    [Header("Tamanhos - Slots de Inventario")]
     public float slotTamanho = 90f;
     public float slotEspaco = 8f;
     public int slotsPorLinha = 5;
 
-    [Header("Tamanhos — Texto")]
+    [Header("Tamanhos - Texto")]
     public int fonteTabs = 14;
     public int fonteLabels = 14;
     public int fonteDef = 16;
@@ -113,7 +113,7 @@ public class GameMenuManager : MonoBehaviour
         currentVolume = defaultVolume;
         currentTextureQuality = QualitySettings.globalTextureMipmapLimit;
 
-        // Isqueiro — item permanente no inventario desde o inicio
+        // Isqueiro e item permanente no inventario desde o inicio
         InventoryManager.Instance?.AddItem(
             new InventoryItem("lighter", "Isqueiro", "tool", "Um isqueiro desgastado. A unica fonte de luz."));
 
@@ -236,7 +236,7 @@ public class GameMenuManager : MonoBehaviour
         tabInventario = CreatePanel(parent, "TabInventario",
             Vector2.zero, new Vector2(1f, 0.9f), Color.clear);
 
-        // Zona esquerda — grelha
+        // Zona esquerda - grelha
         GameObject gridZone = CreatePanel(tabInventario.transform, "GridZone",
             Vector2.zero, new Vector2(0.58f, 1f), corZonaGrelha);
 
@@ -381,6 +381,7 @@ public class GameMenuManager : MonoBehaviour
             rt.offsetMin = rt.offsetMax = Vector2.zero;
             TextMeshProUGUI t = msg.GetComponent<TextMeshProUGUI>();
             t.text = "Inventario vazio"; t.alignment = TMPro.TextAlignmentOptions.Center;
+            t.fontSize = fonteVazio; t.enableAutoSizing = false;
             slots.Add(msg);
             return;
         }
@@ -437,6 +438,7 @@ public class GameMenuManager : MonoBehaviour
             nameRT.offsetMin = nameRT.offsetMax = Vector2.zero;
             TextMeshProUGUI nameText = nameObj.GetComponent<TextMeshProUGUI>();
             nameText.text = item.itemName; nameText.alignment = TMPro.TextAlignmentOptions.Center;
+            nameText.fontSize = fonteSlotsNome; nameText.enableAutoSizing = false;
 
             slots.Add(slot);
         }
@@ -475,6 +477,7 @@ public class GameMenuManager : MonoBehaviour
         tRT.offsetMin = tRT.offsetMax = Vector2.zero;
         TextMeshProUGUI t = textObj.GetComponent<TextMeshProUGUI>();
         t.text = label; t.alignment = TMPro.TextAlignmentOptions.Center;
+        t.fontSize = fonteTabs; t.enableAutoSizing = false;
 
         Button btn = go.GetComponent<Button>();
         btn.onClick.AddListener(action);
@@ -498,6 +501,7 @@ public class GameMenuManager : MonoBehaviour
         tRT.offsetMin = tRT.offsetMax = Vector2.zero;
         TextMeshProUGUI t = textObj.GetComponent<TextMeshProUGUI>();
         t.text = label; t.alignment = TMPro.TextAlignmentOptions.Center;
+        t.fontSize = fonteBotoes; t.enableAutoSizing = false;
 
         return go.GetComponent<Button>();
     }
@@ -513,6 +517,7 @@ public class GameMenuManager : MonoBehaviour
         rt.offsetMin = rt.offsetMax = Vector2.zero;
         TextMeshProUGUI t = go.GetComponent<TextMeshProUGUI>();
         t.text = text; t.alignment = TMPro.TextAlignmentOptions.Left;
+        t.fontSize = fontSize; t.enableAutoSizing = false;
         return t;
     }
 

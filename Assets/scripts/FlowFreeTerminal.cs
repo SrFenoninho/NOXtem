@@ -1,5 +1,5 @@
 using UnityEngine;
-using UnityEngine.UI;
+using TMPro;
 
 public class FlowFreeTerminal : MonoBehaviour, IInteractable
 {
@@ -7,7 +7,7 @@ public class FlowFreeTerminal : MonoBehaviour, IInteractable
     //  INSPETOR
     // ---------------------------------------------
     [Header("UI References")]
-    public Text messageText;
+    public TextMeshProUGUI messageText;
     public GameObject flowFreeUI;
 
     [Header("Settings")]
@@ -51,12 +51,27 @@ public class FlowFreeTerminal : MonoBehaviour, IInteractable
 
         if (messageText != null)
             messageText.text = "";
-
-        Debug.Log("Mini-jogo Flow Free aberto!");
     }
 
     // ---------------------------------------------
-    //  CONCLUSÃO
+    //  SAIDA FORCADA
+    // ---------------------------------------------
+    public void ForceClose()
+    {
+        isGameActive = false;
+
+        if (flowFreeUI != null)
+            flowFreeUI.SetActive(false);
+
+        Time.timeScale = 1f;
+        GameStateManager.Instance?.PopState();
+
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
+    }
+
+    // ---------------------------------------------
+    //  CONCLUSAO
     // ---------------------------------------------
     public void OnGameComplete()
     {
@@ -71,7 +86,6 @@ public class FlowFreeTerminal : MonoBehaviour, IInteractable
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
 
-        Debug.Log("Puzzle concluído! A carregar: " + sceneToLoadOnComplete);
         UnityEngine.SceneManagement.SceneManager.LoadScene(sceneToLoadOnComplete);
     }
 }

@@ -8,29 +8,8 @@ public class CrosshairUI : MonoBehaviour
     // ---------------------------------------------
     [Header("Crosshair RawImages")]
     public RawImage crosshairRawImage;
-    public Texture normalCrosshair;     // mira padrão
-    public Texture interactCrosshair;   // mira ao apontar para objeto interagível
-
-    [Header("Crosshair Rotation Settings")]
-    public float rotationSpeed = 5f;    // velocidade de rotação suave
-
-    // ---------------------------------------------
-    //  ESTADO PRIVADO
-    // ---------------------------------------------
-    private float targetRotation = 0f;
-
-    // ---------------------------------------------
-    //  UNITY
-    // ---------------------------------------------
-    void Update()
-    {
-        if (crosshairRawImage == null) return;
-
-        // Interpolar suavemente para o ângulo alvo
-        float currentRotation = crosshairRawImage.rectTransform.eulerAngles.z;
-        float newRotation = Mathf.LerpAngle(currentRotation, targetRotation, Time.deltaTime * rotationSpeed);
-        crosshairRawImage.rectTransform.rotation = Quaternion.Euler(0f, 0f, newRotation);
-    }
+    public Texture normalCrosshair;
+    public Texture interactCrosshair;
 
     // ---------------------------------------------
     //  ESTADOS DA MIRA
@@ -40,7 +19,6 @@ public class CrosshairUI : MonoBehaviour
         if (crosshairRawImage == null) return;
         if (normalCrosshair != null)
             crosshairRawImage.texture = normalCrosshair;
-        targetRotation = 0f;
     }
 
     public void SetInteract()
@@ -48,6 +26,5 @@ public class CrosshairUI : MonoBehaviour
         if (crosshairRawImage == null) return;
         if (interactCrosshair != null)
             crosshairRawImage.texture = interactCrosshair;
-        targetRotation = 45f; // rodar 45° ao apontar para objeto interagível
     }
 }

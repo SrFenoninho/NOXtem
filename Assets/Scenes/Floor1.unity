@@ -23325,7 +23325,7 @@ MonoBehaviour:
   puzzleData: {fileID: 1539730040}
   terminal: {fileID: 1539730036}
   gameUI: {fileID: 1278175012}
-  winText: {fileID: 0}
+  winText: {fileID: 1329462512}
   resetButton: {fileID: 2075339183}
   exitButton: {fileID: 226990861}
 --- !u!114 &1281228149
@@ -23834,7 +23834,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: tghjkj
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}

@@ -44,6 +44,7 @@ public class Lighter : MonoBehaviour
     // ---------------------------------------------
     //  ESTADO PRIVADO
     // ---------------------------------------------
+    [HideInInspector] public bool inputBlocked = false;
     private bool isLit = false;
     private float currentRadius;
     private float currentSoftness;
@@ -98,6 +99,7 @@ public class Lighter : MonoBehaviour
     // ---------------------------------------------
     void Toggle()
     {
+        if (inputBlocked) return;
         isLit = !isLit;
 
         targetRadius = isLit ? radiusOn : radiusOff;

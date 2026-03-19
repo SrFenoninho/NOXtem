@@ -26,6 +26,12 @@ public class TransformationManager : MonoBehaviour
     public PlayerCombat playerCombat;
     public CharacterController tpController;
 
+    [Header("Transformacao")]
+    public AudioClip transformSound;
+    public float transformCooldown = 2f;
+    private float lastTransformTime = -999f;
+    private AudioSource audioSource;
+
     [Header("Input")]
     public KeyCode transformKey = KeyCode.T;
 
@@ -50,6 +56,7 @@ public class TransformationManager : MonoBehaviour
             if (h != null) h.enabled = false;
         }
 
+        audioSource = GetComponent<AudioSource>() ?? gameObject.AddComponent<AudioSource>();
         ActivateTP();
     }
 
@@ -68,6 +75,11 @@ public class TransformationManager : MonoBehaviour
 
         if (Input.GetKeyDown(transformKey))
         {
+            // So transforma dentro de zona de combate
+            if (!CombatZone.InCombatZone) return;
+            if (Time.time - lastTransformTime < transformCooldown) return;
+            lastTransformTime = Time.time;
+            if (transformSound != null) audioSource.PlayOneShot(transformSound);
             if (isTPForm) SwitchToFP();
             else SwitchToTP();
         }
@@ -102,6 +114,7 @@ public class TransformationManager : MonoBehaviour
         }
         if (tpController != null) tpController.enabled = true;
 
+        audioSource = GetComponent<AudioSource>() ?? gameObject.AddComponent<AudioSource>();
         ActivateTP();
     }
 

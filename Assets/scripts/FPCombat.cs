@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 
 public class FPCombat : MonoBehaviour
 {
@@ -23,6 +23,7 @@ public class FPCombat : MonoBehaviour
 
     [Header("Defesa")]
     public HitboxDefense defenseHitbox;
+    public Camera fpCamera;             // para orientar a parede corretamente
 
     // ---------------------------------------------
     //  ESTADO PRIVADO
@@ -63,12 +64,22 @@ public class FPCombat : MonoBehaviour
         if (isDefending && !wasDefending)
         {
             CancelAttack();
+            if (fpMove != null) fpMove.inputBlocked = true;
             if (defenseHitbox != null)
+            {
+                // Alinhar spawnPoint com a direcao da camara FP
+                if (fpCamera != null && defenseHitbox.spawnPoint != null)
+                {
+                    defenseHitbox.spawnPoint.rotation = Quaternion.Euler(
+                        0f, fpCamera.transform.eulerAngles.y, 0f);
+                }
                 defenseHitbox.ActivateDefense();
+            }
         }
 
         if (!isDefending && wasDefending)
         {
+            if (fpMove != null) fpMove.inputBlocked = false;
             if (defenseHitbox != null)
                 defenseHitbox.DeactivateDefense();
         }
@@ -84,7 +95,7 @@ public class FPCombat : MonoBehaviour
         // Impulso para a frente
         if (fpMove != null)
         {
-            // FPMove nao tem AddImpulse — aplicar via moveDir nao e possivel diretamente
+            // FPMove nao tem AddImpulse ï¿½ aplicar via moveDir nao e possivel diretamente
             // por isso o impulso e ignorado em FP por agora
         }
 

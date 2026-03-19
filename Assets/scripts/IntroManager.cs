@@ -32,6 +32,7 @@ public class IntroManager : MonoBehaviour
         if (fadeImage != null) SetAlpha(1f);
 
         if (playerMovement != null) playerMovement.inputBlocked = true;
+        if (lighter != null) lighter.inputBlocked = true;
 
         // Bloquear menu radial durante a intro
         GameStateManager.Instance?.PushState(GameState.Cutscene);
@@ -52,6 +53,7 @@ public class IntroManager : MonoBehaviour
         yield return new WaitForSeconds(moveUnlockTime);
 
         if (playerMovement != null) playerMovement.inputBlocked = false;
+        if (lighter != null) lighter.inputBlocked = false;
         if (lighter != null) lighter.ForceLight(true);
 
         // Libertar o menu radial

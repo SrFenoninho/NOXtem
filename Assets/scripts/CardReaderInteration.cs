@@ -13,6 +13,10 @@ public class CardReaderInteraction : MonoBehaviour, IInteractable
     [Header("UI")]
     public Text messageText;
 
+    [Header("Atualizar Objetivo (Opcional)")]
+    public bool updateObjectiveOnInteract = false;
+    [TextArea] public string nextObjectiveText = "";
+
     // ---------------------------------------------
     //  ESTADO PRIVADO
     // ---------------------------------------------
@@ -42,6 +46,12 @@ public class CardReaderInteraction : MonoBehaviour, IInteractable
             {
                 messageText.text = "Access Granted!";
                 Invoke(nameof(ClearMessage), 2f);
+            }
+
+            // - - ATUALIZAR OBJETIVO - -
+            if (updateObjectiveOnInteract && !string.IsNullOrEmpty(nextObjectiveText))
+            {
+                ObjectiveManager.Instance?.ShowObjective(nextObjectiveText);
             }
         }
         else

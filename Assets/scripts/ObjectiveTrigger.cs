@@ -1,40 +1,37 @@
 using UnityEngine;
-using UnityEngine.UI;
 
 public class ObjectiveTrigger : MonoBehaviour
 {
     // ---------------------------------------------
     //  INSPETOR
     // ---------------------------------------------
-    public Text objectiveText;
-    public string newObjectiveText = "Objective:\n"; // texto a mostrar ao ativar
-    public bool needsInteraction = false;            // se verdadeiro, espera que o jogador prime E
+    [TextArea]
+    public string objectiveText = "Objetivo: ";
+    public bool needsInteraction = false;
 
     // ---------------------------------------------
     //  ESTADO PRIVADO
     // ---------------------------------------------
     private bool playerInside = false;
+    private bool triggered = false;
 
     // ---------------------------------------------
     //  UNITY
     // ---------------------------------------------
     void Update()
     {
-        // Aguardar interação manual se needsInteraction estiver ativo
-        if (playerInside && needsInteraction && Input.GetKeyDown(KeyCode.E))
-            ChangeText();
+        if (playerInside && !triggered && needsInteraction && Input.GetKeyDown(KeyCode.E))
+            Trigger();
     }
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player"))
-        {
-            playerInside = true;
+        if (triggered) return;
+        if (!other.CompareTag("Player")) return;
 
-            // Ativar automaticamente se não precisar de interação
-            if (!needsInteraction)
-                ChangeText();
-        }
+        playerInside = true;
+        if (!needsInteraction)
+            Trigger();
     }
 
     void OnTriggerExit(Collider other)
@@ -44,19 +41,16 @@ public class ObjectiveTrigger : MonoBehaviour
     }
 
     // ---------------------------------------------
-    //  ATUALIZAÇÃO DO OBJETIVO
+    //  DISPARAR
     // ---------------------------------------------
-    void ChangeText()
+    void Trigger()
     {
-        if (objectiveText != null)
-        {
-            objectiveText.text = newObjectiveText;
+        triggered = true;
+        ObjectiveManager.Instance?.ShowObjective(objectiveText);
 
-            // Desativar o trigger e o mesh após uso — só deve disparar uma vez
-            GetComponent<Collider>().enabled = false;
-            MeshRenderer mesh = GetComponent<MeshRenderer>();
-            if (mesh != null)
-                mesh.enabled = false;
-        }
+        // Desativar collider apos uso
+        GetComponent<Collider>().enabled = false;
+        MeshRenderer mesh = GetComponent<MeshRenderer>();
+        if (mesh != null) mesh.enabled = false;
     }
 }

@@ -22,6 +22,10 @@ public class Lever : MonoBehaviour, IInteractable
     [Header("UI")]
     public Text messageText;
 
+    [Header("Atualizar Objetivo (Opcional)")]
+    public bool updateObjectiveOnInteract = false;
+    [TextArea] public string nextObjectiveText = "";
+
     // ---------------------------------------------
     //  ESTADO PRIVADO
     // ---------------------------------------------
@@ -41,7 +45,7 @@ public class Lever : MonoBehaviour, IInteractable
         if (leverArm != null)
         {
             defaultRotation = leverArm.localRotation;
-            targetRotation  = defaultRotation;
+            targetRotation = defaultRotation;
         }
     }
 
@@ -88,6 +92,12 @@ public class Lever : MonoBehaviour, IInteractable
         // Notificar o sistema central
         if (LeverSystem.Instance != null)
             LeverSystem.Instance.OnLeverActivated();
+
+        // - - ATUALIZAR OBJETIVO - -
+        if (updateObjectiveOnInteract && !string.IsNullOrEmpty(nextObjectiveText))
+        {
+            ObjectiveManager.Instance?.ShowObjective(nextObjectiveText);
+        }
 
         Debug.Log($"Alavanca {leverID} ativada!");
     }

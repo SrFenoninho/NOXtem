@@ -24,6 +24,10 @@ public class InteractiveDoor : MonoBehaviour, IInteractable
     public AudioClip doorOpenSound;
     private AudioSource audioSource;
 
+    [Header("Atualizar Objetivo (Opcional)")]
+    public bool updateObjectiveOnInteract = false;
+    [TextArea] public string nextObjectiveText = "";
+
     // ---------------------------------------------
     //  UNITY
     // ---------------------------------------------
@@ -115,6 +119,12 @@ public class InteractiveDoor : MonoBehaviour, IInteractable
         {
             messageText.text = "Door opened";
             Invoke(nameof(ClearMessage), 2f);
+        }
+
+        // - - ATUALIZAR OBJETIVO - -
+        if (updateObjectiveOnInteract && !string.IsNullOrEmpty(nextObjectiveText))
+        {
+            ObjectiveManager.Instance?.ShowObjective(nextObjectiveText);
         }
 
         Debug.Log("Jogador teletransportado para: " + destination.name);

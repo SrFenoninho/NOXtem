@@ -14,6 +14,10 @@ public class Keys : MonoBehaviour, IInteractable
     [Header("UI")]
     public Text messageText;
 
+    [Header("Atualizar Objetivo (Opcional)")]
+    public bool updateObjectiveOnInteract = false;
+    [TextArea] public string nextObjectiveText = "";
+
     // ---------------------------------------------
     //  ESTADO PRIVADO
     // ---------------------------------------------
@@ -48,6 +52,12 @@ public class Keys : MonoBehaviour, IInteractable
         {
             messageText.text = $"Apanhaste a chave: {name}.";
             Invoke(nameof(ClearMessage), 2f);
+        }
+
+        // - - ATUALIZAR OBJETIVO - -
+        if (updateObjectiveOnInteract && !string.IsNullOrEmpty(nextObjectiveText))
+        {
+            ObjectiveManager.Instance?.ShowObjective(nextObjectiveText);
         }
 
         // Desativar e destruir o objeto

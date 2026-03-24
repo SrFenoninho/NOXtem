@@ -13,6 +13,10 @@ public class FlowFreeTerminal : MonoBehaviour, IInteractable
     [Header("Settings")]
     public string sceneToLoadOnComplete = "NextLevel";
 
+    [Header("Atualizar Objetivo (Opcional)")]
+    public bool updateObjectiveOnInteract = false;
+    [TextArea] public string nextObjectiveText = "";
+
     // ---------------------------------------------
     //  ESTADO PRIVADO
     // ---------------------------------------------
@@ -85,6 +89,12 @@ public class FlowFreeTerminal : MonoBehaviour, IInteractable
 
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
+
+        // - - ATUALIZAR OBJETIVO - -
+        if (updateObjectiveOnInteract && !string.IsNullOrEmpty(nextObjectiveText))
+        {
+            ObjectiveManager.Instance?.ShowObjective(nextObjectiveText);
+        }
 
         UnityEngine.SceneManagement.SceneManager.LoadScene(sceneToLoadOnComplete);
     }

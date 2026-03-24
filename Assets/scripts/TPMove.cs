@@ -45,6 +45,8 @@ public class TPMove : MonoBehaviour
     private PlayerCombat playerCombat;
     public bool IsGrounded => isGrounded; // exposto para PlayerCombat verificar se pode defender
 
+    [HideInInspector] public bool inputBlocked = false;
+
     // ---------------------------------------------
     //  UNITY
     // ---------------------------------------------
@@ -63,6 +65,7 @@ public class TPMove : MonoBehaviour
 
     void Update()
     {
+        if (inputBlocked) return;
         // Bloquear movimento enquanto defende ou carrega ataque pesado
         if (playerCombat != null && (playerCombat.IsDefending || playerCombat.IsHeavyCharging)) return;
 
@@ -97,6 +100,7 @@ public class TPMove : MonoBehaviour
     // ---------------------------------------------
     void FixedUpdate()
     {
+        if (inputBlocked) return;
         if (playerCombat != null && (playerCombat.IsDefending || playerCombat.IsHeavyCharging)) return;
 
         float h = Input.GetAxisRaw("Horizontal");

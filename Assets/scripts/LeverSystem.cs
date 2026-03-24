@@ -25,6 +25,10 @@ public class LeverSystem : MonoBehaviour
     [Header("UI")]
     public UnityEngine.UI.Text messageText;
 
+    [Header("Atualizar Objetivo (Ao Completar Todas)")]
+    public bool updateObjectiveOnRestore = false;
+    [TextArea] public string nextObjectiveText = "Energia restaurada, segue em frente.";
+
     // ---------------------------------------------
     //  ESTADO PRIVADO
     // ---------------------------------------------
@@ -105,6 +109,12 @@ public class LeverSystem : MonoBehaviour
         {
             messageText.text = "Power restored!";
             Invoke(nameof(ClearMessage), 4f);
+        }
+
+        // - - ATUALIZAR OBJETIVO AQUI - -
+        if (updateObjectiveOnRestore && !string.IsNullOrEmpty(nextObjectiveText))
+        {
+            ObjectiveManager.Instance?.ShowObjective(nextObjectiveText);
         }
 
         Debug.Log("Energia restaurada! Todas as alavancas ativas.");

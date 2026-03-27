@@ -2125,6 +2125,7 @@ MonoBehaviour:
   destination: {fileID: 2086739011}
   cameraHorizontalAngle: 90
   messageText: {fileID: 0}
+  doorLockedSound: {fileID: 0}
   doorOpenSound: {fileID: 0}
   updateObjectiveOnInteract: 0
   nextObjectiveText: 
@@ -3499,7 +3500,7 @@ MonoBehaviour:
   fullText: {fileID: 343351923}
   notificationDuration: 5
   fadeDuration: 0.8
-  objectiveSound: {fileID: 0}
+  objectiveSound: {fileID: 8300000, guid: 0e22064ec51398348aff4061b388f0e4, type: 3}
 --- !u!4 &255672927
 Transform:
   m_ObjectHideFlags: 0
@@ -5975,6 +5976,7 @@ MonoBehaviour:
   messageText: {fileID: 412906028}
   updateObjectiveOnInteract: 0
   nextObjectiveText: 
+  pickupSound: {fileID: 8300000, guid: 38e3aca495b42324382f774e68d558e3, type: 3}
 --- !u!114 &366641455
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14672,6 +14674,7 @@ MonoBehaviour:
   messageText: {fileID: 290604112}
   updateObjectiveOnInteract: 0
   nextObjectiveText: 
+  pickupSound: {fileID: 0}
 --- !u!114 &684670711
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20510,6 +20513,7 @@ MonoBehaviour:
   messageText: {fileID: 412906028}
   updateObjectiveOnInteract: 0
   nextObjectiveText: 
+  pickupSound: {fileID: 8300000, guid: 38e3aca495b42324382f774e68d558e3, type: 3}
 --- !u!114 &1097144839
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20809,6 +20813,8 @@ MonoBehaviour:
   messageText: {fileID: 290604112}
   requiredKeyID: Freezer
   isLocked: 1
+  lockedSound: {fileID: 0}
+  unlockedSound: {fileID: 0}
 --- !u!135 &1111918796
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -23439,6 +23445,7 @@ MonoBehaviour:
   messageText: {fileID: 412906028}
   updateObjectiveOnInteract: 0
   nextObjectiveText: 
+  pickupSound: {fileID: 8300000, guid: 38e3aca495b42324382f774e68d558e3, type: 3}
 --- !u!114 &1256314831
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -23829,6 +23836,7 @@ MonoBehaviour:
   messageText: {fileID: 412906028}
   updateObjectiveOnInteract: 0
   nextObjectiveText: 
+  pickupSound: {fileID: 8300000, guid: 38e3aca495b42324382f774e68d558e3, type: 3}
 --- !u!114 &1283452180
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -25694,6 +25702,8 @@ MonoBehaviour:
   messageText: {fileID: 290604112}
   requiredKeyID: Pantry
   isLocked: 1
+  lockedSound: {fileID: 0}
+  unlockedSound: {fileID: 0}
 --- !u!135 &1401371626
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -28077,6 +28087,8 @@ MonoBehaviour:
   messageText: {fileID: 290604112}
   requiredKeyID: Security
   isLocked: 1
+  lockedSound: {fileID: 0}
+  unlockedSound: {fileID: 0}
 --- !u!135 &1603404527
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -33467,6 +33479,7 @@ MonoBehaviour:
   destination: {fileID: 1301594727}
   cameraHorizontalAngle: 270
   messageText: {fileID: 0}
+  doorLockedSound: {fileID: 0}
   doorOpenSound: {fileID: 0}
   updateObjectiveOnInteract: 0
   nextObjectiveText: 

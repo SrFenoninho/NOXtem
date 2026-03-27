@@ -7,13 +7,18 @@ public class LockedDoor : MonoBehaviour
     //  INSPETOR
     // ---------------------------------------------
     public Text messageText;
-    public string requiredKeyID = "Door"; // ID da chave necessária para destravar
+    public string requiredKeyID = "Door";
     public bool isLocked = true;
+
+    [Header("Áudio")]
+    public AudioClip lockedSound;        // Toca se o jogador não tiver a chave
+    public AudioClip unlockedSound;      // Toca ao destrancar a porta com sucesso
 
     // ---------------------------------------------
     //  ESTADO PRIVADO
     // ---------------------------------------------
     private Rigidbody rb;
+    private bool hasPlayedUnlockedSound = false;
 
     // ---------------------------------------------
     //  UNITY
@@ -21,38 +26,58 @@ public class LockedDoor : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        rb.isKinematic = true; // imóvel enquanto trancada
+        if (rb != null) rb.isKinematic = isLocked;
     }
 
     // ---------------------------------------------
     //  DESBLOQUEIO POR COLISÃO
     // ---------------------------------------------
-    // Porta cai fisicamente ao ser desbloqueada pelo jogador com a chave certa
     public void OnTriggerEnter(Collider other)
     {
-        if (!isLocked) return;
-
         if (other.CompareTag("Player"))
         {
-            PlayerKeys playerKeys = other.GetComponent<PlayerKeys>();
-            if (playerKeys != null && playerKeys.HasKey(requiredKeyID))
+            if (isLocked)
             {
-                isLocked = false;
-                rb.isKinematic = false; // ativar física — a porta cai
-                messageText.text = "A door is unlocked";
+                PlayerKeys playerKeys = other.GetComponent<PlayerKeys>();
+                if (playerKeys != null && playerKeys.HasKey(requiredKeyID))
+                {
+                    isLocked = false;
+                    if (rb != null) rb.isKinematic = false;
+
+                    if (messageText != null) messageText.text = "A door is unlocked";
+
+                    if (!hasPlayedUnlockedSound && unlockedSound != null)
+                    {
+                        AudioSource.PlayClipAtPoint(unlockedSound, transform.position);
+                        hasPlayedUnlockedSound = true;
+                    }
+                }
+                else
+                {
+                    if (messageText != null) messageText.text = $"You need a {requiredKeyID} key";
+
+                    if (lockedSound != null)
+                    {
+                        AudioSource.PlayClipAtPoint(lockedSound, transform.position);
+                    }
+                }
             }
             else
             {
-                messageText.text = $"You need a {requiredKeyID} key";
+                if (!hasPlayedUnlockedSound && unlockedSound != null)
+                {
+                    AudioSource.PlayClipAtPoint(unlockedSound, transform.position);
+                    hasPlayedUnlockedSound = true;
+                }
             }
-        }
 
-        CancelInvoke(nameof(ClearMessage));
-        Invoke(nameof(ClearMessage), 2f);
+            CancelInvoke(nameof(ClearMessage));
+            Invoke(nameof(ClearMessage), 2f);
+        }
     }
 
     void ClearMessage()
     {
-        messageText.text = "";
+        if (messageText != null) messageText.text = "";
     }
 }

@@ -7,21 +7,22 @@ public class InteractiveDoor : MonoBehaviour, IInteractable
     //  INSPETOR
     // ---------------------------------------------
     [Header("Door Settings")]
-    public string requiredKeyName = "MainDoor"; // ID da chave necessária para abrir
+    public string requiredKeyName = "MainDoor";
     public bool isLocked = true;
 
     [Header("Teleport")]
-    public Transform destination;               // destino após atravessar a porta
+    public Transform destination;
 
     [Header("Camera Angle After Teleport")]
     [Range(0f, 360f)]
-    public float cameraHorizontalAngle = 0f;    // ângulo da câmera após teletransporte
+    public float cameraHorizontalAngle = 0f;
 
     [Header("UI")]
     public Text messageText;
 
-    [Header("Audio")]
-    public AudioClip doorOpenSound;
+    [Header("Áudio")]
+    public AudioClip doorLockedSound; // Som quando a porta está trancada e tentamos abrir
+    public AudioClip doorOpenSound;   // Som da porta a destrancar/abrir
     private AudioSource audioSource;
 
     [Header("Atualizar Objetivo (Opcional)")]
@@ -34,8 +35,7 @@ public class InteractiveDoor : MonoBehaviour, IInteractable
     void Start()
     {
         audioSource = GetComponent<AudioSource>();
-        // Adicionar AudioSource automaticamente se não existir
-        if (audioSource == null && doorOpenSound != null)
+        if (audioSource == null && (doorOpenSound != null || doorLockedSound != null))
             audioSource = gameObject.AddComponent<AudioSource>();
     }
 
@@ -66,7 +66,9 @@ public class InteractiveDoor : MonoBehaviour, IInteractable
                     messageText.text = $"You need a {requiredKeyName} key.";
                     Invoke(nameof(ClearMessage), 2f);
                 }
-                Debug.Log("Porta trancada! É necessária a chave: " + requiredKeyName);
+
+                if (doorLockedSound != null && audioSource != null)
+                    audioSource.PlayOneShot(doorLockedSound);
             }
         }
         else
@@ -80,18 +82,13 @@ public class InteractiveDoor : MonoBehaviour, IInteractable
     // ---------------------------------------------
     void OpenDoor(GameObject player)
     {
-        if (destination == null)
-        {
-            Debug.LogError("Nenhum destino definido para a porta!");
-            return;
-        }
+        if (destination == null) return;
 
         if (doorOpenSound != null && audioSource != null)
             audioSource.PlayOneShot(doorOpenSound);
 
         CharacterController controller = player.GetComponent<CharacterController>();
 
-        // Desativar CharacterController antes de teletransportar para evitar conflitos de física
         if (controller != null)
         {
             controller.enabled = false;
@@ -105,7 +102,6 @@ public class InteractiveDoor : MonoBehaviour, IInteractable
             player.transform.rotation = Quaternion.Euler(0f, cameraHorizontalAngle, 0f);
         }
 
-        // Repor a rotação vertical da câmera via reflexão (campo privado do FPMove)
         FPMove fpMove = player.GetComponent<FPMove>();
         if (fpMove != null)
         {
@@ -121,13 +117,10 @@ public class InteractiveDoor : MonoBehaviour, IInteractable
             Invoke(nameof(ClearMessage), 2f);
         }
 
-        // - - ATUALIZAR OBJETIVO - -
         if (updateObjectiveOnInteract && !string.IsNullOrEmpty(nextObjectiveText))
         {
             ObjectiveManager.Instance?.ShowObjective(nextObjectiveText);
         }
-
-        Debug.Log("Jogador teletransportado para: " + destination.name);
     }
 
     void ClearMessage()

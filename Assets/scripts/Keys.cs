@@ -7,9 +7,9 @@ public class Keys : MonoBehaviour, IInteractable
     //  INSPETOR
     // ---------------------------------------------
     [Header("Key Settings")]
-    public string keyName = "Door";         // ID unico desta chave (usado nas portas)
-    public string displayName = "";         // nome visivel no inventario (se vazio usa keyName)
-    public string keyDescription = "";      // descricao opcional
+    public string keyName = "Door";
+    public string displayName = "";
+    public string keyDescription = "";
 
     [Header("UI")]
     public Text messageText;
@@ -17,6 +17,9 @@ public class Keys : MonoBehaviour, IInteractable
     [Header("Atualizar Objetivo (Opcional)")]
     public bool updateObjectiveOnInteract = false;
     [TextArea] public string nextObjectiveText = "";
+
+    [Header("Áudio")]
+    public AudioClip pickupSound;      // O som a tocar ao apanhar
 
     // ---------------------------------------------
     //  ESTADO PRIVADO
@@ -34,6 +37,13 @@ public class Keys : MonoBehaviour, IInteractable
     public void Interact(GameObject player)
     {
         if (alreadyPickedUp) return;
+
+        // - - Tocar o Som (Adicionado) - -
+        if (pickupSound != null)
+        {
+            // Toca o som na posição atual do objeto, evitando que o som corte quando o objeto for destruído
+            AudioSource.PlayClipAtPoint(pickupSound, transform.position);
+        }
 
         // - - Adicionar ao inventario global - -
         string name = string.IsNullOrEmpty(displayName) ? keyName : displayName;

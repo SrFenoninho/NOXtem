@@ -20,7 +20,7 @@ public class Hitbox : MonoBehaviour
     void Awake()
     {
         myCollider = GetComponent<Collider>();
-        myCollider.enabled = false;     // começa desativado — só ativo durante janela de ataque
+        myCollider.enabled = false;     // comeca desativado - so ativo durante janela de ataque
         myCollider.isTrigger = true;
         comboSystem = FindFirstObjectByType<PlayerComboSYS>();
     }
@@ -44,13 +44,13 @@ public class Hitbox : MonoBehaviour
     }
 
     // ---------------------------------------------
-    //  DETEÇÃO DE COLISÃO
+    //  DETEcaO DE COLISaO
     // ---------------------------------------------
     void OnTriggerEnter(Collider other)
     {
         if (!other.CompareTag(targetTag)) return;
 
-        // Ignorar inimigos já atingidos neste ataque
+        // Ignorar inimigos ja atingidos neste ataque
         if (enemiesHit.Contains(other.gameObject)) return;
 
         EnemyAI enemy = other.GetComponent<EnemyAI>();

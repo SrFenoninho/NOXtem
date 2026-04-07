@@ -134,7 +134,7 @@ public class RadialMenuManager : MonoBehaviour
     }
 
     // ---------------------------------------------
-    //  SELEÇÃO DE OPÇÕES
+    //  SELEcaO DE OPcoES
     // ---------------------------------------------
     void SelectOption(int optionNumber)
     {
@@ -155,7 +155,7 @@ public class RadialMenuManager : MonoBehaviour
     }
 
     // ---------------------------------------------
-    //  EXECUÇÃO DE OPÇÕES
+    //  EXECUcaO DE OPcoES
     // ---------------------------------------------
     void ExecuteOption(int optionNumber)
     {
@@ -201,7 +201,7 @@ public class RadialMenuManager : MonoBehaviour
     }
 
     // ---------------------------------------------
-    //  CLIQUES DOS BOTÕES
+    //  CLIQUES DOS BOToES
     // ---------------------------------------------
     public void ClickOption1() { SelectOption(1); }
     public void ClickOption2() { SelectOption(2); }

@@ -13,9 +13,9 @@ public class MonsterChaseAI : MonoBehaviour
     // ---------------------------------------------
     //  ESTADO PRIVADO
     // ---------------------------------------------
-    private bool chasing = false;           // só se move depois de ser ativado
+    private bool chasing = false;           // so se move depois de ser ativado
     private float nextAttack = 0f;
-    private bool playerInZone = false;      // verdadeiro quando o jogador está dentro do trigger de ataque
+    private bool playerInZone = false;      // verdadeiro quando o jogador esta dentro do trigger de ataque
     private PlayerHealth playerHealth;
 
     // ---------------------------------------------
@@ -25,7 +25,7 @@ public class MonsterChaseAI : MonoBehaviour
     {
         if (!chasing) return;
 
-        // Mover em direção ao jogador
+        // Mover em direcao ao jogador
         Vector3 direction = (player.position - transform.position).normalized;
         transform.position += direction * speed * Time.deltaTime;
         transform.LookAt(transform.position - (player.position - transform.position));
@@ -39,7 +39,7 @@ public class MonsterChaseAI : MonoBehaviour
     }
 
     // ---------------------------------------------
-    //  ATIVAÇÃO
+    //  ATIVAcaO
     // ---------------------------------------------
     // Chamado pelo StartChaseTrigger quando o jogador entra na zona
     public void StartChasing()
@@ -62,7 +62,7 @@ public class MonsterChaseAI : MonoBehaviour
 
     void OnTriggerStay(Collider other)
     {
-        // Fallback caso o jogador entre antes da referência estar pronta
+        // Fallback caso o jogador entre antes da referencia estar pronta
         if (other.CompareTag("Player") && playerHealth == null)
         {
             playerHealth = other.GetComponent<PlayerHealth>();

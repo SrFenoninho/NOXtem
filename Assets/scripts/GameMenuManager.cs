@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Collections.Generic;
@@ -6,7 +6,7 @@ using System.Collections.Generic;
 public class GameMenuManager : MonoBehaviour
 {
     // ---------------------------------------------
-    //  INSPETOR � REFERENCIAS
+    //  INSPETOR - REFERENCIAS
     // ---------------------------------------------
     [Header("Referencias")]
     public FPMove fPMove;
@@ -25,7 +25,7 @@ public class GameMenuManager : MonoBehaviour
     [Range(0f, 1f)] public float defaultVolume = 1f;
 
     // ---------------------------------------------
-    //  INSPETOR � CORES
+    //  INSPETOR  CORES
     // ---------------------------------------------
     [Header("Cores - Fundo")]
     public Color corFundoEscuro = new Color(0f, 0f, 0f, 0.88f);

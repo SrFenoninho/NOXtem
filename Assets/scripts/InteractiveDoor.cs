@@ -20,8 +20,8 @@ public class InteractiveDoor : MonoBehaviour, IInteractable
     [Header("UI")]
     public Text messageText;
 
-    [Header("Áudio")]
-    public AudioClip doorLockedSound; // Som quando a porta está trancada e tentamos abrir
+    [Header("audio")]
+    public AudioClip doorLockedSound; // Som quando a porta esta trancada e tentamos abrir
     public AudioClip doorOpenSound;   // Som da porta a destrancar/abrir
     private AudioSource audioSource;
 

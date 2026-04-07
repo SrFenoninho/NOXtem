@@ -7,12 +7,12 @@ public class Lever : MonoBehaviour, IInteractable
     //  INSPETOR
     // ---------------------------------------------
     [Header("Lever Settings")]
-    public string leverID = "Lever_A";  // identificador único desta alavanca
+    public string leverID = "Lever_A";  // identificador unico desta alavanca
 
-    [Header("Animação")]
-    [Tooltip("Transform da parte visual que roda ao ativar (ex: o braço da alavanca)")]
+    [Header("Animacao")]
+    [Tooltip("Transform da parte visual que roda ao ativar (ex: o braco da alavanca)")]
     public Transform leverArm;
-    public Vector3 activatedRotation = new Vector3(-60f, 0f, 0f); // rotação quando ativa
+    public Vector3 activatedRotation = new Vector3(-60f, 0f, 0f); // rotacao quando ativa
     public float animationSpeed = 5f;
 
     [Header("Audio")]
@@ -51,7 +51,7 @@ public class Lever : MonoBehaviour, IInteractable
 
     void Update()
     {
-        // Animar suavemente o braço da alavanca para a rotação alvo
+        // Animar suavemente o braco da alavanca para a rotacao alvo
         if (leverArm != null)
             leverArm.localRotation = Quaternion.Lerp(
                 leverArm.localRotation, targetRotation, Time.deltaTime * animationSpeed);
@@ -75,13 +75,13 @@ public class Lever : MonoBehaviour, IInteractable
     }
 
     // ---------------------------------------------
-    //  ATIVAÇÃO
+    //  ATIVAcaO
     // ---------------------------------------------
     void Activate()
     {
         isActivated = true;
 
-        // Animar o braço da alavanca
+        // Animar o braco da alavanca
         if (leverArm != null)
             targetRotation = Quaternion.Euler(activatedRotation);
 
@@ -92,8 +92,6 @@ public class Lever : MonoBehaviour, IInteractable
         // Notificar o sistema central
         if (LeverSystem.Instance != null)
             LeverSystem.Instance.OnLeverActivated();
-
-        // - - ATUALIZAR OBJETIVO - -
         if (updateObjectiveOnInteract && !string.IsNullOrEmpty(nextObjectiveText))
         {
             ObjectiveManager.Instance?.ShowObjective(nextObjectiveText);

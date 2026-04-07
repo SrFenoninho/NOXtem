@@ -8,8 +8,8 @@ public class FlowFreeCell : MonoBehaviour
     // ---------------------------------------------
     public int x;
     public int y;
-    public Image bgImage;       // fundo branco da célula
-    public Image shapeImage;    // círculo (endpoint) ou quadrado (caminho)
+    public Image bgImage;       // fundo branco da celula
+    public Image shapeImage;    // circulo (endpoint) ou quadrado (caminho)
 
     // ---------------------------------------------
     //  ESTADO PRIVADO
@@ -17,7 +17,7 @@ public class FlowFreeCell : MonoBehaviour
     private FlowFreeGame game;
 
     // ---------------------------------------------
-    //  INICIALIZAÇÃO
+    //  INICIALIZAcaO
     // ---------------------------------------------
     // Chamado pelo FlowFreeUI ao criar a grelha
     public void Initialize(int gridX, int gridY, FlowFreeGame gameManager)
@@ -36,7 +36,7 @@ public class FlowFreeCell : MonoBehaviour
     // ---------------------------------------------
     //  VISUAL
     // ---------------------------------------------
-    // Atualiza o aspeto da célula com base no estado atual da grelha
+    // Atualiza o aspeto da celula com base no estado atual da grelha
     public void UpdateVisual()
     {
         if (game == null) return;
@@ -48,7 +48,7 @@ public class FlowFreeCell : MonoBehaviour
 
         if (cellColor == Color.clear)
         {
-            // Célula vazia — esconder forma
+            // Celula vazia - esconder forma
             if (shapeImage != null)
                 shapeImage.gameObject.SetActive(false);
             return;
@@ -63,13 +63,13 @@ public class FlowFreeCell : MonoBehaviour
 
             if (endpoint)
             {
-                // Endpoints são círculos maiores
+                // Endpoints sao circulos maiores
                 shapeImage.sprite = GetCircleSprite();
                 rt.sizeDelta = new Vector2(60f, 60f);
             }
             else
             {
-                // Caminho é um quadrado mais pequeno
+                // Caminho e um quadrado mais pequeno
                 shapeImage.sprite = null;
                 rt.sizeDelta = new Vector2(40f, 40f);
             }
@@ -77,9 +77,9 @@ public class FlowFreeCell : MonoBehaviour
     }
 
     // ---------------------------------------------
-    //  GERAÇÃO DE SPRITE CIRCULAR
+    //  GERAcaO DE SPRITE CIRCULAR
     // ---------------------------------------------
-    // Gera um sprite circular em runtime — sem assets externos necessários
+    // Gera um sprite circular em runtime - sem assets externos necessarios
     Sprite GetCircleSprite()
     {
         int size = 64;

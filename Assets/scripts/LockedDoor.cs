@@ -10,8 +10,8 @@ public class LockedDoor : MonoBehaviour
     public string requiredKeyID = "Door";
     public bool isLocked = true;
 
-    [Header("Áudio")]
-    public AudioClip lockedSound;        // Toca se o jogador não tiver a chave
+    [Header("audio")]
+    public AudioClip lockedSound;        // Toca se o jogador nao tiver a chave
     public AudioClip unlockedSound;      // Toca ao destrancar a porta com sucesso
 
     // ---------------------------------------------
@@ -30,7 +30,7 @@ public class LockedDoor : MonoBehaviour
     }
 
     // ---------------------------------------------
-    //  DESBLOQUEIO POR COLISÃO
+    //  DESBLOQUEIO POR COLISaO
     // ---------------------------------------------
     public void OnTriggerEnter(Collider other)
     {

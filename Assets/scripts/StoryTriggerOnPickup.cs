@@ -7,7 +7,7 @@ public class StoryTriggerOnPickup : MonoBehaviour
     //  INSPETOR
     // ---------------------------------------------
     [Header("Monitoring object")]
-    public GameObject watchObject; // o objeto da chave — quando for destruido dispara
+    public GameObject watchObject; // o objeto da chave - quando for destruido dispara
 
     [Header("Look At")]
     public Transform lookTarget;

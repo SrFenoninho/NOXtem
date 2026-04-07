@@ -7,8 +7,8 @@ public class FlowFreeUI : MonoBehaviour
     //  INSPETOR
     // ---------------------------------------------
     [Header("Grid Settings")]
-    public GameObject cellPrefab;       // prefab de cada célula da grelha
-    public Transform gridContainer;     // contentor pai das células na UI
+    public GameObject cellPrefab;       // prefab de cada celula da grelha
+    public Transform gridContainer;     // contentor pai das celulas na UI
     public float cellSize = 80f;
     public float cellSpacing = 10f;
 
@@ -27,7 +27,7 @@ public class FlowFreeUI : MonoBehaviour
     }
 
     // ---------------------------------------------
-    //  CONSTRUÇÃO DA GRELHA
+    //  CONSTRUcaO DA GRELHA
     // ---------------------------------------------
     // Chamado pelo FlowFreeGame ao iniciar um novo puzzle
     public void DrawGrid(PuzzleData puzzle)
@@ -41,7 +41,7 @@ public class FlowFreeUI : MonoBehaviour
         {
             for (int x = 0; x < 5; x++)
             {
-                // Criar e posicionar cada célula
+                // Criar e posicionar cada celula
                 GameObject cellObj = Instantiate(cellPrefab, gridContainer);
                 RectTransform rect = cellObj.GetComponent<RectTransform>();
 
@@ -53,7 +53,7 @@ public class FlowFreeUI : MonoBehaviour
                 Image bg = cellObj.GetComponent<Image>();
                 if (bg != null) bg.color = Color.white;
 
-                // Criar filho para a forma (círculo ou quadrado)
+                // Criar filho para a forma (circulo ou quadrado)
                 GameObject shapeObj = new GameObject("Shape", typeof(RectTransform), typeof(Image));
                 shapeObj.transform.SetParent(cellObj.transform, false);
                 RectTransform shapeRect = shapeObj.GetComponent<RectTransform>();
@@ -66,14 +66,14 @@ public class FlowFreeUI : MonoBehaviour
 
                 cell.bgImage = bg;
                 cell.shapeImage = shapeObj.GetComponent<Image>();
-                cell.shapeImage.raycastTarget = false; // só a célula pai recebe raycasts
+                cell.shapeImage.raycastTarget = false; // so a celula pai recebe raycasts
 
                 cell.Initialize(x, y, game);
                 cells[x, y] = cell;
             }
         }
 
-        // Forçar atualização visual dos endpoints do puzzle
+        // Forcar atualizacao visual dos endpoints do puzzle
         foreach (ColorPair pair in puzzle.pairs)
         {
             cells[pair.start.x, pair.start.y].UpdateVisual();

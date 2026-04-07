@@ -19,7 +19,7 @@ public class LeverSystem : MonoBehaviour
     public Light[] roomLights;
 
     [Header("Audio")]
-    public AudioClip powerOnSound;  // som quando a eletricidade é restaurada
+    public AudioClip powerOnSound;  // som quando a eletricidade e restaurada
     private AudioSource audioSource;
 
     [Header("UI")]
@@ -40,7 +40,7 @@ public class LeverSystem : MonoBehaviour
     // ---------------------------------------------
     void Awake()
     {
-        // Singleton simples — só deve existir um LeverSystem por cena
+        // Singleton simples - so deve existir um LeverSystem por cena
         if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
@@ -55,14 +55,14 @@ public class LeverSystem : MonoBehaviour
         if (audioSource == null)
             audioSource = gameObject.AddComponent<AudioSource>();
 
-        // Garantir que as luzes da sala começam desligadas
+        // Garantir que as luzes da sala comecam desligadas
         SetRoomLights(false);
     }
 
     // ---------------------------------------------
     //  CHAMADO PELAS ALAVANCAS
     // ---------------------------------------------
-    // Cada Lever.cs chama este método ao ser ativado
+    // Cada Lever.cs chama este metodo ao ser ativado
     public void OnLeverActivated()
     {
         if (powerRestored) return;
@@ -82,7 +82,7 @@ public class LeverSystem : MonoBehaviour
 
         Debug.Log($"Alavanca ativada! {leversActivated}/{levers.Length}");
 
-        // Verificar se todas estão ativas
+        // Verificar se todas estao ativas
         if (leversActivated >= levers.Length)
             RestorePower();
     }
@@ -101,7 +101,7 @@ public class LeverSystem : MonoBehaviour
         // Acender luzes da sala
         SetRoomLights(true);
 
-        // Avisar o DarknessManager para remover a escuridão
+        // Avisar o DarknessManager para remover a escuridao
         if (DarknessManager.Instance != null)
             DarknessManager.Instance.OnPowerRestored();
 
@@ -110,8 +110,6 @@ public class LeverSystem : MonoBehaviour
             messageText.text = "Power restored!";
             Invoke(nameof(ClearMessage), 4f);
         }
-
-        // - - ATUALIZAR OBJETIVO AQUI - -
         if (updateObjectiveOnRestore && !string.IsNullOrEmpty(nextObjectiveText))
         {
             ObjectiveManager.Instance?.ShowObjective(nextObjectiveText);

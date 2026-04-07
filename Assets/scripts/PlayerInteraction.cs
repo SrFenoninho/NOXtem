@@ -32,9 +32,9 @@ public class PlayerInteraction : MonoBehaviour
     }
 
     // ---------------------------------------------
-    //  DETEÇÃO DE INTERAGÍVEIS
+    //  DETEcaO DE INTERAGiVEIS
     // ---------------------------------------------
-    // Raycast do centro do ecrã para detetar objetos interagíveis
+    // Raycast do centro do ecra para detetar objetos interagiveis
     void CheckForInteractable()
     {
         Ray ray = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
@@ -48,7 +48,7 @@ public class PlayerInteraction : MonoBehaviour
             {
                 if (currentInteractable != interactable)
                 {
-                    // Novo interagível encontrado — atualizar UI
+                    // Atualizar UI
                     currentInteractable = interactable;
                     crosshairUI.SetInteract();
 
@@ -59,7 +59,7 @@ public class PlayerInteraction : MonoBehaviour
             }
         }
 
-        // Sem interagível à frente — repor UI normal
+        // Sem interagivel a frente - repor UI normal
         if (currentInteractable != null)
         {
             currentInteractable = null;

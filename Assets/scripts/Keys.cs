@@ -18,7 +18,7 @@ public class Keys : MonoBehaviour, IInteractable
     public bool updateObjectiveOnInteract = false;
     [TextArea] public string nextObjectiveText = "";
 
-    [Header("Áudio")]
+    [Header("Audio")]
     public AudioClip pickupSound;      // O som a tocar ao apanhar
 
     // ---------------------------------------------
@@ -38,20 +38,17 @@ public class Keys : MonoBehaviour, IInteractable
     {
         if (alreadyPickedUp) return;
 
-        // - - Tocar o Som (Adicionado) - -
         if (pickupSound != null)
         {
-            // Toca o som na posição atual do objeto, evitando que o som corte quando o objeto for destruído
+            // Toca o som na posicao atual do objeto, evitando que o som corte quando o objeto for destruido
             AudioSource.PlayClipAtPoint(pickupSound, transform.position);
         }
 
-        // - - Adicionar ao inventario global - -
         string name = string.IsNullOrEmpty(displayName) ? keyName : displayName;
         InventoryItem item = new InventoryItem(keyName, name, "key", keyDescription);
         InventoryManager.Instance?.AddItem(item);
         Debug.Log("InventoryManager instance: " + (InventoryManager.Instance == null ? "NULL" : "OK"));
 
-        // - - Compatibilidade com PlayerKeys (usado nas portas) - -
         PlayerKeys playerKeys = player.GetComponent<PlayerKeys>();
         if (playerKeys != null)
             playerKeys.AddKey(keyName);
@@ -64,7 +61,6 @@ public class Keys : MonoBehaviour, IInteractable
             Invoke(nameof(ClearMessage), 2f);
         }
 
-        // - - ATUALIZAR OBJETIVO - -
         if (updateObjectiveOnInteract && !string.IsNullOrEmpty(nextObjectiveText))
         {
             ObjectiveManager.Instance?.ShowObjective(nextObjectiveText);

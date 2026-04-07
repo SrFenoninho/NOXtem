@@ -17,13 +17,13 @@ public class OrbitCam : MonoBehaviour
 
     [Header("Collision")]
     public LayerMask collisionMask;
-    public float collisionRadius = 0.3f;                // raio do SphereCast para evitar penetração
+    public float collisionRadius = 0.3f;                // raio do SphereCast para evitar penetracao
 
     // ---------------------------------------------
     //  ESTADO PRIVADO
     // ---------------------------------------------
-    private float yaw = 0f;     // rotação horizontal
-    private float pitch = 20f;  // rotação vertical (fixa — só roda horizontalmente)
+    private float yaw = 0f;     // rotacao horizontal
+    private float pitch = 20f;  // rotacao vertical (fixa - so roda horizontalmente)
 
     // ---------------------------------------------
     //  UNITY
@@ -37,7 +37,7 @@ public class OrbitCam : MonoBehaviour
             return;
         }
 
-        // Iniciar atrás do jogador
+        // Iniciar atras do jogador
         yaw = target.eulerAngles.y;
 
         Cursor.lockState = CursorLockMode.Locked;
@@ -57,7 +57,7 @@ public class OrbitCam : MonoBehaviour
     {
         float mouseX = Input.GetAxis("Mouse X") * sensitivity * Time.deltaTime;
         yaw += mouseX;
-        // Pitch removido — câmera só roda horizontalmente (design intencional)
+        // Pitch removido - camera so roda horizontalmente (design intencional)
     }
 
     // ---------------------------------------------
@@ -67,17 +67,17 @@ public class OrbitCam : MonoBehaviour
     {
         Vector3 targetPosition = target.position + targetOffset;
 
-        // Calcular posição desejada com base na rotação horizontal
+        // Calcular posicao desejada com base na rotacao horizontal
         Quaternion rotation = Quaternion.Euler(pitch, yaw, 0);
         Vector3 desiredPosition = targetPosition - rotation * Vector3.forward * distance;
 
-        // SphereCast para detetar colisões entre o alvo e a câmera
+        // SphereCast para detetar colisoes entre o alvo e a camera
         Vector3 direction = desiredPosition - targetPosition;
         RaycastHit hit;
 
         if (Physics.SphereCast(targetPosition, collisionRadius, direction.normalized, out hit, distance, collisionMask))
         {
-            // Aproximar a câmera ao ponto de colisão
+            // Aproximar a camera ao ponto de colisao
             transform.position = targetPosition + direction.normalized * (hit.distance - collisionRadius);
         }
         else

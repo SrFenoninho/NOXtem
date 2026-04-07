@@ -35,7 +35,7 @@ public class RotateObject : MonoBehaviour
 
     void Update()
     {
-        // Se o mesh foi desativado (ex: objeto apanhado), parar efeitos e rotação
+        // Se o mesh foi desativado (ex: objeto apanhado), parar efeitos e rotacao
         if (!effectsStopped && meshRenderer != null && !meshRenderer.enabled)
         {
             StopEffects();
@@ -60,7 +60,7 @@ public class RotateObject : MonoBehaviour
         GameObject particleObj = new GameObject("Particles");
         particleObj.transform.SetParent(transform);
 
-        // Centrar as partículas no renderer do objeto
+        // Centrar as particulas no renderer do objeto
         Renderer rend = GetComponent<Renderer>();
         if (rend != null)
             particleObj.transform.position = rend.bounds.center;
@@ -84,7 +84,7 @@ public class RotateObject : MonoBehaviour
         shape.shapeType = ParticleSystemShapeType.Sphere;
         shape.radius = 0.5f;
 
-        // Partículas diminuem ao longo do tempo
+        // Particulas diminuem ao longo do tempo
         var sizeOverLifetime = particles.sizeOverLifetime;
         sizeOverLifetime.enabled = true;
         AnimationCurve sizeCurve = new AnimationCurve();

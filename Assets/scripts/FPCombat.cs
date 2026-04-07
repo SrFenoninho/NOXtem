@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 public class FPCombat : MonoBehaviour
 {
@@ -95,7 +95,7 @@ public class FPCombat : MonoBehaviour
         // Impulso para a frente
         if (fpMove != null)
         {
-            // FPMove nao tem AddImpulse � aplicar via moveDir nao e possivel diretamente
+            // FPMove nao tem AddImpulse - aplicar via moveDir nao e possivel diretamente
             // por isso o impulso e ignorado em FP por agora
         }
 

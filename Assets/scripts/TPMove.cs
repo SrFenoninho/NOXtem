@@ -11,7 +11,7 @@ public class TPMove : MonoBehaviour
     public float gravity = -9.81f;
     public float jumpHeight = 1.2f;
     public float gravityMultiplier = 2.5f;
-    public float stickToGroundForce = 10f;  // força para manter o jogador no chão em rampas
+    public float stickToGroundForce = 10f;  // forca para manter o jogador no chao em rampas
     public float rotationSpeed = 10f;
 
     [Header("Ground Check")]
@@ -37,7 +37,7 @@ public class TPMove : MonoBehaviour
     private float currentSpeed;
     private float nextFootstep = 0f;
 
-    // Impulso de ataque — aplicado separadamente do movimento normal
+    // Impulso de ataque - aplicado separadamente do movimento normal
     private Vector3 attackImpulseDir;
     private float attackImpulseForce;
     private float attackImpulseEndTime;
@@ -80,7 +80,7 @@ public class TPMove : MonoBehaviour
                 audioSource.PlayOneShot(landSound);
         }
 
-        // Input de salto guardado aqui, aplicado no FixedUpdate para consistência física
+        // Input de salto guardado aqui, aplicado no FixedUpdate para consistencia fisica
         if (Input.GetButtonDown("Jump") && isGrounded && !isJumping)
         {
             jumpInput = true;
@@ -107,7 +107,7 @@ public class TPMove : MonoBehaviour
         float v = Input.GetAxisRaw("Vertical");
         bool isSprinting = Input.GetKey(KeyCode.LeftShift);
 
-        // Calcular direção relativa à câmera
+        // Calcular direcao relativa a camera
         Transform cam = Camera.main.transform;
         Vector3 forward = cam.forward;
         Vector3 right = cam.right;
@@ -120,7 +120,7 @@ public class TPMove : MonoBehaviour
         if (inputDir.magnitude > 1f)
             inputDir.Normalize();
 
-        // Rodar o jogador na direção do movimento
+        // Rodar o jogador na direcao do movimento
         if (inputDir.magnitude > 0.1f)
         {
             Quaternion targetRotation = Quaternion.LookRotation(inputDir);
@@ -133,7 +133,7 @@ public class TPMove : MonoBehaviour
         if (isGrounded)
         {
             currentSpeed = isSprinting ? sprintSpeed : speed;
-            moveDir.y = -stickToGroundForce; // manter colado ao chão em rampas
+            moveDir.y = -stickToGroundForce; // manter colado ao chao em rampas
 
             if (jumpInput)
             {

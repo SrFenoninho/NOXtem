@@ -8,15 +8,15 @@ using UnityEngine;
 public class ColorPair
 {
     public Color color;         // cor deste par de endpoints
-    public Vector2Int start;    // posição inicial na grelha
-    public Vector2Int end;      // posição final na grelha
+    public Vector2Int start;    // posicao inicial na grelha
+    public Vector2Int end;      // posicao final na grelha
 }
 
 [System.Serializable]
 public class PuzzleData
 {
     public ColorPair[] pairs;   // todos os pares de endpoints deste puzzle
-    public string[] solution;   // solução linha a linha (carácter = cor)
+    public string[] solution;   // solucao linha a linha (caracter = cor)
 }
 
 public class FlowFreePuzzle : MonoBehaviour
@@ -35,7 +35,7 @@ public class FlowFreePuzzle : MonoBehaviour
     }
 
     // ---------------------------------------------
-    //  DEFINIÇÃO DOS PUZZLES
+    //  DEFINIcaO DOS PUZZLES
     // ---------------------------------------------
     void CreatePuzzles()
     {

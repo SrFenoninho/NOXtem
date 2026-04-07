@@ -38,7 +38,7 @@ public class TextureRandomRotation : MonoBehaviour
             for (int t = 0; t < 6; t++) verts.Add(tris[i + t]);
             var vertList = new List<int>(verts);
 
-            // Rotacao aleatoria — mesma para os 2 triangulos da face
+            // Rotacao aleatoria - mesma para os 2 triangulos da face
             float angle = Random.Range(0, 4) * 90f * Mathf.Deg2Rad;
             float cos = Mathf.Cos(angle);
             float sin = Mathf.Sin(angle);

@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-// Após todos terminarem, um breve tempo de espera antes do próximo grupo se formar.
+// Apos todos terminarem, um breve tempo de espera antes do proximo grupo se formar.
 public static class EnemyCombatManager
 {
     // ---------------------------------------------
@@ -48,7 +48,7 @@ public static class EnemyCombatManager
     {
         if (!currentAttackers.Remove(attacker)) return;
 
-        // O tempo de espera só começa quando o último atacante do grupo termina
+        // O tempo de espera so comeca quando o ultimo atacante do grupo termina
         if (currentAttackers.Count == 0)
             nextGroupTime = Time.time + Random.Range(groupCooldownMin, groupCooldownMax);
     }

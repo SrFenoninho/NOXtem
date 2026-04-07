@@ -8,9 +8,9 @@ public class EnemySpawn : MonoBehaviour
     [Header("Spawn Settings")]
     public GameObject enemyPrefab;
     public GameObject cloneSpawnerPrefab;   // prefab do CloneSpawner para passar aos inimigos
-    public int enemyCount = 20;             // número de inimigos a criar no início
-    public float spawnRadius = 10f;         // raio à volta do spawner
-    public float spawnHeightOffset = 2f;    // ligeiramente acima do chão para o CharacterController aterrar
+    public int enemyCount = 20;             // numero de inimigos a criar no inicio
+    public float spawnRadius = 10f;         // raio a volta do spawner
+    public float spawnHeightOffset = 2f;    // ligeiramente acima do chao para o CharacterController aterrar
 
     // ---------------------------------------------
     //  ESTADO PRIVADO
@@ -36,7 +36,7 @@ public class EnemySpawn : MonoBehaviour
 
     void SpawnEnemy()
     {
-        // Posição aleatória dentro do raio de spawn
+        // Posicao aleatoria dentro do raio de spawn
         float angle = Random.Range(0f, Mathf.PI * 2f);
         float distance = Random.Range(spawnRadius * 0.3f, spawnRadius);
 
@@ -69,13 +69,13 @@ public class EnemySpawn : MonoBehaviour
     }
 
     // ---------------------------------------------
-    //  DESENHOS DE DEPURAÇÃO
+    //  DESENHOS DE DEPURAcaO
     // ---------------------------------------------
     void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, spawnRadius);
         Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(transform.position, spawnRadius * 0.3f); // raio mínimo
+        Gizmos.DrawWireSphere(transform.position, spawnRadius * 0.3f); // raio minimo
     }
 }

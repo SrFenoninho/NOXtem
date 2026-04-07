@@ -4,7 +4,7 @@ using UnityEngine.SceneManagement;
 public class MainMenu : MonoBehaviour
 {
     // ---------------------------------------------
-    //  BOTÕES DO MENU PRINCIPAL
+    //  BOToES DO MENU PRINCIPAL
     // ---------------------------------------------
     public void PlayGame()
     {

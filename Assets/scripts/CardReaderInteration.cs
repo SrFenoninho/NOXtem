@@ -8,7 +8,7 @@ public class CardReaderInteraction : MonoBehaviour, IInteractable
     // ---------------------------------------------
     [Header("Door Settings")]
     public SimpleLockedDoor doorToUnlock;   // porta que este leitor controla
-    public string keyName = "Keycard";      // ID do cartão necessário
+    public string keyName = "Keycard";      // ID do cartao necessario
 
     [Header("UI")]
     public Text messageText;
@@ -47,8 +47,6 @@ public class CardReaderInteraction : MonoBehaviour, IInteractable
                 messageText.text = "Access Granted!";
                 Invoke(nameof(ClearMessage), 2f);
             }
-
-            // - - ATUALIZAR OBJETIVO - -
             if (updateObjectiveOnInteract && !string.IsNullOrEmpty(nextObjectiveText))
             {
                 ObjectiveManager.Instance?.ShowObjective(nextObjectiveText);
@@ -72,11 +70,11 @@ public class CardReaderInteraction : MonoBehaviour, IInteractable
         if (doorToUnlock != null)
         {
             doorToUnlock.Unlock();
-            Debug.Log("Porta destrancada pelo leitor de cartão!");
+            Debug.Log("Porta destrancada pelo leitor de cartao!");
         }
         else
         {
-            Debug.LogWarning("Nenhuma porta atribuída ao leitor de cartão!");
+            Debug.LogWarning("Nenhuma porta atribuida ao leitor de cartao!");
         }
     }
 

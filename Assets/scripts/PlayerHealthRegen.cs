@@ -7,7 +7,7 @@ public class PlayerHealthRegen : MonoBehaviour
     // ---------------------------------------------
     [Header("Regeneration Settings")]
     public float regenAmount = 2f;      // vida recuperada por intervalo
-    public float regenInterval = 5f;    // segundos entre cada regeneração
+    public float regenInterval = 5f;    // segundos entre cada regeneracao
 
     // ---------------------------------------------
     //  ESTADO PRIVADO
@@ -33,7 +33,7 @@ public class PlayerHealthRegen : MonoBehaviour
     }
 
     // ---------------------------------------------
-    //  REGENERAÇÃO
+    //  REGENERAcaO
     // ---------------------------------------------
     void Regenerate()
     {
@@ -41,7 +41,7 @@ public class PlayerHealthRegen : MonoBehaviour
         {
             playerHealth.currentHealth += regenAmount;
 
-            // Garantir que não ultrapassa o máximo
+            // Garantir que nao ultrapassa o maximo
             if (playerHealth.currentHealth > playerHealth.maxHealth)
                 playerHealth.currentHealth = playerHealth.maxHealth;
         }

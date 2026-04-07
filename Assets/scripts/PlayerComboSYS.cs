@@ -13,11 +13,11 @@ public class PlayerComboSYS : MonoBehaviour
 
     [Header("Combo Settings")]
     public float comboResetTime = 1f;           // segundos sem acertar antes do combo reiniciar
-    public int minimumComboToShow = 2;          // só mostrar o contador a partir de x2
+    public int minimumComboToShow = 2;          // so mostrar o contador a partir de x2
 
     [Header("Punch Scale Effect")]
-    public float punchScale = 1.3f;             // escala máxima do texto a cada acerto
-    public float punchDuration = 0.15f;         // duração da animação de impacto
+    public float punchScale = 1.3f;             // escala maxima do texto a cada acerto
+    public float punchDuration = 0.15f;         // duracao da animacao de impacto
 
     // ---------------------------------------------
     //  ESTADO PRIVADO
@@ -42,7 +42,7 @@ public class PlayerComboSYS : MonoBehaviour
 
     void Update()
     {
-        // Reiniciar combo se não acertar dentro do comboResetTime
+        // Reiniciar combo se nao acertar dentro do comboResetTime
         if (currentCombo > 0 && Time.time - lastHitTime > comboResetTime)
             ResetCombo();
     }
@@ -70,7 +70,7 @@ public class PlayerComboSYS : MonoBehaviour
             comboText.enabled = true;
             comboText.text = string.Format(comboFormat, currentCombo);
 
-            // Efeito de impacto a cada acerto — cancela o anterior se ainda estiver a correr
+            // Efeito de impacto a cada acerto - cancela o anterior se ainda estiver a correr
             if (punchCoroutine != null)
                 StopCoroutine(punchCoroutine);
             punchCoroutine = StartCoroutine(PunchScale());
@@ -83,9 +83,9 @@ public class PlayerComboSYS : MonoBehaviour
     }
 
     // ---------------------------------------------
-    //  ANIMAÇÃO DE ESCALA
+    //  ANIMAcaO DE ESCALA
     // ---------------------------------------------
-    // Escala o texto para cima e depois para baixo — sem DOTween
+    // Escala o texto para cima e depois para baixo - sem DOTween
     IEnumerator PunchScale()
     {
         float elapsed = 0f;

@@ -4,14 +4,14 @@ using System.Collections.Generic;
 public class PlayerKeys : MonoBehaviour
 {
     // ---------------------------------------------
-    //  INVENTÁRIO DE CHAVES
+    //  INVENTaRIO DE CHAVES
     // ---------------------------------------------
     // Lista de IDs das chaves que o jogador carrega
     private List<string> keys = new List<string>();
 
     public void AddKey(string keyID)
     {
-        // Evitar duplicados no inventário
+        // Evitar duplicados no inventario
         if (!keys.Contains(keyID))
             keys.Add(keyID);
     }

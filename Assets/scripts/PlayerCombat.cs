@@ -77,7 +77,7 @@ public class PlayerCombat : MonoBehaviour
     void HandleDefense()
     {
         bool wasDefending = isDefending;
-        // Só é possível defender se estiver no chão — evita ficar suspenso no ar
+        // So e possivel defender se estiver no chao - evita ficar suspenso no ar
         isDefending = Input.GetKey(defenseKey) && tpMove.IsGrounded;
 
         if (isDefending && !wasDefending)
@@ -136,7 +136,7 @@ public class PlayerCombat : MonoBehaviour
     // ---------------------------------------------
     //  CANCELAR ATAQUE
     // ---------------------------------------------
-    // Chamado ao iniciar a defesa ou por forças externas
+    // Chamado ao iniciar a defesa ou por forcas externas
     public void CancelAttack()
     {
         if (isHeavyCharging)
@@ -154,7 +154,7 @@ public class PlayerCombat : MonoBehaviour
     // ---------------------------------------------
     //  COMBO
     // ---------------------------------------------
-    // Chamado pela Hitbox quando um acerto é registado
+    // Chamado pela Hitbox quando um acerto e registado
     public void OnHitLanded()
     {
         if (comboSystem != null)

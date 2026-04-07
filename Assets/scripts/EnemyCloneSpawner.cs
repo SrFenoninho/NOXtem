@@ -31,9 +31,9 @@ public class EnemyCloneSpawner : MonoBehaviour
     private ParticleSystem particles;
 
     // ---------------------------------------------
-    //  INICIALIZAÇÃO
+    //  INICIALIZAcaO
     // ---------------------------------------------
-    // Chamado pelo EnemyAI ao morrer — configura e inicia o processo de spawn
+    // Chamado pelo EnemyAI ao morrer - configura e inicia o processo de spawn
     public void Initialize(GameObject prefab, GameObject spawnerPrefab, int gen, int maxGen, System.Action onCloneDeath)
     {
         enemyPrefab = prefab;
@@ -47,7 +47,7 @@ public class EnemyCloneSpawner : MonoBehaviour
     }
 
     // ---------------------------------------------
-    //  EFEITO DE PARTÍCULAS
+    //  EFEITO DE PARTiCULAS
     // ---------------------------------------------
     void CreateCircleEffect()
     {
@@ -69,14 +69,14 @@ public class EnemyCloneSpawner : MonoBehaviour
         var emission = particles.emission;
         emission.rateOverTime = emissionRate;
 
-        // Círculo horizontal no chão
+        // Circulo horizontal no chao
         var shape = particles.shape;
         shape.shapeType = ParticleSystemShapeType.Circle;
         shape.radius = circleRadius;
         shape.radiusThickness = 0.05f;
         shape.rotation = new Vector3(90f, 0f, 0f);
 
-        // Gradiente de cor ao longo da vida da partícula
+        // Gradiente de cor ao longo da vida da particula
         var colorOverLifetime = particles.colorOverLifetime;
         colorOverLifetime.enabled = true;
         Gradient gradient = new Gradient();
@@ -122,7 +122,7 @@ public class EnemyCloneSpawner : MonoBehaviour
 
         if (enemyPrefab == null) yield break;
 
-        // Criar clone na posição deste objeto (já calculada pelo EnemyAI antes de morrer)
+        // Criar clone na posicao deste objeto (ja calculada pelo EnemyAI antes de morrer)
         GameObject clone = Instantiate(enemyPrefab, transform.position, Quaternion.identity);
 
         EnemyAI ai = clone.GetComponent<EnemyAI>();
@@ -132,7 +132,7 @@ public class EnemyCloneSpawner : MonoBehaviour
             ai.generation = generation;
             ai.maxGeneration = maxGeneration;
             ai.enemyPrefab = enemyPrefab;
-            ai.cloneSpawnerPrefab = cloneSpawnerPrefab; // passar adiante para gerações futuras
+            ai.cloneSpawnerPrefab = cloneSpawnerPrefab; // passar adiante para geracoes futuras
             ai.OnDeath += () => OnCloneDeath?.Invoke();
         }
 

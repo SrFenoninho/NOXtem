@@ -6,7 +6,7 @@ public class HitboxDefense : MonoBehaviour
     //  INSPETOR
     // ---------------------------------------------
     [Header("Defense Settings")]
-    // Prefab do "muro" de defesa instanciado à frente do jogador ao defender
+    // Prefab do "muro" de defesa instanciado a frente do jogador ao defender
     public GameObject defenseWallPrefab;
     public Transform spawnPoint;            // ponto de origem da parede de defesa
 
@@ -20,7 +20,7 @@ public class HitboxDefense : MonoBehaviour
     // ---------------------------------------------
     public void ActivateDefense()
     {
-        if (currentDefenseWall != null) return; // já existe uma parede ativa
+        if (currentDefenseWall != null) return; // ja existe uma parede ativa
 
         if (defenseWallPrefab != null && spawnPoint != null)
         {
@@ -35,7 +35,7 @@ public class HitboxDefense : MonoBehaviour
         {
             Destroy(currentDefenseWall);
             currentDefenseWall = null;
-            Debug.Log("Parede de defesa destruída!");
+            Debug.Log("Parede de defesa destruida!");
         }
     }
 }

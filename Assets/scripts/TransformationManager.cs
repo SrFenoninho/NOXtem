@@ -7,13 +7,13 @@ public class TransformationManager : MonoBehaviour
     // ---------------------------------------------
     [Header("Players")]
     public GameObject fpPlayer;         // Be
-    public GameObject tpPlayer;         // w — nunca SetActive(false)
+    public GameObject tpPlayer;         // w - nunca SetActive(false)
 
     [Header("Cameras")]
     public Camera fpCamera;
     public Camera tpCamera;
 
-    [Header("Modelo TP — esconder em FP")]
+    [Header("Modelo TP - esconder em FP")]
     public Renderer[] tpRenderers;      // MeshRenderers do w
 
     [Header("Scripts FP")]
@@ -34,6 +34,9 @@ public class TransformationManager : MonoBehaviour
 
     [Header("Input")]
     public KeyCode transformKey = KeyCode.T;
+
+    [HideInInspector] public bool transformationBlocked = false;
+
 
     // ---------------------------------------------
     //  ESTADO PRIVADO
@@ -75,6 +78,7 @@ public class TransformationManager : MonoBehaviour
 
         if (Input.GetKeyDown(transformKey))
         {
+            if (transformationBlocked) return;
             // So transforma dentro de zona de combate
             if (!CombatZone.InCombatZone) return;
             if (Time.time - lastTransformTime < transformCooldown) return;
@@ -177,6 +181,15 @@ public class TransformationManager : MonoBehaviour
         if (tpRenderers == null) return;
         foreach (Renderer r in tpRenderers)
             if (r != null) r.enabled = visible;
+    }
+
+    // ---------------------------------------------
+    //  FORCAR TRANSFORMACAO
+    // ---------------------------------------------
+    public void ForceTransformToTP()
+    {
+        if (isTPForm) return;
+        SwitchToTP();
     }
 
     public bool IsTPForm() => isTPForm;

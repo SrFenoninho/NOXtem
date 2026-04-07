@@ -72,12 +72,12 @@ public class DarknessManager : MonoBehaviour
     void Update()
     {
         // Se a energia estiver desligada OU o jogador estiver numa DarkZone,
-        // o isqueiro assume o controlo do raio de visão
+        // o isqueiro assume o controlo do raio de visao
         if (!powerRestored || inDarkZone)
         {
             if (lighter != null)
             {
-                // Ler os valores que o Lighter.cs está a calcular
+                // Ler os valores que o Lighter.cs esta a calcular
                 currentRadius = lighter.GetCurrentRadius();
                 currentSoftness = lighter.GetCurrentSoftness();
             }
@@ -92,7 +92,7 @@ public class DarknessManager : MonoBehaviour
         }
         else
         {
-            // A energia voltou e estamos fora da DarkZone — tudo fica claro gradualmente
+            // A energia voltou e estamos fora da DarkZone - tudo fica claro gradualmente
             currentRadius = Mathf.Lerp(currentRadius, lightRadius, Time.deltaTime * transitionSpeed);
             currentSoftness = Mathf.Lerp(currentSoftness, lightSoftness, Time.deltaTime * transitionSpeed);
             currentAmbient = Mathf.Lerp(currentAmbient, lightAmbient, Time.deltaTime * transitionSpeed);

@@ -18,7 +18,7 @@ public class IntroManager : MonoBehaviour
     [Header("Timings")]
     public float moveUnlockTime = 6f;
 
-    [Header("Referências")]
+    [Header("Referencias")]
     public FPMove playerMovement;
     public Lighter lighter;
 
@@ -44,7 +44,7 @@ public class IntroManager : MonoBehaviour
     }
 
     // ---------------------------------------------
-    //  SEQUÊNCIA DA INTRO
+    //  SEQUeNCIA DA INTRO
     // ---------------------------------------------
     IEnumerator IntroSequence()
     {

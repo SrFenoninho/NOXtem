@@ -89,8 +89,6 @@ public class FlowFreeTerminal : MonoBehaviour, IInteractable
 
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
-
-        // - - ATUALIZAR OBJETIVO - -
         if (updateObjectiveOnInteract && !string.IsNullOrEmpty(nextObjectiveText))
         {
             ObjectiveManager.Instance?.ShowObjective(nextObjectiveText);

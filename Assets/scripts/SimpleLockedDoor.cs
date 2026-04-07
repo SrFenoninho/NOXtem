@@ -19,7 +19,7 @@ public class SimpleLockedDoor : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         if (rb != null)
-            rb.isKinematic = isLocked; // cinemático enquanto trancada
+            rb.isKinematic = isLocked; // cinematico enquanto trancada
     }
 
     // ---------------------------------------------
@@ -33,7 +33,7 @@ public class SimpleLockedDoor : MonoBehaviour
         isLocked = false;
 
         if (rb != null)
-            rb.isKinematic = false; // ativar física — a porta cai
+            rb.isKinematic = false; // ativar fisica - a porta cai
 
         Debug.Log(gameObject.name + " foi destrancada!");
     }

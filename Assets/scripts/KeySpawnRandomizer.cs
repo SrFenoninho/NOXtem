@@ -6,7 +6,7 @@ public class KeySpawnRandomizer : MonoBehaviour
     //  INSPETOR
     // ---------------------------------------------
     [Header("Key Spawn Points")]
-    public GameObject[] keyObjects; // todos os possíveis locais de spawn da chave
+    public GameObject[] keyObjects; // todos os possiveis locais de spawn da chave
 
     // ---------------------------------------------
     //  UNITY

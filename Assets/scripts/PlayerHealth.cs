@@ -51,14 +51,14 @@ public class PlayerHealth : MonoBehaviour
     // ---------------------------------------------
     public void TakeDamage(float damageAmount, Vector3 damageSourcePosition)
     {
-        // Ignorar dano durante o período de invencibilidade
+        // Ignorar dano durante o periodo de invencibilidade
         if (Time.time < nextDamage) return;
 
         currentHealth -= damageAmount;
         nextDamage = Time.time + damageCooldown;
         Debug.Log("Player took " + damageAmount + " damage. Health: " + currentHealth);
 
-        // Calcular direção do knockback (sempre horizontal)
+        // Calcular direcao do knockback (sempre horizontal)
         knockbackDirection = (transform.position - damageSourcePosition).normalized;
         knockbackDirection.y = 0;
         isKnockedBack = true;
@@ -80,7 +80,7 @@ public class PlayerHealth : MonoBehaviour
     // ---------------------------------------------
     //  HUD DE VIDA
     // ---------------------------------------------
-    // Desenha a barra de vida no ecrã com OnGUI
+    // Desenha a barra de vida no ecra com OnGUI
     void OnGUI()
     {
         float boxWidth = 200;

@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class Lighter : MonoBehaviour
@@ -153,18 +153,18 @@ public class Lighter : MonoBehaviour
     // Chamado pelo DarkZone ao entrar
     public void SetZoneValues(float darkRad, float darkSoft)
     {
-        // O isqueiro quando aceso usa sempre a sua força original
+        // O isqueiro quando aceso usa sempre a sua forca original
         radiusOn = origRadiusOn;
         softnessOn = origSoftnessOn;
 
-        // O isqueiro quando apagado passa a usar a escuridão da zona
+        // O isqueiro quando apagado passa a usar a escuridao da zona
         radiusOff = darkRad;
         softnessOff = darkSoft;
 
         targetRadius = isLit ? radiusOn : radiusOff;
         targetSoftness = isLit ? softnessOn : softnessOff;
 
-        // Forçar os valores atuais para que a escuridão caia imediatamente se estiver apagado
+        // Forcar os valores atuais para que a escuridao caia imediatamente se estiver apagado
         currentRadius = targetRadius;
         currentSoftness = targetSoftness;
     }

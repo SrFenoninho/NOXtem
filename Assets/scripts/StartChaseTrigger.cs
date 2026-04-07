@@ -10,13 +10,13 @@ public class StartChaseTrigger : MonoBehaviour
     // ---------------------------------------------
     //  TRIGGER
     // ---------------------------------------------
-    // Ativa a perseguição quando o jogador entra na zona
+    // Ativa a perseguicao quando o jogador entra na zona
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
             monster.StartChasing();
-            gameObject.SetActive(false); // desativar o trigger após uso — só deve disparar uma vez
+            gameObject.SetActive(false); // desativar o trigger apos uso - so deve disparar uma vez
         }
     }
 }

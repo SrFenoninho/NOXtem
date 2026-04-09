@@ -12,7 +12,6 @@ public class StoryTriggerOnPickup : MonoBehaviour
     [Header("Look At")]
     public Transform lookTarget;
     public float lookSpeed = 3f;
-    public float lookDuration = 4f;
 
     [Header("Audio")]
     public AudioClip voiceLine;
@@ -20,6 +19,7 @@ public class StoryTriggerOnPickup : MonoBehaviour
     [Header("References")]
     public FPMove playerMovement;
     public float slowMultiplier = 0f; // 0 = velocidade normal
+    public float lookDuration = 4f;
     public bool triggerInDarkZone = false;
 
     // ---------------------------------------------
@@ -70,33 +70,23 @@ public class StoryTriggerOnPickup : MonoBehaviour
             audio.PlayOneShot(voiceLine);
 
         float elapsed = 0f;
-        Transform playerT = playerMovement != null ? playerMovement.transform : null;
+
         Camera cam = playerMovement != null ? playerMovement.GetComponentInChildren<Camera>() : null;
         Transform camT = cam != null ? cam.transform : null;
 
-        while (elapsed < lookDuration && lookTarget != null)
+        while (elapsed < lookDuration)
         {
             elapsed += Time.deltaTime;
 
-            if (playerT != null)
+            if (lookTarget != null && camT != null)
             {
-                Vector3 dir = lookTarget.position - playerT.position;
-                dir.y = 0f;
-                if (dir.sqrMagnitude > 0.001f)
-                    playerT.rotation = Quaternion.Slerp(
-                        playerT.rotation,
-                        Quaternion.LookRotation(dir),
-                        Time.deltaTime * lookSpeed);
+                Vector3 dirCam = lookTarget.position - camT.position;
+                float pitch = -Mathf.Asin(Mathf.Clamp(dirCam.normalized.y, -1f, 1f)) * Mathf.Rad2Deg;
 
-                if (camT != null)
-                {
-                    Vector3 dirCam = lookTarget.position - camT.position;
-                    float pitch = -Mathf.Asin(Mathf.Clamp(dirCam.normalized.y, -1f, 1f)) * Mathf.Rad2Deg;
-                    camT.localRotation = Quaternion.Slerp(
-                        camT.localRotation,
-                        Quaternion.Euler(pitch, 0f, 0f),
-                        Time.deltaTime * lookSpeed);
-                }
+                camT.localRotation = Quaternion.Slerp(
+                    camT.localRotation,
+                    Quaternion.Euler(pitch, 0f, 0f),
+                    Time.deltaTime * lookSpeed);
             }
 
             yield return null;

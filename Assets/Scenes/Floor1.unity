@@ -18386,7 +18386,7 @@ MonoBehaviour:
   lookSpeed: 0
   voiceLine: {fileID: 8300000, guid: 1ca7a3a1d2b1b0f47834b0ab6e281a86, type: 3}
   playerMovement: {fileID: 1951774458}
-  slowMultiplier: 0.3
+  slowMultiplier: 0.1
   lookDuration: 5
   triggerInDarkZone: 1
 --- !u!4 &952515360

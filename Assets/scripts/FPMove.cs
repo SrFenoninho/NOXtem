@@ -62,6 +62,7 @@ public class FPMove : MonoBehaviour
     // Balanco da camera ao andar
     private float defaultCameraY;
     private float bobTimer = 0f;
+    private float defaultSpeed; // Velocidade base do jogador
 
     private float nextFootstep = 0f;
 
@@ -96,6 +97,8 @@ public class FPMove : MonoBehaviour
         defaultCameraY = playerCamera.localPosition.y;
         normalFOV = cam.fieldOfView;
         previousPosition = transform.position;
+
+        defaultSpeed = speed; // Guardamos a velocidade original do jogador ao iniciar
     }
 
     void Update()
@@ -191,18 +194,25 @@ public class FPMove : MonoBehaviour
         controller.Move(moveDir * Time.fixedDeltaTime);
 
         if (isGrounded && inputDir.magnitude > 0)
-            HandleFootsteps();
+        {
+            // Agora passamos a velocidade atual para os passos se ajustarem a ela
+            HandleFootsteps(currentSpeed);
+        }
     }
 
     // ---------------------------------------------
     //  EFEITOS VISUAIS / AUDIO
     // ---------------------------------------------
-    void HandleHeadBob(float speed)
+    void HandleHeadBob(float currentSpeed)
     {
-        if (speed > 0)
+        if (currentSpeed > 0)
         {
-            bobTimer += Time.deltaTime * bobSpeed;
-            float bobOffsetY = Mathf.Sin(bobTimer) * bobAmount;
+            float rawMultiplier = defaultSpeed > 0 ? (currentSpeed / defaultSpeed) : 1f;
+            float speedMultiplier = rawMultiplier > 1f ? Mathf.Lerp(1f, rawMultiplier, 0.5f) : rawMultiplier;
+
+            bobTimer += Time.deltaTime * (bobSpeed * speedMultiplier);
+            float bobOffsetY = Mathf.Sin(bobTimer) * (bobAmount * speedMultiplier);
+
             Vector3 newPos = playerCamera.localPosition;
             newPos.y = defaultCameraY + bobOffsetY;
             playerCamera.localPosition = newPos;
@@ -222,16 +232,21 @@ public class FPMove : MonoBehaviour
         cam.fieldOfView = Mathf.Lerp(cam.fieldOfView, targetFOV, Time.deltaTime * fovSmoothSpeed);
     }
 
-    void HandleFootsteps()
+    void HandleFootsteps(float currentSpeed)
     {
         if (Time.time >= nextFootstep && footstepSounds.Length > 0)
         {
             int randomIndex = Random.Range(0, footstepSounds.Length);
             audioSource.PlayOneShot(footstepSounds[randomIndex]);
-            // Intervalo mais curto a correr
-            nextFootstep = Time.time + (Input.GetKey(KeyCode.LeftShift) && Input.GetAxisRaw("Vertical") > 0f
-                ? footstepInterval * 0.6f
-                : footstepInterval);
+
+            // Usamos exatamente a mesma suavização e rácio da câmara para manter a sincronização
+            float rawMultiplier = defaultSpeed > 0 ? (currentSpeed / defaultSpeed) : 1f;
+            float speedMultiplier = rawMultiplier > 1f ? Mathf.Lerp(1f, rawMultiplier, 0.5f) : rawMultiplier;
+
+            // Dividimos o intervalo pelo multiplicador (mais veloz = menos tempo entre passos)
+            float currentInterval = speedMultiplier > 0f ? (footstepInterval / speedMultiplier) : footstepInterval;
+
+            nextFootstep = Time.time + currentInterval;
         }
     }
 
@@ -257,6 +272,7 @@ public class FPMove : MonoBehaviour
         }
         previousPosition = transform.position;
     }
+
     public void SyncCameraRotation()
     {
         xRotation = playerCamera.localEulerAngles.x;

@@ -7,7 +7,7 @@ public class StoryTriggerOnPickup : MonoBehaviour
     //  INSPETOR
     // ---------------------------------------------
     [Header("Monitoring object")]
-    public GameObject watchObject; // o objeto da chave - quando for destruido dispara
+    public GameObject watchObject;
 
     [Header("Look At")]
     public Transform lookTarget;
@@ -18,9 +18,10 @@ public class StoryTriggerOnPickup : MonoBehaviour
 
     [Header("References")]
     public FPMove playerMovement;
-    public float slowMultiplier = 0f; // 0 = velocidade normal
+    public float slowMultiplier = 0f;
     public float lookDuration = 4f;
     public bool triggerInDarkZone = false;
+    public bool frozen = false;
 
     // ---------------------------------------------
     //  ESTADO PRIVADO
@@ -57,11 +58,17 @@ public class StoryTriggerOnPickup : MonoBehaviour
         {
             origSpeed = playerMovement.speed;
             origSprintSpeed = playerMovement.sprintSpeed;
-            if (slowMultiplier > 0f)
+
+            if (frozen)
+            {
+                playerMovement.inputBlocked = true;
+            }
+            else if (slowMultiplier > 0f)
             {
                 playerMovement.speed = origSpeed * slowMultiplier;
                 playerMovement.sprintSpeed = origSprintSpeed * slowMultiplier;
             }
+
             if (lookTarget != null) playerMovement.cameraBlocked = true;
         }
 
@@ -94,11 +101,16 @@ public class StoryTriggerOnPickup : MonoBehaviour
 
         if (playerMovement != null)
         {
-            if (slowMultiplier > 0f)
+            if (frozen)
+            {
+                playerMovement.inputBlocked = false;
+            }
+            else if (slowMultiplier > 0f)
             {
                 playerMovement.speed = origSpeed;
                 playerMovement.sprintSpeed = origSprintSpeed;
             }
+
             if (lookTarget != null)
             {
                 playerMovement.cameraBlocked = false;

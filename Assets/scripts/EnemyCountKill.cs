@@ -49,7 +49,6 @@ public class EnemyCountKill : MonoBehaviour
         if (cutsceneView != null)
             cutsceneView.enabled = false;
 
-        // Garantir que o teletransporte esta inativo inicialmente
         if (teleporterToActivate != null)
             teleporterToActivate.enabled = false;
     }
@@ -75,6 +74,9 @@ public class EnemyCountKill : MonoBehaviour
     // ---------------------------------------------
     IEnumerator RewardSequence()
     {
+        // Bloquear inventario durante toda a sequencia
+        GameStateManager.Instance?.PushState(GameState.Cutscene);
+
         if (transformationManager != null && !transformationManager.IsTPForm())
             transformationManager.ForceTransformToTP();
 
@@ -177,7 +179,9 @@ public class EnemyCountKill : MonoBehaviour
         if (transformationManager != null)
             transformationManager.transformationBlocked = false;
 
-        // Ativar colisor do teletransporte apos a sequencia e o dialogo terminarem
+        // Sequencia terminou - inventario pode voltar a abrir
+        GameStateManager.Instance?.PopState();
+
         if (teleporterToActivate != null)
             teleporterToActivate.enabled = true;
     }

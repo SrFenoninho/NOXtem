@@ -890,7 +890,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 1
+  m_SortingOrder: 100
   m_TargetDisplay: 0
 --- !u!64 &60956888
 MeshCollider:
@@ -6237,6 +6237,8 @@ MonoBehaviour:
   - {fileID: 2800000, guid: 7875607cb2416c2499f652cc704c1201, type: 3}
   williamFPS: 8
   itemIcons: []
+  inventoryMusic: {fileID: 0}
+  inventoryMusicVolume: 0.5
   defaultSensitivity: 100
   defaultVolume: 1
   corFundoEscuro: {r: 0, g: 0, b: 0, a: 0.88}
@@ -19245,9 +19247,10 @@ MonoBehaviour:
   lookSpeed: 0
   voiceLine: {fileID: 8300000, guid: 1ca7a3a1d2b1b0f47834b0ab6e281a86, type: 3}
   playerMovement: {fileID: 1951774458}
-  slowMultiplier: 0.001
+  slowMultiplier: 0
   lookDuration: 5
   triggerInDarkZone: 1
+  frozen: 1
 --- !u!4 &952515360
 Transform:
   m_ObjectHideFlags: 0
@@ -35201,7 +35204,6 @@ MonoBehaviour:
   speed: 3
   sprintSpeed: 5
   gravity: -20
-  jumpHeight: 2
   stickToGroundForce: 10
   gravityMultiplier: 3
   groundDistance: 0.3
@@ -35220,12 +35222,12 @@ MonoBehaviour:
   - {fileID: 8300000, guid: f2bb9fd115eb3514ea3e01fd0a55c2d8, type: 3}
   - {fileID: 8300000, guid: 12200e2bc0d19e04e89b1c0746bd4432, type: 3}
   - {fileID: 8300000, guid: d488b6197f1b18d41a5b6ecf6d4e69ff, type: 3}
-  jumpSound: {fileID: 8300000, guid: c7eafbcc4bde5b34cbba381997ba5b00, type: 3}
   landSound: {fileID: 8300000, guid: f2131054bad53d04cbccaf31f5461d1e, type: 3}
   footstepInterval: 0.5
   useStuckDetection: 1
   stuckThreshold: 0.01
   stuckTimeLimit: 2
+  stuckRecoveryHeight: 1.2
   inputBlocked: 0
   cameraBlocked: 0
 --- !u!114 &1951774459

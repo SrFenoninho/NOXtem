@@ -12,20 +12,25 @@ public class GameMenuManager : MonoBehaviour
     public FPMove fPMove;
 
     [Header("Animacao do Inventario")]
-    public Texture2D[] playerFrames;       // frames do player (ex: 6 imagens)
-    public float playerFPS = 8f;           // velocidade da animacao do player
-    public Texture2D[] williamFrames;      // frames do William
-    public float williamFPS = 6f;          // velocidade da animacao do William
+    public Texture2D[] playerFrames;
+    public float playerFPS = 8f;
+    public Texture2D[] williamFrames;
+    public float williamFPS = 6f;
 
     [Header("Icones dos Items")]
     public ItemIconEntry[] itemIcons;
+
+    // Campo para a musica do inventario - arrasta o ficheiro de audio aqui no Unity
+    [Header("Audio do Inventario")]
+    public AudioClip inventoryMusic;
+    public float inventoryMusicVolume = 0.5f;
 
     [Header("Defaults das Definicoes")]
     [Range(10f, 300f)] public float defaultSensitivity = 100f;
     [Range(0f, 1f)] public float defaultVolume = 1f;
 
     // ---------------------------------------------
-    //  INSPETOR  CORES
+    //  INSPETOR - CORES
     // ---------------------------------------------
     [Header("Cores - Fundo")]
     public Color corFundoEscuro = new Color(0f, 0f, 0f, 0.88f);
@@ -61,7 +66,7 @@ public class GameMenuManager : MonoBehaviour
     //  INSPETOR - TAMANHOS
     // ---------------------------------------------
     [Header("Tamanhos - Janela (0 a 1)")]
-    public Vector2 janelaMargem = new Vector2(0.05f, 0.05f); // margem em cada lado
+    public Vector2 janelaMargem = new Vector2(0.05f, 0.05f);
 
     [Header("Tamanhos - Slots de Inventario")]
     public float slotTamanho = 90f;
@@ -85,7 +90,7 @@ public class GameMenuManager : MonoBehaviour
     private Button btnInventario, btnDefinicoes, btnSairTab;
 
     private List<GameObject> slots = new List<GameObject>();
-    private Transform slotsRoot; // referencia direta, sem componente auxiliar
+    private Transform slotsRoot;
 
     private float currentSensitivity;
     private float currentVolume;
@@ -93,7 +98,6 @@ public class GameMenuManager : MonoBehaviour
 
     private bool isOpen = false;
 
-    // Animacao das imagens do inventario
     private RawImage playerRawImage;
     private RawImage williamRawImage;
     private float playerAnimTimer = 0f;
@@ -101,19 +105,24 @@ public class GameMenuManager : MonoBehaviour
     private int playerFrameIndex = 0;
     private int williamFrameIndex = 0;
 
+    // AudioSource dedicado a musica do inventario
+    private AudioSource inventoryAudioSource;
+    // Lista dos sons que pausamos ao abrir (para os retomar ao fechar)
+    private List<AudioSource> pausedSources = new List<AudioSource>();
 
     // ---------------------------------------------
     //  UNITY
     // ---------------------------------------------
     void Start()
     {
-
-
         currentSensitivity = fPMove != null ? fPMove.mouseSensitivity : defaultSensitivity;
         currentVolume = defaultVolume;
         currentTextureQuality = QualitySettings.globalTextureMipmapLimit;
 
-        // Isqueiro e item permanente no inventario desde o inicio
+        inventoryAudioSource = gameObject.AddComponent<AudioSource>();
+        inventoryAudioSource.loop = true;
+        inventoryAudioSource.volume = inventoryMusicVolume;
+
         InventoryManager.Instance?.AddItem(
             new InventoryItem("lighter", "Isqueiro", "tool", "Um isqueiro desgastado. A unica fonte de luz."));
 
@@ -135,10 +144,10 @@ public class GameMenuManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape))
             ToggleMenu();
 
-        // Animar player
+        // unscaledDeltaTime para as animacoes funcionarem mesmo com o jogo pausado
         if (playerRawImage != null && playerFrames != null && playerFrames.Length > 1)
         {
-            playerAnimTimer += Time.deltaTime;
+            playerAnimTimer += Time.unscaledDeltaTime;
             if (playerAnimTimer >= 1f / playerFPS)
             {
                 playerAnimTimer = 0f;
@@ -148,10 +157,9 @@ public class GameMenuManager : MonoBehaviour
             }
         }
 
-        // Animar William
         if (williamRawImage != null && williamFrames != null && williamFrames.Length > 1)
         {
-            williamAnimTimer += Time.deltaTime;
+            williamAnimTimer += Time.unscaledDeltaTime;
             if (williamAnimTimer >= 1f / williamFPS)
             {
                 williamAnimTimer = 0f;
@@ -167,16 +175,13 @@ public class GameMenuManager : MonoBehaviour
     // ---------------------------------------------
     void ToggleMenu()
     {
-        isOpen = !isOpen;
-        menuRoot.SetActive(isOpen);
-
-        if (isOpen)
+        if (!isOpen)
         {
-            if (fPMove != null) { fPMove.inputBlocked = true; fPMove.cameraBlocked = true; }
-            Cursor.visible = true;
-            Cursor.lockState = CursorLockMode.None;
-            GameStateManager.Instance?.PushState(GameState.RadialMenu);
-            ShowTab("inventario");
+            // So abre se o jogo estiver em estado normal
+            if (GameStateManager.Instance != null && !GameStateManager.Instance.CanOpenInventory())
+                return;
+
+            OpenMenu();
         }
         else
         {
@@ -184,16 +189,74 @@ public class GameMenuManager : MonoBehaviour
         }
     }
 
+    void OpenMenu()
+    {
+        isOpen = true;
+        menuRoot.SetActive(true);
+
+        Time.timeScale = 0f;
+
+        PauseAllAudio();
+
+        if (inventoryMusic != null)
+        {
+            inventoryAudioSource.clip = inventoryMusic;
+            inventoryAudioSource.Play();
+        }
+
+        if (fPMove != null) { fPMove.inputBlocked = true; fPMove.cameraBlocked = true; }
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
+        GameStateManager.Instance?.PushState(GameState.Inventory);
+        ShowTab("inventario");
+    }
+
     void CloseMenu()
     {
         isOpen = false;
         menuRoot.SetActive(false);
+
+        inventoryAudioSource.Stop();
+
+        ResumeAllAudio();
+
+        Time.timeScale = 1f;
+
         if (fPMove != null) { fPMove.inputBlocked = false; fPMove.cameraBlocked = false; }
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
         GameStateManager.Instance?.PopState();
     }
 
+    // ---------------------------------------------
+    //  GESTAO DE AUDIO
+    // ---------------------------------------------
+    void PauseAllAudio()
+    {
+        pausedSources.Clear();
+        foreach (AudioSource src in FindObjectsByType<AudioSource>(FindObjectsSortMode.None))
+        {
+            if (src == inventoryAudioSource) continue;
+            if (src.isPlaying)
+            {
+                src.Pause();
+                pausedSources.Add(src);
+            }
+        }
+    }
+
+    void ResumeAllAudio()
+    {
+        foreach (AudioSource src in pausedSources)
+        {
+            if (src != null)
+                src.UnPause();
+        }
+        pausedSources.Clear();
+    }
+
+    // ---------------------------------------------
+    //  
     // ---------------------------------------------
     //  CONSTRUCAO DO MENU
     // ---------------------------------------------
@@ -236,7 +299,6 @@ public class GameMenuManager : MonoBehaviour
         tabInventario = CreatePanel(parent, "TabInventario",
             Vector2.zero, new Vector2(1f, 0.9f), Color.clear);
 
-        // Zona esquerda - grelha
         GameObject gridZone = CreatePanel(tabInventario.transform, "GridZone",
             Vector2.zero, new Vector2(0.58f, 1f), corZonaGrelha);
 
@@ -247,9 +309,8 @@ public class GameMenuManager : MonoBehaviour
         srt.anchorMax = new Vector2(0.97f, 0.97f);
         srt.offsetMin = srt.offsetMax = Vector2.zero;
 
-        slotsRoot = slotsRootObj.transform; // guardar referencia direta
+        slotsRoot = slotsRootObj.transform;
 
-        // Zona direita dividida em dois paineis iguais
         GameObject rightTop = CreatePanel(tabInventario.transform, "",
             new Vector2(0.6f, 0.5f), Vector2.one, Color.clear);
 
@@ -278,7 +339,6 @@ public class GameMenuManager : MonoBehaviour
 
         float rowH = 0.1f;
 
-        // Sensibilidade
         CreateLabel(tabDefinicoes.transform, "Sensibilidade do Rato",
             new Vector2(0.05f, 0.75f), new Vector2(0.45f, 0.75f + rowH), fonteDef);
         Slider sliderSens = CreateSlider(tabDefinicoes.transform,
@@ -290,7 +350,6 @@ public class GameMenuManager : MonoBehaviour
             if (fPMove != null) fPMove.mouseSensitivity = v;
         });
 
-        // Volume
         CreateLabel(tabDefinicoes.transform, "Volume",
             new Vector2(0.05f, 0.6f), new Vector2(0.45f, 0.6f + rowH), fonteDef);
         Slider sliderVol = CreateSlider(tabDefinicoes.transform,
@@ -302,11 +361,10 @@ public class GameMenuManager : MonoBehaviour
             AudioListener.volume = v;
         });
 
-        // Qualidade de texturas
         CreateLabel(tabDefinicoes.transform, "Qualidade das Texturas",
             new Vector2(0.05f, 0.45f), new Vector2(0.45f, 0.45f + rowH), fonteDef);
         string[] qLabels = { "Alta", "Media", "Baixa" };
-        int[] qLevels = { 0, 2, 4 }; // mipmap limit: 0=4096, 2=1024, 4=256
+        int[] qLevels = { 0, 2, 4 };
         for (int i = 0; i < 3; i++)
         {
             int q = qLevels[i];
@@ -403,7 +461,6 @@ public class GameMenuManager : MonoBehaviour
                -row * (slotTamanho + slotEspaco));
             slot.GetComponent<Image>().color = corSlot;
 
-            // Icone
             GameObject iconObj = new GameObject("Icon", typeof(RectTransform), typeof(RawImage));
             iconObj.transform.SetParent(slot.transform, false);
             RectTransform iconRT = iconObj.GetComponent<RectTransform>();
@@ -411,13 +468,10 @@ public class GameMenuManager : MonoBehaviour
             iconRT.anchorMax = new Vector2(0.95f, 1f);
             iconRT.offsetMin = iconRT.offsetMax = Vector2.zero;
             RawImage iconImg = iconObj.GetComponent<RawImage>();
-            // Procurar icone no array do Inspector pelo itemID
             Texture2D foundIcon = null;
             if (itemIcons != null)
                 foreach (var entry in itemIcons)
                     if (entry.itemID == item.itemID) { foundIcon = entry.icon; break; }
-            // Fallback para o icone direto no InventoryItem
-
 
             if (foundIcon != null)
             {
@@ -429,7 +483,6 @@ public class GameMenuManager : MonoBehaviour
                 iconImg.color = GetTypeColor(item.itemType);
             }
 
-            // Nome
             GameObject nameObj = new GameObject("Name", typeof(RectTransform), typeof(TextMeshProUGUI));
             nameObj.transform.SetParent(slot.transform, false);
             RectTransform nameRT = nameObj.GetComponent<RectTransform>();
@@ -579,7 +632,6 @@ public class GameMenuManager : MonoBehaviour
         RectTransform rt = go.GetComponent<RectTransform>();
         rt.anchorMin = anchorMin; rt.anchorMax = anchorMax;
         rt.offsetMin = rt.offsetMax = Vector2.zero;
-        // AspectRatioFitter em HeightControlsWidth mantem 1:1 sem conflito com anchors
         AspectRatioFitter fitter = go.AddComponent<AspectRatioFitter>();
         fitter.aspectMode = AspectRatioFitter.AspectMode.HeightControlsWidth;
         fitter.aspectRatio = 1f;
@@ -603,12 +655,9 @@ public class InventoryTabRef : MonoBehaviour
     public Transform slotsRoot;
 }
 
-// ---------------------------------------------
-//  ESTRUTURA DE ICONE POR ITEM
-// ---------------------------------------------
 [System.Serializable]
 public class ItemIconEntry
 {
-    public string itemID;   // deve coincidir com o itemID do InventoryItem
+    public string itemID;
     public Texture2D icon;
 }

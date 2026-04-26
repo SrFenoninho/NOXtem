@@ -3,13 +3,13 @@ using UnityEngine;
 
 public enum GameState
 {
-    Gameplay,       // estado normal - tudo permitido
-    RadialMenu,     // menu radial aberto
-    Dialogue,       // dialogo a decorrer
-    Minigame,       // minijogo ativo
-    Cutscene,       // cutscene
-    Inventory,      // inventario aberto
-    Paused          // pausado
+    Gameplay,
+    RadialMenu,
+    Dialogue,
+    Minigame,
+    Cutscene,
+    Inventory,
+    Paused
 }
 
 public class GameStateManager : MonoBehaviour
@@ -38,16 +38,14 @@ public class GameStateManager : MonoBehaviour
     }
 
     // ---------------------------------------------
-    //  GESTaO DE ESTADOS
+    //  GESTAO DE ESTADOS
     // ---------------------------------------------
-    // Entra num novo estado (empilha por cima)
     public void PushState(GameState state)
     {
         stateStack.Push(state);
         Debug.Log($"[GameState] Push: {state} | Stack: {stateStack.Count}");
     }
 
-    // Sai do estado atual (volta ao anterior)
     public void PopState()
     {
         if (stateStack.Count > 1)
@@ -60,12 +58,12 @@ public class GameStateManager : MonoBehaviour
     // ---------------------------------------------
     //  CONSULTAS
     // ---------------------------------------------
-    // Verifica se um estado especifico esta ativo
     public bool Is(GameState state) => CurrentState == state;
 
-    // O menu radial so pode abrir se estivermos em Gameplay
     public bool CanOpenRadialMenu() => CurrentState == GameState.Gameplay;
 
-    // O jogador pode mover-se?
+    // Inventario so abre em Gameplay puro
+    public bool CanOpenInventory() => CurrentState == GameState.Gameplay;
+
     public bool CanMove() => CurrentState == GameState.Gameplay;
 }

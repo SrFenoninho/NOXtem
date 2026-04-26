@@ -15,6 +15,9 @@ public class MusicManager : MonoBehaviour
     private AudioSource audioSource;
     private int currentTrack = 0;
     private bool isStopped = false;
+    // Impede o Update de reiniciar a musica quando esta pausada externamente
+    private bool isPaused = false;
+    private int savedTimeSamples = 0;
 
     // ---------------------------------------------
     //  UNITY
@@ -28,7 +31,8 @@ public class MusicManager : MonoBehaviour
 
     void Update()
     {
-        if (isStopped) return;
+        // Nao fazer nada se parado ou pausado
+        if (isStopped || isPaused) return;
 
         if (!audioSource.isPlaying)
             NextTrack();
@@ -51,8 +55,28 @@ public class MusicManager : MonoBehaviour
         PlayCurrentTrack();
     }
 
+    // Pausa e guarda a posicao exata
+    public void PauseMusic()
+    {
+        if (audioSource.isPlaying)
+        {
+            savedTimeSamples = audioSource.timeSamples;
+            audioSource.Pause();
+        }
+        isPaused = true;
+    }
+
+    // Retoma exatamente onde parou
+    public void ResumeMusic()
+    {
+        if (isStopped) return;
+        isPaused = false;
+        audioSource.timeSamples = savedTimeSamples;
+        audioSource.UnPause();
+    }
+
     // ---------------------------------------------
-    //  FADE OUT
+    //  PARAGEM DEFINITIVA (com fade)
     // ---------------------------------------------
     public void StopMusic()
     {
@@ -63,9 +87,10 @@ public class MusicManager : MonoBehaviour
     IEnumerator FadeOut()
     {
         float startVolume = audioSource.volume;
+        // unscaledDeltaTime para o fade funcionar mesmo com timeScale = 0
         while (audioSource.volume > 0)
         {
-            audioSource.volume -= startVolume * Time.deltaTime * 2f;
+            audioSource.volume -= startVolume * Time.unscaledDeltaTime * 2f;
             yield return null;
         }
         audioSource.Stop();

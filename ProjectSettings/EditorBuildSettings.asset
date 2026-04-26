@@ -14,6 +14,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/HackAndSlash.unity
     guid: d99f87696de54284099098b602dadc83
+  - enabled: 1
+    path: Assets/Scenes/Floor2.unity
+    guid: 22175004159fd7347bb3ad3be17ce1d8
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0

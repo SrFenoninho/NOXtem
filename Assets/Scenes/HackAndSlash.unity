@@ -6750,7 +6750,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c3ea34451f6565a4fa7ff76b6e693404, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sceneToLoad: 
+  sceneToLoad: Floor2
 --- !u!4 &1328833750
 Transform:
   m_ObjectHideFlags: 0

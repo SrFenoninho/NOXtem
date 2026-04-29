@@ -28,3 +28,20 @@ You may share and adapt them **for non-commercial purposes only**, as long as yo
 © 2026 João Rodrigues (a.k.a. Sr. Fenoninho)
 
 ---
+
+## 🎖️ **Credits**
+
+### Character IP
+| Character | Owner |
+|---|---|
+| Springtrap / William Afton | © Scott Cawthon |
+
+### 3D Models
+| Model | Author |
+|---|---|
+| Springtrap (recreated from scratch) | João Rodrigues (SrFenoninho) |
+
+### Sound Effects
+Some sound effects sourced from [Pixabay](https://pixabay.com/sound-effects/) under the [Pixabay Content License](https://pixabay.com/service/terms/).
+
+---

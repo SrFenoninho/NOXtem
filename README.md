@@ -24,7 +24,7 @@ This project uses a dual licensing model:
 | | License |
 |---|---|
 | 💻 **Source Code** | [MIT License](./LICENSE-CODE) |
-| 🎨 **Original Assets** (art, music, sounds, etc.) | [CC BY-NC 4.0](./LICENSE-ASSETS) |
+| 🎨 **Original Assets** (art, music, etc.) | [CC BY-NC 4.0](./LICENSE-ASSETS) |
 
 > ⚠️ The Springtrap / William Afton character design and intellectual property belong to **Scott Cawthon** and are **not** covered by the CC BY-NC 4.0 license. The 3D model included in this repository was recreated from scratch and is shared strictly for fan/non-commercial use. Do **not** use it for commercial purposes.
 

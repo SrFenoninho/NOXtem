@@ -32,7 +32,7 @@ This project uses a dual licensing model:
 
 ## 🎖️ **Credits**
 
-### Character
+### Font
 | Font | Owner |
 |---|---|
 | Mia's Scribblings | Amelia McVinnie |

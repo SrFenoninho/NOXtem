@@ -35217,8 +35217,8 @@ MonoBehaviour:
   useFovKick: 1
   sprintFOV: 55
   fovSmoothSpeed: 3
-  crouchHeight: 1
-  crouchCameraOffset: 0.3
+  crouchHeight: 2.5
+  crouchCameraOffset: 2
   crouchSpeed: 3
   crouchTransitionSpeed: 8
   footstepSounds:

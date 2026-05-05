@@ -31,6 +31,12 @@ public class FPMove : MonoBehaviour
     private float normalFOV = 60f;
     public float fovSmoothSpeed = 5f;
 
+    [Header("Crouch Settings")]
+    public float crouchHeight = 1f;
+    public float crouchCameraOffset = 0.3f;
+    public float crouchSpeed = 3f;
+    public float crouchTransitionSpeed = 8f;
+
     [Header("Audio")]
     public AudioClip[] footstepSounds;
     public AudioClip landSound;
@@ -64,6 +70,12 @@ public class FPMove : MonoBehaviour
     private Vector3 previousPosition;
     private float stuckTimer = 0f;
 
+    // Crouch
+    private float standingHeight;
+    private float standingCameraY;
+    private float currentHeight;
+    [HideInInspector] public bool isCrouching = false;
+
     [HideInInspector] public bool inputBlocked = false;
     [HideInInspector] public bool cameraBlocked = false;
 
@@ -91,6 +103,11 @@ public class FPMove : MonoBehaviour
         normalFOV = cam.fieldOfView;
         previousPosition = transform.position;
         defaultSpeed = speed;
+
+        // Crouch init
+        standingHeight = controller.height;
+        standingCameraY = defaultCameraY;
+        currentHeight = standingHeight;
     }
 
     void Update()
@@ -108,15 +125,18 @@ public class FPMove : MonoBehaviour
             if (landSound != null) audioSource.PlayOneShot(landSound);
         }
 
+        // --- Crouch ---
+        HandleCrouch();
+
         if (useHeadBob && isGrounded)
         {
             bool isMoving = !inputBlocked && (Input.GetAxisRaw("Horizontal") != 0 || Input.GetAxisRaw("Vertical") != 0);
-            HandleHeadBob(isMoving ? (Input.GetKey(KeyCode.LeftShift) ? sprintSpeed : speed) : 0);
+            HandleHeadBob(isMoving ? (Input.GetKey(KeyCode.LeftShift) && !isCrouching ? sprintSpeed : speed) : 0);
         }
 
         if (useFovKick)
         {
-            bool isSprinting = !inputBlocked && Input.GetKey(KeyCode.LeftShift) && isGrounded && Input.GetAxisRaw("Vertical") > 0f;
+            bool isSprinting = !inputBlocked && Input.GetKey(KeyCode.LeftShift) && !isCrouching && isGrounded && Input.GetAxisRaw("Vertical") > 0f;
             HandleFOVKick(isSprinting);
         }
 
@@ -150,8 +170,8 @@ public class FPMove : MonoBehaviour
 
         float x = Input.GetAxisRaw("Horizontal");
         float z = Input.GetAxisRaw("Vertical");
-        bool isSprinting = Input.GetKey(KeyCode.LeftShift) && isGrounded && z > 0f;
-        float currentSpeed = isSprinting ? sprintSpeed : speed;
+        bool isSprinting = Input.GetKey(KeyCode.LeftShift) && !isCrouching && isGrounded && z > 0f;
+        float currentSpeed = isCrouching ? crouchSpeed : (isSprinting ? sprintSpeed : speed);
 
         Vector3 inputDir = transform.right * x + transform.forward * z;
         if (inputDir.magnitude > 1f) inputDir.Normalize();
@@ -219,6 +239,48 @@ public class FPMove : MonoBehaviour
 
             nextFootstep = Time.time + currentInterval;
         }
+    }
+
+    // ---------------------------------------------
+    //  CROUCH
+    // ---------------------------------------------
+    void HandleCrouch()
+    {
+        if (inputBlocked) return;
+
+        // Premir Left Control para alternar agachamento
+        if (Input.GetKeyDown(KeyCode.LeftControl))
+        {
+            if (isCrouching)
+            {
+                // Verificar se ha espaco para levantar
+                if (!CanStandUp()) return;
+                isCrouching = false;
+            }
+            else
+            {
+                isCrouching = true;
+            }
+        }
+
+        float targetHeight = isCrouching ? crouchHeight : standingHeight;
+        float targetCamY   = isCrouching ? (standingCameraY - crouchCameraOffset) : standingCameraY;
+
+        // Transicao suave da altura do CharacterController
+        currentHeight = Mathf.Lerp(currentHeight, targetHeight, Time.deltaTime * crouchTransitionSpeed);
+        controller.height = currentHeight;
+        controller.center = new Vector3(0, currentHeight / 2f, 0);
+
+        // Transicao suave da posicao da camera
+        defaultCameraY = Mathf.Lerp(defaultCameraY, targetCamY, Time.deltaTime * crouchTransitionSpeed);
+    }
+
+    bool CanStandUp()
+    {
+        // Lanca um raio para cima para verificar se ha obstaculo
+        float checkDistance = standingHeight - crouchHeight;
+        Vector3 origin = transform.position + Vector3.up * crouchHeight;
+        return !Physics.Raycast(origin, Vector3.up, checkDistance, groundMask);
     }
 
     // ---------------------------------------------

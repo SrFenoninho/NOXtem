@@ -2051,8 +2051,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1.3125, y: 0.18750004, z: 3.3125007}
-  m_Center: {x: -0.578125, y: -0.062499538, z: 0.031250007}
+  m_Size: {x: 1, y: 0.18750004, z: 3}
+  m_Center: {x: -0.5, y: -0.062499538, z: 0.031250007}
 --- !u!54 &157151379
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -8060,8 +8060,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1.3125, y: 0.1875, z: 3.3125}
-  m_Center: {x: -0.578125, y: -0.0625, z: 0.03125}
+  m_Size: {x: 1, y: 0.1875, z: 3}
+  m_Center: {x: -0.5, y: -0.0625, z: 0.03125}
 --- !u!54 &472050115
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -8745,8 +8745,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1.3125, y: 0.18750004, z: 3.3125007}
-  m_Center: {x: -0.578125, y: -0.06250025, z: 0.031250007}
+  m_Size: {x: 1, y: 0.18750004, z: 3}
+  m_Center: {x: -0.5, y: -0.06250025, z: 0.031250007}
 --- !u!54 &549693915
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -21509,8 +21509,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1.3125, y: 0.1875, z: 3.3125}
-  m_Center: {x: -0.578125, y: -0.0625, z: 0.03125}
+  m_Size: {x: 1, y: 0.1875, z: 3}
+  m_Center: {x: -0.5, y: -0.0625, z: 0.03125}
 --- !u!54 &1071413692
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -22085,8 +22085,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1.3125, y: 0.18750004, z: 3.3125007}
-  m_Center: {x: -0.578125, y: -0.062499538, z: 0.031250007}
+  m_Size: {x: 1, y: 0.18750004, z: 3}
+  m_Center: {x: -0.5, y: -0.062499538, z: 0.031250007}
 --- !u!54 &1111918791
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -22738,8 +22738,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1.3125, y: 0.1875, z: 3.3125}
-  m_Center: {x: -0.578125, y: -0.0625, z: 0.03125}
+  m_Size: {x: 1, y: 0.1875, z: 3}
+  m_Center: {x: -0.5, y: -0.0625, z: 0.03125}
 --- !u!54 &1134944836
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -24417,8 +24417,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1.3125, y: 0.18750004, z: 3.3125007}
-  m_Center: {x: -0.578125, y: -0.06250025, z: 0.031250007}
+  m_Size: {x: 1, y: 0.18750004, z: 3}
+  m_Center: {x: -0.5, y: -0.06250025, z: 0.031250007}
 --- !u!54 &1212253342
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -27515,8 +27515,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1.3125, y: 0.1875, z: 3.3125}
-  m_Center: {x: -0.578125, y: -0.0625, z: 0.03125}
+  m_Size: {x: 1, y: 0.1875, z: 3}
+  m_Center: {x: -0.5, y: -0.0625, z: 0.03125}
 --- !u!54 &1401371621
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -28754,8 +28754,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1.3125, y: 0.18750004, z: 3.3125007}
-  m_Center: {x: -0.578125, y: -0.062499538, z: 0.031250007}
+  m_Size: {x: 1, y: 0.18750004, z: 3}
+  m_Center: {x: -0.5, y: -0.062499538, z: 0.031250007}
 --- !u!54 &1474622096
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -30425,8 +30425,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1.3125, y: 0.1875, z: 3.3125}
-  m_Center: {x: -0.578125, y: -0.0625, z: 0.03125}
+  m_Size: {x: 1, y: 0.1875, z: 3}
+  m_Center: {x: -0.5, y: -0.0625, z: 0.03125}
 --- !u!54 &1603404521
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -32080,8 +32080,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1.3125, y: 0.1875, z: 3.3125}
-  m_Center: {x: -0.578125, y: -0.0625, z: 0.03125}
+  m_Size: {x: 1, y: 0.1875, z: 3}
+  m_Center: {x: -0.5, y: -0.0625, z: 0.03125}
 --- !u!54 &1792308410
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -35217,6 +35217,10 @@ MonoBehaviour:
   useFovKick: 1
   sprintFOV: 55
   fovSmoothSpeed: 3
+  crouchHeight: 1
+  crouchCameraOffset: 0.3
+  crouchSpeed: 3
+  crouchTransitionSpeed: 8
   footstepSounds:
   - {fileID: 8300000, guid: 0386ffefc9f141f41bb0594f29a87cc0, type: 3}
   - {fileID: 8300000, guid: f2bb9fd115eb3514ea3e01fd0a55c2d8, type: 3}
@@ -35228,6 +35232,7 @@ MonoBehaviour:
   stuckThreshold: 0.01
   stuckTimeLimit: 2
   stuckRecoveryHeight: 1.2
+  isCrouching: 0
   inputBlocked: 0
   cameraBlocked: 0
 --- !u!114 &1951774459
@@ -36820,8 +36825,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1.3125, y: 0.1875, z: 3.3125}
-  m_Center: {x: -0.578125, y: -0.0625, z: 0.03125}
+  m_Size: {x: 1, y: 0.1875, z: 3}
+  m_Center: {x: -0.5, y: -0.0625, z: 0.03125}
 --- !u!54 &2057153344
 Rigidbody:
   m_ObjectHideFlags: 0

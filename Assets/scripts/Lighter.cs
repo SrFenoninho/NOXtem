@@ -55,6 +55,8 @@ public class Lighter : MonoBehaviour
     private float origSoftnessOff;
     private float origSoftnessOn;
 
+    private FPMove fpMove;
+
     // ---------------------------------------------
     //  UNITY
     // ---------------------------------------------
@@ -80,6 +82,8 @@ public class Lighter : MonoBehaviour
 
         if (vignetteImage != null) SetAlpha(vignetteImage, darkVignetteAlpha);
         if (tintImage != null) SetAlpha(tintImage, 0f);
+
+        fpMove = GetComponentInParent<FPMove>();
     }
 
     void Update()
@@ -143,6 +147,13 @@ public class Lighter : MonoBehaviour
     {
         if (lighterModel == null) return;
         Vector3 target = isLit ? visiblePosition : hiddenPosition;
+
+        // Acompanhar o offset do crouch
+        if (fpMove != null && fpMove.isCrouching)
+        {
+            target.y -= fpMove.crouchCameraOffset;
+        }
+
         lighterModel.transform.localPosition = Vector3.Lerp(
             lighterModel.transform.localPosition, target, Time.deltaTime * drawSpeed);
     }

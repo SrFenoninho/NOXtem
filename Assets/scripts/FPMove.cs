@@ -70,9 +70,8 @@ public class FPMove : MonoBehaviour
     private Vector3 previousPosition;
     private float stuckTimer = 0f;
 
-    // Crouch
     private float standingHeight;
-    private float standingCameraY;
+    [HideInInspector] public float standingCameraY;
     private float currentHeight;
     [HideInInspector] public bool isCrouching = false;
 
@@ -104,7 +103,6 @@ public class FPMove : MonoBehaviour
         previousPosition = transform.position;
         defaultSpeed = speed;
 
-        // Crouch init
         standingHeight = controller.height;
         standingCameraY = defaultCameraY;
         currentHeight = standingHeight;
@@ -125,7 +123,6 @@ public class FPMove : MonoBehaviour
             if (landSound != null) audioSource.PlayOneShot(landSound);
         }
 
-        // --- Crouch ---
         HandleCrouch();
 
         if (useHeadBob && isGrounded)
@@ -145,7 +142,7 @@ public class FPMove : MonoBehaviour
     }
 
     // ---------------------------------------------
-    //  VISAO DO RATO
+    //  VISAO DA CAMARA
     // ---------------------------------------------
     void LateUpdate()
     {
@@ -242,18 +239,16 @@ public class FPMove : MonoBehaviour
     }
 
     // ---------------------------------------------
-    //  CROUCH
+    //  AGACHAMENTO
     // ---------------------------------------------
     void HandleCrouch()
     {
         if (inputBlocked) return;
 
-        // Premir Left Control para alternar agachamento
         if (Input.GetKeyDown(KeyCode.LeftControl))
         {
             if (isCrouching)
             {
-                // Verificar se ha espaco para levantar
                 if (!CanStandUp()) return;
                 isCrouching = false;
             }
@@ -266,18 +261,16 @@ public class FPMove : MonoBehaviour
         float targetHeight = isCrouching ? crouchHeight : standingHeight;
         float targetCamY   = isCrouching ? (standingCameraY - crouchCameraOffset) : standingCameraY;
 
-        // Transicao suave da altura do CharacterController
         currentHeight = Mathf.Lerp(currentHeight, targetHeight, Time.deltaTime * crouchTransitionSpeed);
         controller.height = currentHeight;
         controller.center = new Vector3(0, currentHeight / 2f, 0);
 
-        // Transicao suave da posicao da camera
-        defaultCameraY = Mathf.Lerp(defaultCameraY, targetCamY, Time.deltaTime * crouchTransitionSpeed);
+        float camSpeed = crouchCameraOffset * crouchTransitionSpeed;
+        defaultCameraY = Mathf.MoveTowards(defaultCameraY, targetCamY, Time.deltaTime * camSpeed);
     }
 
     bool CanStandUp()
     {
-        // Lanca um raio para cima para verificar se ha obstaculo
         float checkDistance = standingHeight - crouchHeight;
         Vector3 origin = transform.position + Vector3.up * crouchHeight;
         return !Physics.Raycast(origin, Vector3.up, checkDistance, groundMask);
@@ -311,4 +304,6 @@ public class FPMove : MonoBehaviour
         if (xRotation > 180f) xRotation -= 360f;
         xRotation = Mathf.Clamp(xRotation, -70f, 70f);
     }
+
+    public float CurrentCameraY => defaultCameraY;
 }

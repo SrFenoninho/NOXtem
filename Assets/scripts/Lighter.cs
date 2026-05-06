@@ -148,10 +148,10 @@ public class Lighter : MonoBehaviour
         if (lighterModel == null) return;
         Vector3 target = isLit ? visiblePosition : hiddenPosition;
 
-        // Acompanhar o offset do crouch
-        if (fpMove != null && fpMove.isCrouching)
+        if (fpMove != null)
         {
-            target.y -= fpMove.crouchCameraOffset;
+            float cameraYDelta = fpMove.CurrentCameraY - fpMove.standingCameraY;
+            target.y += cameraYDelta;
         }
 
         lighterModel.transform.localPosition = Vector3.Lerp(
@@ -161,26 +161,21 @@ public class Lighter : MonoBehaviour
     // ---------------------------------------------
     //  VALORES DE ZONA
     // ---------------------------------------------
-    // Chamado pelo DarkZone ao entrar
     public void SetZoneValues(float darkRad, float darkSoft)
     {
-        // O isqueiro quando aceso usa sempre a sua forca original
         radiusOn = origRadiusOn;
         softnessOn = origSoftnessOn;
 
-        // O isqueiro quando apagado passa a usar a escuridao da zona
         radiusOff = darkRad;
         softnessOff = darkSoft;
 
         targetRadius = isLit ? radiusOn : radiusOff;
         targetSoftness = isLit ? softnessOn : softnessOff;
 
-        // Forcar os valores atuais para que a escuridao caia imediatamente se estiver apagado
         currentRadius = targetRadius;
         currentSoftness = targetSoftness;
     }
 
-    // Chamado pelo DarkZone ao sair
     public void ClearZoneValues()
     {
         radiusOff = origRadiusOff;
@@ -200,7 +195,6 @@ public class Lighter : MonoBehaviour
     // ---------------------------------------------
     void SetAlpha(Image img, float a) { Color c = img.color; c.a = a; img.color = c; }
 
-    // Chamado pelo IntroManager para acender/apagar o isqueiro programaticamente
     public void ForceLight(bool state)
     {
         if (isLit == state) return;

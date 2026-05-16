@@ -7,12 +7,12 @@ public class PatrolEnemyAI : MonoBehaviour
     // ---------------------------------------------
     //  FASES DA IA
     // ---------------------------------------------
-    private enum State 
-    { 
-        Patrolling, 
-        Chasing, 
-        Searching, 
-        Attacking 
+    private enum State
+    {
+        Patrolling,
+        Chasing,
+        Searching,
+        Attacking
     }
 
     // ---------------------------------------------
@@ -29,8 +29,14 @@ public class PatrolEnemyAI : MonoBehaviour
     public float chaseSpeed = 6f;
 
     [Header("Search Settings")]
-    public float searchDuration = 10f; // Quanto tempo ele procura antes de desistir
-    public float searchPointRadius = 10f; // Raio da área de busca aleatória
+    public float searchDuration = 10f;
+    public float searchPointRadius = 10f;
+
+    [Header("Musica de Perseguicao")]
+    public MusicManager musicManager;
+    public AudioClip chaseMusic;
+    public float chaseMusicVolume = 0.6f;
+    public float chaseFadeDuration = 1f;
 
     [Header("Attack Settings (One Shot Kill)")]
     public float attackDamage = 9999f;
@@ -40,14 +46,20 @@ public class PatrolEnemyAI : MonoBehaviour
     //  ESTADO PRIVADO
     // ---------------------------------------------
     private NavMeshAgent agent;
+    private AudioSource chaseMusicSource;
+    private bool chaseMusicPlaying = false;
     private int currentWaypointIndex = -1;
     private float searchTimer = 0f;
     private float nextSearchMoveTimer = 0f;
     private float nextAttackTime = 0f;
-    
+
     private Transform player;
     private PlayerHealth playerHealth;
     private State currentState;
+    
+    // Último local onde viu o jogador
+    private Vector3 lastPlayerPosition;
+    private bool hasReachedLastPlayerPosition = false;
 
     // ---------------------------------------------
     //  UNITY
@@ -64,7 +76,11 @@ public class PatrolEnemyAI : MonoBehaviour
             playerHealth = playerObj.GetComponent<PlayerHealth>();
         }
 
-        // Inicia sempre em movimento
+        chaseMusicSource = gameObject.AddComponent<AudioSource>();
+        chaseMusicSource.loop = true;
+        chaseMusicSource.volume = 0f;
+        if (chaseMusic != null) chaseMusicSource.clip = chaseMusic;
+
         currentState = State.Patrolling;
         PickRandomWaypoint();
     }
@@ -78,7 +94,7 @@ public class PatrolEnemyAI : MonoBehaviour
     }
 
     // ---------------------------------------------
-    //  MaQUINA DE ESTADOS
+    //  MAQUINA DE ESTADOS
     // ---------------------------------------------
     void HandleStateTransitions()
     {
@@ -87,19 +103,34 @@ public class PatrolEnemyAI : MonoBehaviour
 
         if (canSee)
         {
+            lastPlayerPosition = player.position;
+            
             if (distToPlayer <= attackRange)
-                currentState = State.Attacking;
+            {
+                if (currentState != State.Attacking)  // ← SÓ MUDA SE NÃO JÁ ESTÁ
+                {
+                    currentState = State.Attacking;
+                    StartChaseMusic();
+                }
+            }
             else
-                currentState = State.Chasing;
+            {
+                if (currentState != State.Chasing)  // ← SÓ MUDA SE NÃO JÁ ESTÁ
+                {
+                    currentState = State.Chasing;
+                    StartChaseMusic();
+                }
+            }
         }
         else
         {
-            // Se perdeu o jogador enquanto perseguia ou atacava -> Começa a procurar
             if (currentState == State.Chasing || currentState == State.Attacking)
             {
                 currentState = State.Searching;
                 searchTimer = searchDuration;
-                nextSearchMoveTimer = 0f; // Força movimento imediato na busca
+                nextSearchMoveTimer = 0f;
+                hasReachedLastPlayerPosition = false;
+                StopChaseMusic();
             }
         }
     }
@@ -109,9 +140,9 @@ public class PatrolEnemyAI : MonoBehaviour
         switch (currentState)
         {
             case State.Patrolling: PatrolBehavior(); break;
-            case State.Chasing:    ChaseBehavior();  break;
-            case State.Searching:  SearchBehavior(); break;
-            case State.Attacking:  AttackBehavior(); break;
+            case State.Chasing: ChaseBehavior(); break;
+            case State.Searching: SearchBehavior(); break;
+            case State.Attacking: AttackBehavior(); break;
         }
     }
 
@@ -123,7 +154,6 @@ public class PatrolEnemyAI : MonoBehaviour
         agent.speed = patrolSpeed;
         agent.isStopped = false;
 
-        // Quando chega a um ponto, escolhe logo o próximo sem parar
         if (!agent.pathPending && agent.remainingDistance < 0.5f)
         {
             PickRandomWaypoint();
@@ -139,30 +169,46 @@ public class PatrolEnemyAI : MonoBehaviour
 
     void SearchBehavior()
     {
-        agent.speed = patrolSpeed * 1.2f; // Procura um pouco mais rápido que a patrulha
+        agent.speed = patrolSpeed * 1.2f;
         agent.isStopped = false;
 
         searchTimer -= Time.deltaTime;
 
-        // Desiste da busca após 10 segundos
+        // Se ainda não chegou ao último local do jogador
+        if (!hasReachedLastPlayerPosition)
+        {
+            // Vai para o último local onde viu o jogador
+            agent.SetDestination(lastPlayerPosition);
+
+            // Verifica se chegou ao local
+            if (!agent.pathPending && agent.remainingDistance < 0.5f)
+            {
+                hasReachedLastPlayerPosition = true;
+                nextSearchMoveTimer = 0f;
+            }
+        }
+        else
+        {
+            // Se já chegou ao último local, começa a procurar aleatoriamente
+            nextSearchMoveTimer -= Time.deltaTime;
+            if (nextSearchMoveTimer <= 0f || (agent.remainingDistance < 0.5f && !agent.pathPending))
+            {
+                Vector3 randomSearchPoint = transform.position + Random.insideUnitSphere * searchPointRadius;
+                NavMeshHit hit;
+                if (NavMesh.SamplePosition(randomSearchPoint, out hit, searchPointRadius, NavMesh.AllAreas))
+                {
+                    agent.SetDestination(hit.position);
+                }
+                nextSearchMoveTimer = 3f;
+            }
+        }
+
+        // Se o tempo de procura acabou, volta a patrulhar
         if (searchTimer <= 0f)
         {
             currentState = State.Patrolling;
             PickRandomWaypoint();
             return;
-        }
-
-        // Move-se aleatoriamente pela sala enquanto procura
-        nextSearchMoveTimer -= Time.deltaTime;
-        if (nextSearchMoveTimer <= 0f || (agent.remainingDistance < 0.5f && !agent.pathPending))
-        {
-            Vector3 randomSearchPoint = transform.position + Random.insideUnitSphere * searchPointRadius;
-            NavMeshHit hit;
-            if (NavMesh.SamplePosition(randomSearchPoint, out hit, searchPointRadius, NavMesh.AllAreas))
-            {
-                agent.SetDestination(hit.position);
-            }
-            nextSearchMoveTimer = 3f; // Tenta um novo ponto a cada 3 segundos ou ao chegar
         }
     }
 
@@ -201,7 +247,7 @@ public class PatrolEnemyAI : MonoBehaviour
     }
 
     // ---------------------------------------------
-    //  LOGICA DE VISaO (FOV)
+    //  LOGICA DE VISAO (FOV)
     // ---------------------------------------------
     bool CanSeePlayer()
     {
@@ -225,7 +271,7 @@ public class PatrolEnemyAI : MonoBehaviour
     }
 
     // ---------------------------------------------
-    //  DESENHOS DE DEPURAcaO
+    //  DESENHOS DE DEBUGACAO
     // ---------------------------------------------
     void OnDrawGizmosSelected()
     {
@@ -241,5 +287,47 @@ public class PatrolEnemyAI : MonoBehaviour
         Vector3 rightBoundary = Quaternion.Euler(0, viewAngle / 2f, 0) * transform.forward;
         Gizmos.DrawRay(transform.position + Vector3.up, leftBoundary * detectionRadius);
         Gizmos.DrawRay(transform.position + Vector3.up, rightBoundary * detectionRadius);
+    }
+
+    // ---------------------------------------------
+    //  MUSICA DE PERSEGUICAO
+    // ---------------------------------------------
+    void StartChaseMusic()
+    {
+        if (chaseMusicPlaying || chaseMusic == null) return;
+        chaseMusicPlaying = true;
+
+        if (musicManager != null) musicManager.PauseMusic();
+
+        chaseMusicSource.clip = chaseMusic;
+        chaseMusicSource.volume = 0f;
+        chaseMusicSource.Play();
+        StartCoroutine(FadeChaseMusic(0f, chaseMusicVolume, chaseFadeDuration));
+    }
+
+    void StopChaseMusic()
+    {
+        if (!chaseMusicPlaying) return;
+        chaseMusicPlaying = false;
+        StartCoroutine(FadeOutAndResume());
+    }
+
+    System.Collections.IEnumerator FadeChaseMusic(float from, float to, float duration)
+    {
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            chaseMusicSource.volume = Mathf.Lerp(from, to, elapsed / duration);
+            yield return null;
+        }
+        chaseMusicSource.volume = to;
+    }
+
+    System.Collections.IEnumerator FadeOutAndResume()
+    {
+        yield return StartCoroutine(FadeChaseMusic(chaseMusicSource.volume, 0f, chaseFadeDuration));
+        chaseMusicSource.Stop();
+        if (musicManager != null) musicManager.ResumeMusic();
     }
 }

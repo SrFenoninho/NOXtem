@@ -51,10 +51,10 @@ public class MusicManager : MonoBehaviour
 
     void NextTrack()
     {
+        if (tracks.Length == 0) return;
         currentTrack = (currentTrack + 1) % tracks.Length;
         PlayCurrentTrack();
     }
-
     // Pausa e guarda a posicao exata
     public void PauseMusic()
     {
@@ -70,6 +70,7 @@ public class MusicManager : MonoBehaviour
     public void ResumeMusic()
     {
         if (isStopped) return;
+        if (audioSource.clip == null) return;  // ← ADICIONA ISTO
         isPaused = false;
         audioSource.timeSamples = savedTimeSamples;
         audioSource.UnPause();

@@ -89,6 +89,12 @@ public class Lever : MonoBehaviour, IInteractable
         if (leverSound != null && audioSource != null)
             audioSource.PlayOneShot(leverSound);
 
+        // ← ADICIONA ISTO:
+        // Desativa o glow quando a alavanca é ativada
+        GlowEmitter glow = GetComponent<GlowEmitter>();
+        if (glow != null)
+            glow.DisableGlow();
+
         // Notificar o sistema central
         if (LeverSystem.Instance != null)
             LeverSystem.Instance.OnLeverActivated();

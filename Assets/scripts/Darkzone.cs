@@ -7,6 +7,9 @@ public class DarkZone : MonoBehaviour
     // ---------------------------------------------
     public string zoneID = "DarkZone_1";
 
+    [Header("Agachamento")]
+    public bool forceCrouch = false;
+
     // ---------------------------------------------
     //  ESTADO PRIVADO
     // ---------------------------------------------
@@ -14,6 +17,7 @@ public class DarkZone : MonoBehaviour
     private Collider zoneCollider;
     private Lighter lighter;
     private bool playerInZone = false;
+    private FPMove fpMove;
 
     // ---------------------------------------------
     //  UNITY
@@ -30,6 +34,7 @@ public class DarkZone : MonoBehaviour
         zoneCollider.isTrigger = true;
 
         lighter = Object.FindFirstObjectByType<Lighter>();
+        fpMove = Object.FindFirstObjectByType<FPMove>();
     }
 
     void Update()
@@ -38,6 +43,9 @@ public class DarkZone : MonoBehaviour
 
         // Verifica a cada frame se o jogador esta dentro da hitbox da zona
         bool containsPlayer = zoneCollider.bounds.Contains(player.position);
+
+        if (forceCrouch && playerInZone && fpMove != null && !fpMove.isCrouching)
+            fpMove.isCrouching = true;
 
         if (containsPlayer && !playerInZone)
         {
@@ -48,13 +56,12 @@ public class DarkZone : MonoBehaviour
             if (DarknessManager.Instance != null)
             {
                 DarknessManager.Instance.SetInDarkZone(true);
-
-                // Passa os valores base do DarknessManager para o isqueiro
                 if (lighter != null)
-                {
                     lighter.SetZoneValues(DarknessManager.Instance.darkRadius, DarknessManager.Instance.darkSoftness);
-                }
             }
+
+            if (forceCrouch && fpMove != null && !fpMove.isCrouching)
+                fpMove.isCrouching = true;
         }
         else if (!containsPlayer && playerInZone)
         {
@@ -63,14 +70,13 @@ public class DarkZone : MonoBehaviour
             Debug.Log($"Exited Dark Zone: {zoneID}");
 
             if (lighter != null)
-            {
                 lighter.ClearZoneValues();
-            }
 
             if (DarknessManager.Instance != null)
-            {
                 DarknessManager.Instance.SetInDarkZone(false);
-            }
+
+            if (forceCrouch && fpMove != null)
+                fpMove.isCrouching = false;
         }
     }
 }

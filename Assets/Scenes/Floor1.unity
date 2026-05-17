@@ -4780,6 +4780,33 @@ MonoBehaviour:
   messageText: {fileID: 290604112}
   updateObjectiveOnInteract: 0
   nextObjectiveText: 
+--- !u!114 &314840210
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 314840203}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: def2be112b40bc549a2d5fa12500ff5b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enableGlow: 1
+  glowColor: {r: 1, g: 1, b: 1, a: 0.5019608}
+  glowShape: 0
+  autoFitToCollider: 1
+  glowScale: 1.1
+  glowOpacity: 0.1
+  glowIntensityMin: 1
+  glowIntensityMax: 3
+  glowSpeed: 2
+  customMesh: {fileID: 0}
+  autoDisableWhenTriggered: 1
+  useParticles: 1
+  particleColor: {r: 1, g: 1, b: 1, a: 1}
+  emissionRate: 10
+  particleSize: 0.3
 --- !u!1 &315526503
 GameObject:
   m_ObjectHideFlags: 0
@@ -15474,26 +15501,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: e46538efbdfd9a0409184ee1f2e4aa6c, type: 3}
   m_PrefabInstance: {fileID: 1901473585}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &677300013
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 677300012}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8b3912dd1b070ac43b4780184abd298a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  leverID: Lever_A
-  leverArm: {fileID: 0}
-  activatedRotation: {x: -60, y: 0, z: 0}
-  animationSpeed: 5
-  leverSound: {fileID: 0}
-  messageText: {fileID: 0}
-  updateObjectiveOnInteract: 0
-  nextObjectiveText: 
 --- !u!65 &677300014
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -15535,6 +15542,33 @@ MonoBehaviour:
   messageText: {fileID: 290604112}
   updateObjectiveOnInteract: 0
   nextObjectiveText: 
+--- !u!114 &677300019
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 677300012}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: def2be112b40bc549a2d5fa12500ff5b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enableGlow: 1
+  glowColor: {r: 1, g: 1, b: 1, a: 0.5019608}
+  glowShape: 0
+  autoFitToCollider: 1
+  glowScale: 1.1
+  glowOpacity: 0.1
+  glowIntensityMin: 1
+  glowIntensityMax: 3
+  glowSpeed: 2
+  customMesh: {fileID: 0}
+  autoDisableWhenTriggered: 1
+  useParticles: 1
+  particleColor: {r: 1, g: 1, b: 1, a: 1}
+  emissionRate: 10
+  particleSize: 0.3
 --- !u!1 &684670708 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 3d5bee2826dde6c4ea41cb7a6c5cb0f9, type: 3}
@@ -22898,6 +22932,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: e46538efbdfd9a0409184ee1f2e4aa6c, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2058307290}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: e46538efbdfd9a0409184ee1f2e4aa6c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2058307296}
   m_SourcePrefab: {fileID: 100100000, guid: e46538efbdfd9a0409184ee1f2e4aa6c, type: 3}
 --- !u!1 &1155492921
 GameObject:
@@ -29107,6 +29144,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: e46538efbdfd9a0409184ee1f2e4aa6c, type: 3}
       insertIndex: -1
       addedObject: {fileID: 314840204}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: e46538efbdfd9a0409184ee1f2e4aa6c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 314840210}
   m_SourcePrefab: {fileID: 100100000, guid: e46538efbdfd9a0409184ee1f2e4aa6c, type: 3}
 --- !u!64 &1524713552
 MeshCollider:
@@ -33947,10 +33987,10 @@ PrefabInstance:
       addedObject: {fileID: 677300015}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: e46538efbdfd9a0409184ee1f2e4aa6c, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 677300014}
+      addedObject: {fileID: 677300019}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: e46538efbdfd9a0409184ee1f2e4aa6c, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 677300013}
+      addedObject: {fileID: 677300014}
   m_SourcePrefab: {fileID: 100100000, guid: e46538efbdfd9a0409184ee1f2e4aa6c, type: 3}
 --- !u!64 &1903177570
 MeshCollider:
@@ -35232,6 +35272,7 @@ MonoBehaviour:
   stuckThreshold: 0.01
   stuckTimeLimit: 2
   stuckRecoveryHeight: 1.2
+  standingCameraY: 0
   isCrouching: 0
   inputBlocked: 0
   cameraBlocked: 0
@@ -36913,6 +36954,33 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1.0000004, y: 0.2625003, z: 1.0000005}
   m_Center: {x: 0.3125001, y: 0.18125013, z: 0}
+--- !u!114 &2058307296
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2058307289}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: def2be112b40bc549a2d5fa12500ff5b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enableGlow: 1
+  glowColor: {r: 1, g: 1, b: 1, a: 0.5019608}
+  glowShape: 0
+  autoFitToCollider: 1
+  glowScale: 1.1
+  glowOpacity: 0.1
+  glowIntensityMin: 1
+  glowIntensityMax: 3
+  glowSpeed: 2
+  customMesh: {fileID: 0}
+  autoDisableWhenTriggered: 1
+  useParticles: 1
+  particleColor: {r: 1, g: 1, b: 1, a: 1}
+  emissionRate: 10
+  particleSize: 0.3
 --- !u!1 &2059147501 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 5bc85e930e9d16f498110c0774d9b90c, type: 3}
@@ -37330,6 +37398,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   zoneID: DarkZone_1
+  forceCrouch: 0
 --- !u!54 &2086739015
 Rigidbody:
   m_ObjectHideFlags: 0

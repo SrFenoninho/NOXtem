@@ -80,7 +80,7 @@ public class InteractiveDoor : MonoBehaviour, IInteractable
     // ---------------------------------------------
     //  ABRIR PORTA / TELETRANSPORTE
     // ---------------------------------------------
-    void OpenDoor(GameObject player)
+    public void OpenDoor(GameObject player)
     {
         if (destination == null) return;
 
@@ -89,17 +89,21 @@ public class InteractiveDoor : MonoBehaviour, IInteractable
 
         CharacterController controller = player.GetComponent<CharacterController>();
 
+        // Guarda a rotação Y atual (direção que o jogador está a olhar)
+        float currentYRotation = player.transform.eulerAngles.y;
+
         if (controller != null)
         {
             controller.enabled = false;
             player.transform.position = destination.position;
-            player.transform.rotation = Quaternion.Euler(0f, cameraHorizontalAngle, 0f);
+            // Mantém a mesma direção, mas aplica o offset se definires
+            player.transform.rotation = Quaternion.Euler(0f, currentYRotation + cameraHorizontalAngle, 0f);
             controller.enabled = true;
         }
         else
         {
             player.transform.position = destination.position;
-            player.transform.rotation = Quaternion.Euler(0f, cameraHorizontalAngle, 0f);
+            player.transform.rotation = Quaternion.Euler(0f, currentYRotation + cameraHorizontalAngle, 0f);
         }
 
         FPMove fpMove = player.GetComponent<FPMove>();

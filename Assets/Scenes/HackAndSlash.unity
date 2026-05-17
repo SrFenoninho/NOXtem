@@ -4686,6 +4686,10 @@ MonoBehaviour:
   useFovKick: 1
   sprintFOV: 55
   fovSmoothSpeed: 3
+  crouchHeight: 1
+  crouchCameraOffset: 0.3
+  crouchSpeed: 3
+  crouchTransitionSpeed: 8
   footstepSounds:
   - {fileID: 8300000, guid: 0386ffefc9f141f41bb0594f29a87cc0, type: 3}
   - {fileID: 8300000, guid: f2bb9fd115eb3514ea3e01fd0a55c2d8, type: 3}
@@ -4697,6 +4701,8 @@ MonoBehaviour:
   stuckThreshold: 0.01
   stuckTimeLimit: 2
   stuckRecoveryHeight: 1.2
+  standingCameraY: 0
+  isCrouching: 0
   inputBlocked: 0
   cameraBlocked: 0
 --- !u!82 &592752473
@@ -5883,6 +5889,59 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 4.0625, y: 3.53125, z: 4.0625}
   m_Center: {x: 0, y: -3.953125, z: 0}
+--- !u!1 &969971863
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 969971865}
+  - component: {fileID: 969971864}
+  m_Layer: 0
+  m_Name: FogController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &969971864
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 969971863}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3e4943559ea721e438518edebe3915e1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  darknessColor: {r: 0, g: 0, b: 0, a: 1}
+  ambientLight: 0
+  darkRadius: 0.5
+  darkSoftness: 0.5
+  lightRadius: 200
+  lightSoftness: 10
+  lightAmbient: 0.3
+  transitionSpeed: 10
+  startWithDarkness: 0
+--- !u!4 &969971865
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 969971863}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -10.593263, y: 15.792881, z: -32.29663}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1030389157 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -231537852577957333, guid: 9a737bb354cb25b459d37fbba5493b5d, type: 3}
@@ -8570,6 +8629,7 @@ SceneRoots:
   - {fileID: 316334378}
   - {fileID: 285958697}
   - {fileID: 1474080444}
+  - {fileID: 969971865}
   - {fileID: 2051154143}
   - {fileID: 1275722619}
   - {fileID: 36214590}

@@ -48,7 +48,6 @@ public class GlowEmitter : MonoBehaviour
     private bool glowActive = true;
     private Material glowMaterial;
     private Vector3 colliderSize = Vector3.one;
-    private bool effectsStopped = false;
 
     // ---------------------------------------------
     //  UNITY
@@ -245,7 +244,6 @@ public class GlowEmitter : MonoBehaviour
     // Para os efeitos
     void StopEffects()
     {
-        effectsStopped = true;
         if (particles != null)
             particles.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
     }

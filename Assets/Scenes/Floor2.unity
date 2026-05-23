@@ -2937,6 +2937,8 @@ MonoBehaviour:
   messageText: {fileID: 0}
   doorLockedSound: {fileID: 0}
   doorOpenSound: {fileID: 0}
+  forcePlayerToCrouch: 0
+  crouchDelayBeforeTeleport: 0.5
   updateObjectiveOnInteract: 0
   nextObjectiveText: 
 --- !u!65 &142968806
@@ -24856,7 +24858,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: e46538efbdfd9a0409184ee1f2e4aa6c, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 24.563
+      value: 24.62
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: e46538efbdfd9a0409184ee1f2e4aa6c, type: 3}
       propertyPath: m_LocalPosition.z
@@ -24958,6 +24960,8 @@ MonoBehaviour:
   messageText: {fileID: 0}
   doorLockedSound: {fileID: 0}
   doorOpenSound: {fileID: 0}
+  forcePlayerToCrouch: 1
+  crouchDelayBeforeTeleport: 0.8
   updateObjectiveOnInteract: 0
   nextObjectiveText: 
 --- !u!1 &1462767656 stripped
@@ -25116,6 +25120,8 @@ MonoBehaviour:
   messageText: {fileID: 0}
   doorLockedSound: {fileID: 0}
   doorOpenSound: {fileID: 0}
+  forcePlayerToCrouch: 1
+  crouchDelayBeforeTeleport: 0.8
   updateObjectiveOnInteract: 0
   nextObjectiveText: 
 --- !u!1 &1467515224 stripped
@@ -25489,6 +25495,8 @@ MonoBehaviour:
   messageText: {fileID: 0}
   doorLockedSound: {fileID: 0}
   doorOpenSound: {fileID: 0}
+  forcePlayerToCrouch: 0
+  crouchDelayBeforeTeleport: 0.5
   updateObjectiveOnInteract: 0
   nextObjectiveText: 
 --- !u!1001 &1479871801
@@ -30799,6 +30807,8 @@ MonoBehaviour:
   messageText: {fileID: 0}
   doorLockedSound: {fileID: 0}
   doorOpenSound: {fileID: 0}
+  forcePlayerToCrouch: 0
+  crouchDelayBeforeTeleport: 0.5
   updateObjectiveOnInteract: 0
   nextObjectiveText: 
 --- !u!1 &1727855523 stripped

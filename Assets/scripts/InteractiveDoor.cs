@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections;
 
 public class InteractiveDoor : MonoBehaviour, IInteractable
 {
@@ -24,6 +25,10 @@ public class InteractiveDoor : MonoBehaviour, IInteractable
     public AudioClip doorLockedSound; // Som quando a porta esta trancada e tentamos abrir
     public AudioClip doorOpenSound;   // Som da porta a destrancar/abrir
     private AudioSource audioSource;
+
+    [Header("Agachamento & Delay")]
+    public bool forcePlayerToCrouch = false;
+    public float crouchDelayBeforeTeleport = 0.5f;
 
     [Header("Atualizar Objetivo (Opcional)")]
     public bool updateObjectiveOnInteract = false;
@@ -88,7 +93,31 @@ public class InteractiveDoor : MonoBehaviour, IInteractable
             audioSource.PlayOneShot(doorOpenSound);
 
         CharacterController controller = player.GetComponent<CharacterController>();
+        FPMove fpMove = player.GetComponent<FPMove>();
 
+        if (forcePlayerToCrouch && fpMove != null)
+        {
+            // Força o agachamento imediatamente
+            fpMove.isCrouching = true;
+            
+            // Inicia coroutine para teleportar após o delay
+            StartCoroutine(TeleportAfterDelay(player, controller, fpMove));
+        }
+        else
+        {
+            // Teleporta imediatamente
+            PerformTeleport(player, controller, fpMove);
+        }
+    }
+
+    IEnumerator TeleportAfterDelay(GameObject player, CharacterController controller, FPMove fpMove)
+    {
+        yield return new WaitForSeconds(crouchDelayBeforeTeleport);
+        PerformTeleport(player, controller, fpMove);
+    }
+
+    void PerformTeleport(GameObject player, CharacterController controller, FPMove fpMove)
+    {
         // Guarda a rotação Y atual (direção que o jogador está a olhar)
         float currentYRotation = player.transform.eulerAngles.y;
 
@@ -106,7 +135,6 @@ public class InteractiveDoor : MonoBehaviour, IInteractable
             player.transform.rotation = Quaternion.Euler(0f, currentYRotation + cameraHorizontalAngle, 0f);
         }
 
-        FPMove fpMove = player.GetComponent<FPMove>();
         if (fpMove != null)
         {
             var field = typeof(FPMove).GetField("xRotation",

@@ -17,10 +17,44 @@ public class CardReaderInteraction : MonoBehaviour, IInteractable
     public bool updateObjectiveOnInteract = false;
     [TextArea] public string nextObjectiveText = "";
 
+    [Header("Glow Settings")]
+    public bool enableGlow = true;
+
     // ---------------------------------------------
     //  ESTADO PRIVADO
     // ---------------------------------------------
     private bool isUnlocked = false;
+    private GlowEmitter readerGlow;
+
+    // ---------------------------------------------
+    //  UNITY
+    // ---------------------------------------------
+    void Start()
+    {
+        InitializeGlow();
+    }
+
+    // ---------------------------------------------
+    //  INICIALIZACAO DO GLOW
+    // ---------------------------------------------
+    void InitializeGlow()
+    {
+        if (!enableGlow) return;
+
+        readerGlow = GetComponent<GlowEmitter>();
+        if (readerGlow == null)
+        {
+            readerGlow = gameObject.AddComponent<GlowEmitter>();
+            readerGlow.glowColor = Color.white;
+            readerGlow.enableGlow = false;
+        }
+    }
+
+    public void OnKeyPickedUp(string keyName)
+    {
+        if (keyName == this.keyName && enableGlow && readerGlow != null)
+            readerGlow.EnableGlow();
+    }
 
     // ---------------------------------------------
     //  INTERFACE IInteractable
@@ -41,6 +75,11 @@ public class CardReaderInteraction : MonoBehaviour, IInteractable
         {
             UnlockDoor();
             isUnlocked = true;
+
+            if (readerGlow != null && enableGlow)
+            {
+                readerGlow.DisableGlow();
+            }
 
             if (messageText != null)
             {

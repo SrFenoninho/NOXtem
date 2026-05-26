@@ -7,12 +7,12 @@ public class Lever : MonoBehaviour, IInteractable
     //  INSPETOR
     // ---------------------------------------------
     [Header("Lever Settings")]
-    public string leverID = "Lever_A";  // identificador unico desta alavanca
+    public string leverID = "Lever_A";
 
     [Header("Animacao")]
     [Tooltip("Transform da parte visual que roda ao ativar (ex: o braco da alavanca)")]
     public Transform leverArm;
-    public Vector3 activatedRotation = new Vector3(-60f, 0f, 0f); // rotacao quando ativa
+    public Vector3 activatedRotation = new Vector3(-60f, 0f, 0f);
     public float animationSpeed = 5f;
 
     [Header("Audio")]
@@ -26,12 +26,16 @@ public class Lever : MonoBehaviour, IInteractable
     public bool updateObjectiveOnInteract = false;
     [TextArea] public string nextObjectiveText = "";
 
+    [Header("Glow Settings")]
+    public bool enableGlow = true;
+
     // ---------------------------------------------
     //  ESTADO PRIVADO
     // ---------------------------------------------
     private bool isActivated = false;
     private Quaternion targetRotation;
     private Quaternion defaultRotation;
+    private GlowEmitter leverGlow;
 
     // ---------------------------------------------
     //  UNITY
@@ -47,11 +51,20 @@ public class Lever : MonoBehaviour, IInteractable
             defaultRotation = leverArm.localRotation;
             targetRotation = defaultRotation;
         }
+
+        if (enableGlow)
+        {
+            leverGlow = GetComponent<GlowEmitter>();
+            if (leverGlow == null)
+            {
+                leverGlow = gameObject.AddComponent<GlowEmitter>();
+                leverGlow.glowColor = Color.white;
+            }
+        }
     }
 
     void Update()
     {
-        // Animar suavemente o braco da alavanca para a rotacao alvo
         if (leverArm != null)
             leverArm.localRotation = Quaternion.Lerp(
                 leverArm.localRotation, targetRotation, Time.deltaTime * animationSpeed);
@@ -70,34 +83,28 @@ public class Lever : MonoBehaviour, IInteractable
     public void Interact(GameObject player)
     {
         if (isActivated) return;
-
         Activate();
     }
 
     // ---------------------------------------------
-    //  ATIVAcaO
+    //  ATIVACAO
     // ---------------------------------------------
     void Activate()
     {
         isActivated = true;
 
-        // Animar o braco da alavanca
         if (leverArm != null)
             targetRotation = Quaternion.Euler(activatedRotation);
 
-        // Som da alavanca
         if (leverSound != null && audioSource != null)
             audioSource.PlayOneShot(leverSound);
 
-        // ← ADICIONA ISTO:
-        // Desativa o glow quando a alavanca é ativada
-        GlowEmitter glow = GetComponent<GlowEmitter>();
-        if (glow != null)
-            glow.DisableGlow();
+        if (leverGlow != null)
+            leverGlow.DisableGlow();
 
-        // Notificar o sistema central
         if (LeverSystem.Instance != null)
             LeverSystem.Instance.OnLeverActivated();
+        
         if (updateObjectiveOnInteract && !string.IsNullOrEmpty(nextObjectiveText))
         {
             ObjectiveManager.Instance?.ShowObjective(nextObjectiveText);

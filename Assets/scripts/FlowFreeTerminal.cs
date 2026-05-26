@@ -17,10 +17,40 @@ public class FlowFreeTerminal : MonoBehaviour, IInteractable
     public bool updateObjectiveOnInteract = false;
     [TextArea] public string nextObjectiveText = "";
 
+    [Header("Glow Settings")]
+    public bool enableGlow = true;
+
     // ---------------------------------------------
     //  ESTADO PRIVADO
     // ---------------------------------------------
     private bool isGameActive = false;
+    private GlowEmitter terminalGlow;
+
+    // ---------------------------------------------
+    //  UNITY
+    // ---------------------------------------------
+    void Start()
+    {
+        InitializeGlow();
+    }
+
+    // ---------------------------------------------
+    //  INICIALIZACAO DO GLOW
+    // ---------------------------------------------
+    void InitializeGlow()
+    {
+        if (!enableGlow) return;
+
+        terminalGlow = GetComponent<GlowEmitter>();
+        if (terminalGlow == null)
+        {
+            terminalGlow = gameObject.AddComponent<GlowEmitter>();
+            terminalGlow.glowColor = Color.white;
+            terminalGlow.enableGlow = false;
+        }
+
+        terminalGlow.EnableGlow();
+    }
 
     // ---------------------------------------------
     //  INTERFACE IInteractable
@@ -43,6 +73,11 @@ public class FlowFreeTerminal : MonoBehaviour, IInteractable
     void OpenMinigame()
     {
         isGameActive = true;
+
+        if (terminalGlow != null && enableGlow)
+        {
+            terminalGlow.DisableGlow();
+        }
 
         if (flowFreeUI != null)
             flowFreeUI.SetActive(true);
@@ -89,6 +124,7 @@ public class FlowFreeTerminal : MonoBehaviour, IInteractable
 
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
+
         if (updateObjectiveOnInteract && !string.IsNullOrEmpty(nextObjectiveText))
         {
             ObjectiveManager.Instance?.ShowObjective(nextObjectiveText);

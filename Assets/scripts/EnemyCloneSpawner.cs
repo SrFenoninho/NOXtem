@@ -42,6 +42,7 @@ public class EnemyCloneSpawner : MonoBehaviour
         maxGeneration = maxGen;
         OnCloneDeath = onCloneDeath;
 
+        EnemyCombatManager.AddPendingSpawn();
         CreateCircleEffect();
         StartCoroutine(SpawnCloneAfterDelay());
     }
@@ -119,6 +120,8 @@ public class EnemyCloneSpawner : MonoBehaviour
 
         if (particles != null)
             particles.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+
+        EnemyCombatManager.RemovePendingSpawn();
 
         if (enemyPrefab == null) yield break;
 

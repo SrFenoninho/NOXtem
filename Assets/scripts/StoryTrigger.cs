@@ -15,15 +15,35 @@ public class StoryTrigger : MonoBehaviour
 
     [Header("Referencias")]
     public FPMove playerMovement;
-    public float slowMultiplier = 0f; // 0 = velocidade normal, sem alteracao
+    public float slowMultiplier = 0f;
     public float lookDuration = 6f;
     public bool triggerInDarkZone = false;
+
+    [Header("Glow Settings")]
+    public bool enableGlow = true;
 
     // ---------------------------------------------
     //  ESTADO PRIVADO
     // ---------------------------------------------
     private float origSpeed;
     private float origSprintSpeed;
+    private GlowEmitter triggerGlow;
+
+    // ---------------------------------------------
+    //  UNITY
+    // ---------------------------------------------
+    void Start()
+    {
+        if (enableGlow)
+        {
+            triggerGlow = GetComponent<GlowEmitter>();
+            if (triggerGlow == null)
+            {
+                triggerGlow = gameObject.AddComponent<GlowEmitter>();
+                triggerGlow.glowColor = Color.white;
+            }
+        }
+    }
 
     // ---------------------------------------------
     //  TRIGGER
@@ -33,6 +53,9 @@ public class StoryTrigger : MonoBehaviour
         if (!other.CompareTag("Player")) return;
 
         if (!triggerInDarkZone && DarknessManager.Instance != null && DarknessManager.Instance.IsDark()) return;
+
+        if (triggerGlow != null)
+            triggerGlow.DisableGlow();
 
         Destroy(GetComponent<Collider>());
         StartCoroutine(RunSequence());
@@ -62,7 +85,6 @@ public class StoryTrigger : MonoBehaviour
             audio.PlayOneShot(voiceLine);
 
         float elapsed = 0f;
-        float lookDuration = 6f;
 
         Transform playerT = playerMovement != null ? playerMovement.transform : null;
         Camera cam = playerMovement != null ? playerMovement.GetComponentInChildren<Camera>() : null;

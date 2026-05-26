@@ -9,21 +9,41 @@ public class ObjectiveTrigger : MonoBehaviour
     public string objectiveText = "Objetivo: ";
     public bool needsInteraction = false;
 
+    [Header("Glow Settings")]
+    public bool enableGlow = true;
+
     // ---------------------------------------------
     //  ESTADO PRIVADO
     // ---------------------------------------------
     private bool playerInside = false;
     private bool triggered = false;
+    private GlowEmitter triggerGlow;
 
     // ---------------------------------------------
     //  UNITY
     // ---------------------------------------------
+    void Start()
+    {
+        if (enableGlow)
+        {
+            triggerGlow = GetComponent<GlowEmitter>();
+            if (triggerGlow == null)
+            {
+                triggerGlow = gameObject.AddComponent<GlowEmitter>();
+                triggerGlow.glowColor = Color.white;
+            }
+        }
+    }
+
     void Update()
     {
         if (playerInside && !triggered && needsInteraction && Input.GetKeyDown(KeyCode.E))
             Trigger();
     }
 
+    // ---------------------------------------------
+    //  TRIGGER
+    // ---------------------------------------------
     void OnTriggerEnter(Collider other)
     {
         if (triggered) return;
@@ -40,15 +60,14 @@ public class ObjectiveTrigger : MonoBehaviour
             playerInside = false;
     }
 
-    // ---------------------------------------------
-    //  DISPARAR
-    // ---------------------------------------------
     void Trigger()
     {
         triggered = true;
         ObjectiveManager.Instance?.ShowObjective(objectiveText);
 
-        // Desativar collider apos uso
+        if (triggerGlow != null)
+            triggerGlow.DisableGlow();
+
         GetComponent<Collider>().enabled = false;
         MeshRenderer mesh = GetComponent<MeshRenderer>();
         if (mesh != null) mesh.enabled = false;

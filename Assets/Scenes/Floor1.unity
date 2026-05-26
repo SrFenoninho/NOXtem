@@ -2189,10 +2189,13 @@ MonoBehaviour:
   destination: {fileID: 2086739011}
   cameraHorizontalAngle: 90
   messageText: {fileID: 0}
-  doorLockedSound: {fileID: 0}
-  doorOpenSound: {fileID: 0}
+  doorLockedSound: {fileID: 8300000, guid: 57d5f58b31154df4384031cd90143772, type: 3}
+  doorOpenSound: {fileID: 8300000, guid: f35ebb3049c9d6d419f7988effdbef5c, type: 3}
+  forcePlayerToCrouch: 0
+  crouchDelayBeforeTeleport: 0.5
   updateObjectiveOnInteract: 0
   nextObjectiveText: 
+  enableGlowWhenKeyAvailable: 1
 --- !u!1001 &170095135
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4780,6 +4783,7 @@ MonoBehaviour:
   messageText: {fileID: 290604112}
   updateObjectiveOnInteract: 0
   nextObjectiveText: 
+  enableGlow: 1
 --- !u!114 &314840210
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4794,19 +4798,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enableGlow: 1
   glowColor: {r: 1, g: 1, b: 1, a: 0.5019608}
-  glowShape: 0
-  autoFitToCollider: 1
-  glowScale: 1.1
-  glowOpacity: 0.1
-  glowIntensityMin: 1
-  glowIntensityMax: 3
-  glowSpeed: 2
-  customMesh: {fileID: 0}
-  autoDisableWhenTriggered: 1
-  useParticles: 1
-  particleColor: {r: 1, g: 1, b: 1, a: 1}
   emissionRate: 10
   particleSize: 0.3
+  particleLifetime: 1.5
+  dispersalSpeed: 1
+  pulseSpeed: 1.5
+  pulseMin: 0.3
+  pulseMax: 1.2
 --- !u!1 &315526503
 GameObject:
   m_ObjectHideFlags: 0
@@ -6110,6 +6108,7 @@ MonoBehaviour:
   updateObjectiveOnInteract: 0
   nextObjectiveText: 
   pickupSound: {fileID: 8300000, guid: 38e3aca495b42324382f774e68d558e3, type: 3}
+  enableGlow: 1
 --- !u!114 &366641455
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15542,6 +15541,7 @@ MonoBehaviour:
   messageText: {fileID: 290604112}
   updateObjectiveOnInteract: 0
   nextObjectiveText: 
+  enableGlow: 1
 --- !u!114 &677300019
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15556,19 +15556,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enableGlow: 1
   glowColor: {r: 1, g: 1, b: 1, a: 0.5019608}
-  glowShape: 0
-  autoFitToCollider: 1
-  glowScale: 1.1
-  glowOpacity: 0.1
-  glowIntensityMin: 1
-  glowIntensityMax: 3
-  glowSpeed: 2
-  customMesh: {fileID: 0}
-  autoDisableWhenTriggered: 1
-  useParticles: 1
-  particleColor: {r: 1, g: 1, b: 1, a: 1}
   emissionRate: 10
   particleSize: 0.3
+  particleLifetime: 1.5
+  dispersalSpeed: 1
+  pulseSpeed: 1.5
+  pulseMin: 0.3
+  pulseMax: 1.2
 --- !u!1 &684670708 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 3d5bee2826dde6c4ea41cb7a6c5cb0f9, type: 3}
@@ -15614,6 +15608,7 @@ MonoBehaviour:
   updateObjectiveOnInteract: 0
   nextObjectiveText: 
   pickupSound: {fileID: 0}
+  enableGlow: 1
 --- !u!114 &684670711
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16126,15 +16121,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: e46538efbdfd9a0409184ee1f2e4aa6c, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.4
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: e46538efbdfd9a0409184ee1f2e4aa6c, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.4
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: e46538efbdfd9a0409184ee1f2e4aa6c, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.4
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: e46538efbdfd9a0409184ee1f2e4aa6c, type: 3}
       propertyPath: m_LocalPosition.x
@@ -16142,11 +16137,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: e46538efbdfd9a0409184ee1f2e4aa6c, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 16.732
+      value: 16.986
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: e46538efbdfd9a0409184ee1f2e4aa6c, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -19.076
+      value: -18.82
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: e46538efbdfd9a0409184ee1f2e4aa6c, type: 3}
       propertyPath: m_LocalRotation.w
@@ -16221,6 +16216,7 @@ MonoBehaviour:
   messageText: {fileID: 290604112}
   updateObjectiveOnInteract: 0
   nextObjectiveText: 
+  enableGlow: 1
 --- !u!65 &736859641
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -19285,6 +19281,7 @@ MonoBehaviour:
   lookDuration: 5
   triggerInDarkZone: 1
   frozen: 1
+  enableGlow: 1
 --- !u!4 &952515360
 Transform:
   m_ObjectHideFlags: 0
@@ -21864,6 +21861,7 @@ MonoBehaviour:
   updateObjectiveOnInteract: 0
   nextObjectiveText: 
   pickupSound: {fileID: 8300000, guid: 38e3aca495b42324382f774e68d558e3, type: 3}
+  enableGlow: 1
 --- !u!114 &1097144839
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -22163,8 +22161,9 @@ MonoBehaviour:
   messageText: {fileID: 290604112}
   requiredKeyID: Freezer
   isLocked: 1
-  lockedSound: {fileID: 0}
-  unlockedSound: {fileID: 0}
+  lockedSound: {fileID: 8300000, guid: 57d5f58b31154df4384031cd90143772, type: 3}
+  unlockedSound: {fileID: 8300000, guid: f35ebb3049c9d6d419f7988effdbef5c, type: 3}
+  enableGlowWhenKeyAvailable: 1
 --- !u!135 &1111918796
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -22541,6 +22540,7 @@ MonoBehaviour:
   slowMultiplier: 0.3
   lookDuration: 5
   triggerInDarkZone: 0
+  enableGlow: 1
 --- !u!65 &1130377080
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -25340,6 +25340,7 @@ MonoBehaviour:
   updateObjectiveOnInteract: 0
   nextObjectiveText: 
   pickupSound: {fileID: 8300000, guid: 38e3aca495b42324382f774e68d558e3, type: 3}
+  enableGlow: 1
 --- !u!114 &1256314831
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -25731,6 +25732,7 @@ MonoBehaviour:
   updateObjectiveOnInteract: 0
   nextObjectiveText: 
   pickupSound: {fileID: 8300000, guid: 38e3aca495b42324382f774e68d558e3, type: 3}
+  enableGlow: 1
 --- !u!114 &1283452180
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -27596,8 +27598,9 @@ MonoBehaviour:
   messageText: {fileID: 290604112}
   requiredKeyID: Pantry
   isLocked: 1
-  lockedSound: {fileID: 0}
-  unlockedSound: {fileID: 0}
+  lockedSound: {fileID: 8300000, guid: 57d5f58b31154df4384031cd90143772, type: 3}
+  unlockedSound: {fileID: 8300000, guid: f35ebb3049c9d6d419f7988effdbef5c, type: 3}
+  enableGlowWhenKeyAvailable: 1
 --- !u!135 &1401371626
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -29430,6 +29433,7 @@ MonoBehaviour:
   slowMultiplier: 0.5
   lookDuration: 8
   triggerInDarkZone: 1
+  enableGlow: 1
 --- !u!65 &1538273236
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -29606,6 +29610,7 @@ MonoBehaviour:
   sceneToLoadOnComplete: HackAndSlash
   updateObjectiveOnInteract: 0
   nextObjectiveText: 
+  enableGlow: 1
 --- !u!114 &1539730040
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -30509,8 +30514,9 @@ MonoBehaviour:
   messageText: {fileID: 290604112}
   requiredKeyID: Security
   isLocked: 1
-  lockedSound: {fileID: 0}
-  unlockedSound: {fileID: 0}
+  lockedSound: {fileID: 8300000, guid: 57d5f58b31154df4384031cd90143772, type: 3}
+  unlockedSound: {fileID: 8300000, guid: f35ebb3049c9d6d419f7988effdbef5c, type: 3}
+  enableGlowWhenKeyAvailable: 1
 --- !u!135 &1603404527
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -36138,8 +36144,11 @@ MonoBehaviour:
   messageText: {fileID: 0}
   doorLockedSound: {fileID: 0}
   doorOpenSound: {fileID: 0}
+  forcePlayerToCrouch: 0
+  crouchDelayBeforeTeleport: 0.5
   updateObjectiveOnInteract: 0
   nextObjectiveText: 
+  enableGlowWhenKeyAvailable: 0
 --- !u!65 &1992061572
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -36933,6 +36942,7 @@ MonoBehaviour:
   messageText: {fileID: 290604112}
   updateObjectiveOnInteract: 0
   nextObjectiveText: 
+  enableGlow: 1
 --- !u!65 &2058307291
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -36968,19 +36978,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enableGlow: 1
   glowColor: {r: 1, g: 1, b: 1, a: 0.5019608}
-  glowShape: 0
-  autoFitToCollider: 1
-  glowScale: 1.1
-  glowOpacity: 0.1
-  glowIntensityMin: 1
-  glowIntensityMax: 3
-  glowSpeed: 2
-  customMesh: {fileID: 0}
-  autoDisableWhenTriggered: 1
-  useParticles: 1
-  particleColor: {r: 1, g: 1, b: 1, a: 1}
   emissionRate: 10
   particleSize: 0.3
+  particleLifetime: 1.5
+  dispersalSpeed: 1
+  pulseSpeed: 1.5
+  pulseMin: 0.3
+  pulseMax: 1.2
 --- !u!1 &2059147501 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 5bc85e930e9d16f498110c0774d9b90c, type: 3}

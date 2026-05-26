@@ -19,12 +19,32 @@ public class Keys : MonoBehaviour, IInteractable
     [TextArea] public string nextObjectiveText = "";
 
     [Header("Audio")]
-    public AudioClip pickupSound;      // O som a tocar ao apanhar
+    public AudioClip pickupSound;
+
+    [Header("Glow Settings")]
+    public bool enableGlow = true;
 
     // ---------------------------------------------
     //  ESTADO PRIVADO
     // ---------------------------------------------
     private bool alreadyPickedUp = false;
+    private GlowEmitter keyGlow;
+
+    // ---------------------------------------------
+    //  UNITY
+    // ---------------------------------------------
+    void Start()
+    {
+        if (enableGlow)
+        {
+            keyGlow = GetComponent<GlowEmitter>();
+            if (keyGlow == null)
+            {
+                keyGlow = gameObject.AddComponent<GlowEmitter>();
+                keyGlow.glowColor = Color.white;
+            }
+        }
+    }
 
     // ---------------------------------------------
     //  INTERFACE IInteractable
@@ -40,14 +60,12 @@ public class Keys : MonoBehaviour, IInteractable
 
         if (pickupSound != null)
         {
-            // Toca o som na posicao atual do objeto, evitando que o som corte quando o objeto for destruido
             AudioSource.PlayClipAtPoint(pickupSound, transform.position);
         }
 
         string name = string.IsNullOrEmpty(displayName) ? keyName : displayName;
         InventoryItem item = new InventoryItem(keyName, name, "key", keyDescription);
         InventoryManager.Instance?.AddItem(item);
-        Debug.Log("InventoryManager instance: " + (InventoryManager.Instance == null ? "NULL" : "OK"));
 
         PlayerKeys playerKeys = player.GetComponent<PlayerKeys>();
         if (playerKeys != null)
@@ -61,16 +79,36 @@ public class Keys : MonoBehaviour, IInteractable
             Invoke(nameof(ClearMessage), 2f);
         }
 
+        NotifyDoorsAboutKey(keyName);
+
         if (updateObjectiveOnInteract && !string.IsNullOrEmpty(nextObjectiveText))
         {
             ObjectiveManager.Instance?.ShowObjective(nextObjectiveText);
         }
 
-        // Desativar e destruir o objeto
         GetComponent<Collider>().enabled = false;
         MeshRenderer mesh = GetComponent<MeshRenderer>();
         if (mesh != null) mesh.enabled = false;
+
+        if (keyGlow != null)
+            keyGlow.DisableGlow();
+
         Destroy(gameObject, 2.1f);
+    }
+
+    // ---------------------------------------------
+    //  GLOW
+    // ---------------------------------------------
+    void NotifyDoorsAboutKey(string keyName)
+    {
+        foreach (InteractiveDoor door in FindObjectsByType<InteractiveDoor>(FindObjectsSortMode.None))
+            door.OnKeyPickedUp(keyName);
+
+        foreach (LockedDoor door in FindObjectsByType<LockedDoor>(FindObjectsSortMode.None))
+            door.OnKeyPickedUp(keyName);
+
+        foreach (CardReaderInteraction reader in FindObjectsByType<CardReaderInteraction>(FindObjectsSortMode.None))
+            reader.OnKeyPickedUp(keyName);
     }
 
     // ---------------------------------------------

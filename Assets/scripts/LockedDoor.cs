@@ -14,11 +14,16 @@ public class LockedDoor : MonoBehaviour
     public AudioClip lockedSound;        // Toca se o jogador nao tiver a chave
     public AudioClip unlockedSound;      // Toca ao destrancar a porta com sucesso
 
+    [Header("Glow Settings")]
+    public bool enableGlowWhenKeyAvailable = true;
+
     // ---------------------------------------------
     //  ESTADO PRIVADO
     // ---------------------------------------------
     private Rigidbody rb;
     private bool hasPlayedUnlockedSound = false;
+    private GlowEmitter doorGlow;
+    private bool hasGlowedThisRun = false;
 
     // ---------------------------------------------
     //  UNITY
@@ -27,10 +32,42 @@ public class LockedDoor : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         if (rb != null) rb.isKinematic = isLocked;
+
+        InitializeGlow();
     }
 
     // ---------------------------------------------
-    //  DESBLOQUEIO POR COLISaO
+    //  INICIALIZACAO DO GLOW
+    // ---------------------------------------------
+    void InitializeGlow()
+    {
+        if (!enableGlowWhenKeyAvailable) return;
+
+        doorGlow = GetComponent<GlowEmitter>();
+        if (doorGlow == null)
+        {
+            doorGlow = gameObject.AddComponent<GlowEmitter>();
+            doorGlow.glowColor = Color.white;
+            doorGlow.enableGlow = false;
+        }
+
+        doorGlow.DisableGlow();
+    }
+
+    // ---------------------------------------------
+    //  CALLBACK DE CHAVE COLETADA
+    // ---------------------------------------------
+    public void OnKeyPickedUp(string keyName)
+    {
+        if (keyName == requiredKeyID && doorGlow != null && enableGlowWhenKeyAvailable && !hasGlowedThisRun)
+        {
+            doorGlow.EnableGlow();
+            hasGlowedThisRun = true;
+        }
+    }
+
+    // ---------------------------------------------
+    //  DESBLOQUEIO POR COLISAO
     // ---------------------------------------------
     public void OnTriggerEnter(Collider other)
     {
@@ -43,6 +80,11 @@ public class LockedDoor : MonoBehaviour
                 {
                     isLocked = false;
                     if (rb != null) rb.isKinematic = false;
+
+                    if (doorGlow != null && enableGlowWhenKeyAvailable)
+                    {
+                        doorGlow.DisableGlow();
+                    }
 
                     if (messageText != null) messageText.text = "A door is unlocked";
 
@@ -76,6 +118,9 @@ public class LockedDoor : MonoBehaviour
         }
     }
 
+    // ---------------------------------------------
+    //  UI
+    // ---------------------------------------------
     void ClearMessage()
     {
         if (messageText != null) messageText.text = "";

@@ -23,16 +23,33 @@ public class StoryTriggerOnPickup : MonoBehaviour
     public bool triggerInDarkZone = false;
     public bool frozen = false;
 
+    [Header("Glow Settings")]
+    public bool enableGlow = true;
+
     // ---------------------------------------------
     //  ESTADO PRIVADO
     // ---------------------------------------------
     private float origSpeed;
     private float origSprintSpeed;
     private bool triggered = false;
+    private GlowEmitter triggerGlow;
 
     // ---------------------------------------------
     //  UNITY
     // ---------------------------------------------
+    void Start()
+    {
+        if (enableGlow)
+        {
+            triggerGlow = GetComponent<GlowEmitter>();
+            if (triggerGlow == null)
+            {
+                triggerGlow = gameObject.AddComponent<GlowEmitter>();
+                triggerGlow.glowColor = Color.white;
+            }
+        }
+    }
+
     void Update()
     {
         if (triggered) return;
@@ -42,6 +59,9 @@ public class StoryTriggerOnPickup : MonoBehaviour
             triggered = true;
 
             if (!triggerInDarkZone && DarknessManager.Instance != null && DarknessManager.Instance.IsDark()) return;
+
+            if (triggerGlow != null)
+                triggerGlow.DisableGlow();
 
             StartCoroutine(RunSequence());
         }

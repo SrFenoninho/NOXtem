@@ -22,8 +22,8 @@ public class InteractiveDoor : MonoBehaviour, IInteractable
     public Text messageText;
 
     [Header("audio")]
-    public AudioClip doorLockedSound; // Som quando a porta esta trancada e tentamos abrir
-    public AudioClip doorOpenSound;   // Som da porta a destrancar/abrir
+    public AudioClip doorLockedSound;
+    public AudioClip doorOpenSound;
     private AudioSource audioSource;
 
     [Header("Agachamento & Delay")]
@@ -34,6 +34,15 @@ public class InteractiveDoor : MonoBehaviour, IInteractable
     public bool updateObjectiveOnInteract = false;
     [TextArea] public string nextObjectiveText = "";
 
+    [Header("Glow Settings")]
+    public bool enableGlowWhenKeyAvailable = true;
+
+    // ---------------------------------------------
+    //  ESTADO PRIVADO
+    // ---------------------------------------------
+    private GlowEmitter doorGlow;
+    private bool hasGlowedThisRun = false;
+
     // ---------------------------------------------
     //  UNITY
     // ---------------------------------------------
@@ -42,6 +51,35 @@ public class InteractiveDoor : MonoBehaviour, IInteractable
         audioSource = GetComponent<AudioSource>();
         if (audioSource == null && (doorOpenSound != null || doorLockedSound != null))
             audioSource = gameObject.AddComponent<AudioSource>();
+
+        InitializeGlow();
+    }
+
+    // ---------------------------------------------
+    //  GLOW
+    // ---------------------------------------------
+    void InitializeGlow()
+    {
+        if (!enableGlowWhenKeyAvailable) return;
+
+        doorGlow = GetComponent<GlowEmitter>();
+        if (doorGlow == null)
+        {
+            doorGlow = gameObject.AddComponent<GlowEmitter>();
+            doorGlow.glowColor = Color.white;
+        }
+
+        doorGlow.DisableGlow();
+    }
+
+    public void OnKeyPickedUp(string keyName)
+    {
+        if (keyName == requiredKeyName && !hasGlowedThisRun && enableGlowWhenKeyAvailable && doorGlow != null)
+        {
+            doorGlow.EnableGlow();
+            hasGlowedThisRun = true;
+            Debug.Log("Door glow enabled for key: " + keyName);
+        }
     }
 
     // ---------------------------------------------
@@ -62,6 +100,10 @@ public class InteractiveDoor : MonoBehaviour, IInteractable
             if (playerKeys != null && playerKeys.HasKey(requiredKeyName))
             {
                 isLocked = false;
+
+                if (doorGlow != null && hasGlowedThisRun)
+                    doorGlow.DisableGlow();
+
                 OpenDoor(player);
             }
             else
@@ -97,15 +139,11 @@ public class InteractiveDoor : MonoBehaviour, IInteractable
 
         if (forcePlayerToCrouch && fpMove != null)
         {
-            // Força o agachamento imediatamente
             fpMove.isCrouching = true;
-            
-            // Inicia coroutine para teleportar após o delay
             StartCoroutine(TeleportAfterDelay(player, controller, fpMove));
         }
         else
         {
-            // Teleporta imediatamente
             PerformTeleport(player, controller, fpMove);
         }
     }
@@ -118,14 +156,12 @@ public class InteractiveDoor : MonoBehaviour, IInteractable
 
     void PerformTeleport(GameObject player, CharacterController controller, FPMove fpMove)
     {
-        // Guarda a rotação Y atual (direção que o jogador está a olhar)
         float currentYRotation = player.transform.eulerAngles.y;
 
         if (controller != null)
         {
             controller.enabled = false;
             player.transform.position = destination.position;
-            // Mantém a mesma direção, mas aplica o offset se definires
             player.transform.rotation = Quaternion.Euler(0f, currentYRotation + cameraHorizontalAngle, 0f);
             controller.enabled = true;
         }
@@ -155,6 +191,9 @@ public class InteractiveDoor : MonoBehaviour, IInteractable
         }
     }
 
+    // ---------------------------------------------
+    //  UI
+    // ---------------------------------------------
     void ClearMessage()
     {
         if (messageText != null) messageText.text = "";

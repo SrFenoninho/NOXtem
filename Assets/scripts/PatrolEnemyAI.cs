@@ -29,8 +29,10 @@ public class PatrolEnemyAI : MonoBehaviour
     public float chaseSpeed = 6f;
 
     [Header("Search Settings")]
-    public float searchDuration = 10f;
-    public float searchPointRadius = 10f;
+    public int lookAroundCount = 4;           // Nº de direções a olhar em cada fase
+    public float lookRotateSpeed = 100f;      // Velocidade de rotação (graus/segundo)
+    public float lookHoldDuration = 1.5f;     // Tempo parado a olhar para cada direção
+    public float searchMoveDistance = 4f;     // Distância a avançar entre as fases de busca
 
     [Header("Musica de Perseguicao")]
     public MusicManager musicManager;
@@ -49,17 +51,31 @@ public class PatrolEnemyAI : MonoBehaviour
     private AudioSource chaseMusicSource;
     private bool chaseMusicPlaying = false;
     private int currentWaypointIndex = -1;
-    private float searchTimer = 0f;
-    private float nextSearchMoveTimer = 0f;
     private float nextAttackTime = 0f;
 
     private Transform player;
     private PlayerHealth playerHealth;
     private State currentState;
-    
+
     // Último local onde viu o jogador
     private Vector3 lastPlayerPosition;
-    private bool hasReachedLastPlayerPosition = false;
+
+    // ---------------------------------------------
+    //  SUB-ESTADOS DE BUSCA
+    // ---------------------------------------------
+    private enum SearchSubState
+    {
+        GoingToLastPosition,  // A caminho do último local onde viu o jogador
+        LookingAround,        // Parado a olhar para os lados
+        MovingForward,        // A avançar um pouco antes de olhar outra vez
+    }
+    private SearchSubState searchSubState;
+
+    // Controlo da rotação de busca
+    private float targetLookAngle;     // Ângulo Y alvo para a rotação atual
+    private float lookHoldTimer;       // Tempo restante a olhar nessa direção
+    private int looksRemaining;        // Olhares que faltam nesta fase
+    private int searchPhase;           // 0 = 1ª fase de olhar | 1 = avançou, 2ª fase
 
     // ---------------------------------------------
     //  UNITY
@@ -104,7 +120,7 @@ public class PatrolEnemyAI : MonoBehaviour
         if (canSee)
         {
             lastPlayerPosition = player.position;
-            
+
             if (distToPlayer <= attackRange)
             {
                 if (currentState != State.Attacking)  // ← SÓ MUDA SE NÃO JÁ ESTÁ
@@ -127,9 +143,9 @@ public class PatrolEnemyAI : MonoBehaviour
             if (currentState == State.Chasing || currentState == State.Attacking)
             {
                 currentState = State.Searching;
-                searchTimer = searchDuration;
-                nextSearchMoveTimer = 0f;
-                hasReachedLastPlayerPosition = false;
+                searchSubState = SearchSubState.GoingToLastPosition;
+                agent.isStopped = false;
+                agent.SetDestination(lastPlayerPosition);
                 StopChaseMusic();
             }
         }
@@ -169,46 +185,116 @@ public class PatrolEnemyAI : MonoBehaviour
 
     void SearchBehavior()
     {
-        agent.speed = patrolSpeed * 1.2f;
-        agent.isStopped = false;
-
-        searchTimer -= Time.deltaTime;
-
-        // Se ainda não chegou ao último local do jogador
-        if (!hasReachedLastPlayerPosition)
+        switch (searchSubState)
         {
-            // Vai para o último local onde viu o jogador
-            agent.SetDestination(lastPlayerPosition);
+            // --------------------------------------------------
+            // FASE 0: Vai até ao último local onde viu o jogador
+            // --------------------------------------------------
+            case SearchSubState.GoingToLastPosition:
+                agent.speed = patrolSpeed * 1.2f;
+                agent.isStopped = false;
 
-            // Verifica se chegou ao local
-            if (!agent.pathPending && agent.remainingDistance < 0.5f)
-            {
-                hasReachedLastPlayerPosition = true;
-                nextSearchMoveTimer = 0f;
-            }
+                if (!agent.pathPending && agent.remainingDistance < 0.5f)
+                {
+                    // Chegou — para e começa a olhar para os lados (fase 1)
+                    EnterLookAround(phase: 0);
+                }
+                break;
+
+            // --------------------------------------------------
+            // FASE 1 / 3: Olha para os lados aleatoriamente
+            // --------------------------------------------------
+            case SearchSubState.LookingAround:
+                agent.isStopped = true;
+
+                // Roda suavemente em direção ao ângulo alvo
+                float currentY = transform.eulerAngles.y;
+                float newY = Mathf.MoveTowardsAngle(currentY, targetLookAngle, lookRotateSpeed * Time.deltaTime);
+                transform.rotation = Quaternion.Euler(0f, newY, 0f);
+
+                // Chegou à direção alvo?
+                if (Mathf.Abs(Mathf.DeltaAngle(newY, targetLookAngle)) < 2f)
+                {
+                    lookHoldTimer -= Time.deltaTime;
+
+                    if (lookHoldTimer <= 0f)
+                    {
+                        looksRemaining--;
+
+                        if (looksRemaining > 0)
+                        {
+                            // Escolhe mais uma direção aleatória
+                            PickNextLookAngle();
+                        }
+                        else if (searchPhase == 0)
+                        {
+                            // Terminou 1ª fase de olhar → avança um pouco
+                            searchPhase = 1;
+                            TryMoveForward();
+                        }
+                        else
+                        {
+                            // Terminou 2ª fase de olhar sem ver nada → volta à patrulha
+                            agent.isStopped = false;
+                            currentState = State.Patrolling;
+                            PickRandomWaypoint();
+                        }
+                    }
+                }
+                break;
+
+            // --------------------------------------------------
+            // FASE 2: Avança um pouco antes de olhar outra vez
+            // --------------------------------------------------
+            case SearchSubState.MovingForward:
+                agent.speed = patrolSpeed;
+                agent.isStopped = false;
+
+                if (!agent.pathPending && agent.remainingDistance < 0.5f)
+                {
+                    // Chegou ao ponto intermédio → olha outra vez (fase 2)
+                    EnterLookAround(phase: 1);
+                }
+                break;
+        }
+    }
+
+    // Inicia uma fase de "olhar para os lados"
+    void EnterLookAround(int phase)
+    {
+        searchPhase = phase;
+        looksRemaining = lookAroundCount;
+        searchSubState = SearchSubState.LookingAround;
+        PickNextLookAngle();
+    }
+
+    // Escolhe um ângulo Y aleatório (evita repetir o atual)
+    void PickNextLookAngle()
+    {
+        float newAngle;
+        do { newAngle = Random.Range(0f, 360f); }
+        while (Mathf.Abs(Mathf.DeltaAngle(newAngle, targetLookAngle)) < 30f);
+
+        targetLookAngle = newAngle;
+        lookHoldTimer = lookHoldDuration;
+    }
+
+    // Tenta avançar um pouco na direção em que está a olhar
+    void TryMoveForward()
+    {
+        Vector3 forwardPos = transform.position + transform.forward * searchMoveDistance;
+        NavMeshHit hit;
+
+        if (NavMesh.SamplePosition(forwardPos, out hit, searchMoveDistance, NavMesh.AllAreas))
+        {
+            searchSubState = SearchSubState.MovingForward;
+            agent.isStopped = false;
+            agent.SetDestination(hit.position);
         }
         else
         {
-            // Se já chegou ao último local, começa a procurar aleatoriamente
-            nextSearchMoveTimer -= Time.deltaTime;
-            if (nextSearchMoveTimer <= 0f || (agent.remainingDistance < 0.5f && !agent.pathPending))
-            {
-                Vector3 randomSearchPoint = transform.position + Random.insideUnitSphere * searchPointRadius;
-                NavMeshHit hit;
-                if (NavMesh.SamplePosition(randomSearchPoint, out hit, searchPointRadius, NavMesh.AllAreas))
-                {
-                    agent.SetDestination(hit.position);
-                }
-                nextSearchMoveTimer = 3f;
-            }
-        }
-
-        // Se o tempo de procura acabou, volta a patrulhar
-        if (searchTimer <= 0f)
-        {
-            currentState = State.Patrolling;
-            PickRandomWaypoint();
-            return;
+            // Sem NavMesh à frente — salta direto para a 2ª fase de olhar
+            EnterLookAround(phase: 1);
         }
     }
 

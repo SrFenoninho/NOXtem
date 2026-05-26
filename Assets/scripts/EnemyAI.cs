@@ -118,6 +118,11 @@ public class EnemyAI : MonoBehaviour
     // ---------------------------------------------
     //  UNITY
     // ----------------------------------------------
+    void Awake()
+    {
+        EnemyCombatManager.Register(this);
+    }
+
     void Start()
     {
         currentHealth = maxHealth;
@@ -141,8 +146,6 @@ public class EnemyAI : MonoBehaviour
 
         // angulo inicial aleatorio para que os inimigos se espalhem imediatamente
         orbitAngle = Random.Range(0f, 360f);
-
-        EnemyCombatManager.Register(this);
     }
 
     void OnDestroy()

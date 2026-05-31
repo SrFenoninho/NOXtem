@@ -24018,8 +24018,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fPMove: {fileID: 1600505028}
-  playerFrames:
-  - {fileID: 2800000, guid: 54faa64bbf99ffe419be4b68778966c0, type: 3}
+  playerFrames_HP100:
+  - {fileID: 2800000, guid: e06eb7a883aefb94cbe7ee2f6b2a2fc4, type: 3}
+  playerFrames_HP75:
+  - {fileID: 2800000, guid: de20280fdbffaef4bb1be6d55c47ecb6, type: 3}
+  playerFrames_HP50:
+  - {fileID: 2800000, guid: 173970108d7599d4fb03fbe12880a963, type: 3}
+  playerFrames_HP25:
+  - {fileID: 2800000, guid: a8852b2dd8258e54b9d88f5ab37a2dd9, type: 3}
+  playerFrames_HP10:
+  - {fileID: 2800000, guid: 9332e9a49b0867041951187836a6ec8e, type: 3}
+  playerFrames_HP5:
+  - {fileID: 2800000, guid: 7f22635fea0c3644ea9d73b241988ec9, type: 3}
   playerFPS: 1
   williamFrames:
   - {fileID: 2800000, guid: 7875607cb2416c2499f652cc704c1201, type: 3}

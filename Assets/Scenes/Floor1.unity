@@ -6370,8 +6370,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fPMove: {fileID: 1951774458}
-  playerFrames:
-  - {fileID: 2800000, guid: 54faa64bbf99ffe419be4b68778966c0, type: 3}
+  playerFrames_HP100:
+  - {fileID: 2800000, guid: e06eb7a883aefb94cbe7ee2f6b2a2fc4, type: 3}
+  playerFrames_HP75:
+  - {fileID: 2800000, guid: de20280fdbffaef4bb1be6d55c47ecb6, type: 3}
+  playerFrames_HP50:
+  - {fileID: 2800000, guid: 173970108d7599d4fb03fbe12880a963, type: 3}
+  playerFrames_HP25:
+  - {fileID: 2800000, guid: a8852b2dd8258e54b9d88f5ab37a2dd9, type: 3}
+  playerFrames_HP10:
+  - {fileID: 2800000, guid: 9332e9a49b0867041951187836a6ec8e, type: 3}
+  playerFrames_HP5:
+  - {fileID: 2800000, guid: 7f22635fea0c3644ea9d73b241988ec9, type: 3}
   playerFPS: 1
   williamFrames:
   - {fileID: 2800000, guid: 7875607cb2416c2499f652cc704c1201, type: 3}
@@ -6391,7 +6401,11 @@ MonoBehaviour:
   - {fileID: 2800000, guid: 7875607cb2416c2499f652cc704c1201, type: 3}
   - {fileID: 2800000, guid: 7875607cb2416c2499f652cc704c1201, type: 3}
   williamFPS: 8
-  itemIcons: []
+  keyImages:
+  - keyID: 
+    keyImage: {fileID: 2800000, guid: 54b107a168d31804a9e7fb3ba7c1a991, type: 3}
+  - keyID: 
+    keyImage: {fileID: 0}
   inventoryMusic: {fileID: 0}
   inventoryMusicVolume: 0.5
   defaultSensitivity: 100
@@ -28733,12 +28747,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1417068681}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.70534444, y: -0.0027568892, z: -0.0023297553, w: 0.70885575}
-  m_LocalPosition: {x: -5.44, y: 24.76, z: -51.77}
+  m_LocalRotation: {x: 0.7053444, y: -0.002756889, z: -0.002329755, w: 0.7088557}
+  m_LocalPosition: {x: 22.51, y: 10.385, z: -61.22}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 1733571052}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1417124132
 MonoBehaviour:
@@ -32288,12 +32302,20 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: 18eda91990403c7488422b635bc4bec7, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 23a38b4ec33c5904ebeec68897b6dcd8, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1417068687}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 23a38b4ec33c5904ebeec68897b6dcd8, type: 3}
       insertIndex: -1
       addedObject: {fileID: 172221690}
   m_SourcePrefab: {fileID: 100100000, guid: 23a38b4ec33c5904ebeec68897b6dcd8, type: 3}
+--- !u!4 &1733571052 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 23a38b4ec33c5904ebeec68897b6dcd8, type: 3}
+  m_PrefabInstance: {fileID: 1733571051}
+  m_PrefabAsset: {fileID: 0}
 --- !u!64 &1734446715
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -39519,7 +39541,6 @@ SceneRoots:
   - {fileID: 459023414}
   - {fileID: 368407253}
   - {fileID: 889510327}
-  - {fileID: 1417068687}
   - {fileID: 1733571051}
   - {fileID: 1595609213}
   - {fileID: 1071470869}

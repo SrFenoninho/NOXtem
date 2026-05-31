@@ -12,13 +12,20 @@ public class GameMenuManager : MonoBehaviour
     public FPMove fPMove;
 
     [Header("Animacao do Inventario")]
-    public Texture2D[] playerFrames;
+    [Header("Player Frames - Por Nivel de Vida")]
+    public Texture2D[] playerFrames_HP100;  // Vida > 75
+    public Texture2D[] playerFrames_HP75;   // Vida <= 75 e > 50
+    public Texture2D[] playerFrames_HP50;   // Vida <= 50 e > 25
+    public Texture2D[] playerFrames_HP25;   // Vida <= 25 e > 10
+    public Texture2D[] playerFrames_HP10;   // Vida <= 10 e > 5
+    public Texture2D[] playerFrames_HP5;    // Vida <= 5
     public float playerFPS = 8f;
+    
     public Texture2D[] williamFrames;
     public float williamFPS = 6f;
 
     [Header("Icones dos Items")]
-    public ItemIconEntry[] itemIcons;
+    public KeyIconEntry[] keyImages; // Mapeia cada keyName (ID) a uma imagem
 
     // Campo para a musica do inventario - arrasta o ficheiro de audio aqui no Unity
     [Header("Audio do Inventario")]
@@ -56,17 +63,19 @@ public class GameMenuManager : MonoBehaviour
     public Color corTextoLabels = new Color(0.3f, 1f, 0.3f);
     public Color corTextoVazio = new Color(0.5f, 0.5f, 0.5f);
 
-    [Header("Cores - Tipos de Item")]
+    [Header("Cores - Tipos de Item (Fallback)")]
     public Color corItemChave = new Color(1f, 0.85f, 0.3f);
     public Color corItemNota = new Color(0.9f, 0.9f, 0.9f);
     public Color corItemFerramenta = new Color(0.5f, 0.8f, 1f);
     public Color corItemDesconhecido = new Color(0.5f, 0.5f, 0.5f);
 
+
+
     // ---------------------------------------------
     //  INSPETOR - TAMANHOS
     // ---------------------------------------------
     [Header("Tamanhos - Janela (0 a 1)")]
-    public Vector2 janelaMargem = new Vector2(0.05f, 0.05f);
+    public Vector2 janelaMargem = Vector2.zero;
 
     [Header("Tamanhos - Slots de Inventario")]
     public float slotTamanho = 90f;
@@ -104,6 +113,10 @@ public class GameMenuManager : MonoBehaviour
     private float williamAnimTimer = 0f;
     private int playerFrameIndex = 0;
     private int williamFrameIndex = 0;
+    
+    // Controlo de mudancas de array de frames
+    private Texture2D[] currentPlayerFrameArray;
+    private Texture2D[] previousPlayerFrameArray;
 
     // AudioSource dedicado a musica do inventario
     private AudioSource inventoryAudioSource;
@@ -145,15 +158,28 @@ public class GameMenuManager : MonoBehaviour
             ToggleMenu();
 
         // unscaledDeltaTime para as animacoes funcionarem mesmo com o jogo pausado
-        if (playerRawImage != null && playerFrames != null && playerFrames.Length > 1)
+        if (playerRawImage != null)
         {
-            playerAnimTimer += Time.unscaledDeltaTime;
-            if (playerAnimTimer >= 1f / playerFPS)
+            currentPlayerFrameArray = GetCurrentPlayerFrameArray();
+            
+            // Se mudou de array, resetar o index
+            if (currentPlayerFrameArray != previousPlayerFrameArray)
             {
+                playerFrameIndex = 0;
+                previousPlayerFrameArray = currentPlayerFrameArray;
                 playerAnimTimer = 0f;
-                playerFrameIndex = (playerFrameIndex + 1) % playerFrames.Length;
-                if (playerFrames[playerFrameIndex] != null)
-                    playerRawImage.texture = playerFrames[playerFrameIndex];
+            }
+            
+            if (currentPlayerFrameArray != null && currentPlayerFrameArray.Length > 0)
+            {
+                playerAnimTimer += Time.unscaledDeltaTime;
+                if (playerAnimTimer >= 1f / playerFPS)
+                {
+                    playerAnimTimer = 0f;
+                    playerFrameIndex = (playerFrameIndex + 1) % currentPlayerFrameArray.Length;
+                    if (currentPlayerFrameArray[playerFrameIndex] != null)
+                        playerRawImage.texture = currentPlayerFrameArray[playerFrameIndex];
+                }
             }
         }
 
@@ -256,7 +282,33 @@ public class GameMenuManager : MonoBehaviour
     }
 
     // ---------------------------------------------
-    //  
+    //  SELECAO DE FRAMES DO PLAYER POR VIDA
+    // ---------------------------------------------
+    Texture2D[] GetCurrentPlayerFrameArray()
+    {
+        // Obter a vida do player
+        PlayerHealth playerHealth = FindFirstObjectByType<PlayerHealth>();
+        if (playerHealth == null)
+            return playerFrames_HP100; // Default se nao encontrar
+
+        float currentHealth = playerHealth.currentHealth;
+        float maxHealth = playerHealth.maxHealth;
+        float healthPercent = (currentHealth / maxHealth) * 100f;
+
+        // Determinar qual array usar baseado na percentagem de vida
+        if (healthPercent > 75f)
+            return playerFrames_HP100;
+        else if (healthPercent > 50f)
+            return playerFrames_HP75;
+        else if (healthPercent > 25f)
+            return playerFrames_HP50;
+        else if (healthPercent > 10f)
+            return playerFrames_HP25;
+        else if (healthPercent > 5f)
+            return playerFrames_HP10;
+        else
+            return playerFrames_HP5;
+    }
     // ---------------------------------------------
     //  CONSTRUCAO DO MENU
     // ---------------------------------------------
@@ -317,7 +369,7 @@ public class GameMenuManager : MonoBehaviour
         CreateLabel(rightTop.transform, "",
             new Vector2(0f, 0.88f), new Vector2(1f, 1f), fonteLabels, corTextoLabels);
         playerRawImage = CreateRawImageBox(rightTop.transform,
-            playerFrames != null && playerFrames.Length > 0 ? playerFrames[0] : null,
+            playerFrames_HP100 != null && playerFrames_HP100.Length > 0 ? playerFrames_HP100[0] : null,
             new Vector2(0.1f, 0.05f), new Vector2(0.9f, 0.85f));
 
         GameObject rightBot = CreatePanel(tabInventario.transform, "",
@@ -468,10 +520,7 @@ public class GameMenuManager : MonoBehaviour
             iconRT.anchorMax = new Vector2(0.95f, 1f);
             iconRT.offsetMin = iconRT.offsetMax = Vector2.zero;
             RawImage iconImg = iconObj.GetComponent<RawImage>();
-            Texture2D foundIcon = null;
-            if (itemIcons != null)
-                foreach (var entry in itemIcons)
-                    if (entry.itemID == item.itemID) { foundIcon = entry.icon; break; }
+            Texture2D foundIcon = GetKeyImage(item.itemID);
 
             if (foundIcon != null)
             {
@@ -641,6 +690,18 @@ public class GameMenuManager : MonoBehaviour
         return img;
     }
 
+    // Procurar imagem de chave por ID (keyName)
+    Texture2D GetKeyImage(string keyID)
+    {
+        if (keyImages == null) return null;
+        
+        foreach (var entry in keyImages)
+            if (entry.keyID == keyID)
+                return entry.keyImage;
+        
+        return null;
+    }
+
     Color GetTypeColor(string type) => type switch
     {
         "key" => corItemChave,
@@ -656,8 +717,8 @@ public class InventoryTabRef : MonoBehaviour
 }
 
 [System.Serializable]
-public class ItemIconEntry
+public class KeyIconEntry
 {
-    public string itemID;
-    public Texture2D icon;
+    public string keyID;      // ID da chave (ex: "Door", "lighter", etc)
+    public Texture2D keyImage; // Imagem para essa chave
 }

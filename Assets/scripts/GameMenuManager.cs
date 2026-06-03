@@ -8,11 +8,11 @@ public class GameMenuManager : MonoBehaviour
     // ---------------------------------------------
     //  INSPETOR - REFERENCIAS
     // ---------------------------------------------
-    [Header("Referencias")]
+    [Header("Referências")]
     public FPMove fPMove;
 
-    [Header("Animacao do Inventario")]
-    [Header("Player Frames - Por Nivel de Vida")]
+    [Header("Animação do Inventário")]
+    [Header("Player Frames - Por Nível de Vida")]
     public Texture2D[] playerFrames_HP100;  // Vida > 75
     public Texture2D[] playerFrames_HP75;   // Vida <= 75 e > 50
     public Texture2D[] playerFrames_HP50;   // Vida <= 50 e > 25
@@ -24,15 +24,15 @@ public class GameMenuManager : MonoBehaviour
     public Texture2D[] williamFrames;
     public float williamFPS = 6f;
 
-    [Header("Icones dos Items")]
+    [Header("Ícones dos Itens")]
     public KeyIconEntry[] keyImages; // Mapeia cada keyName (ID) a uma imagem
 
     // Campo para a musica do inventario - arrasta o ficheiro de audio aqui no Unity
-    [Header("Audio do Inventario")]
+    [Header("Áudio do Inventário")]
     public AudioClip inventoryMusic;
     public float inventoryMusicVolume = 0.5f;
 
-    [Header("Defaults das Definicoes")]
+    [Header("Defaults das Definições")]
     [Range(10f, 300f)] public float defaultSensitivity = 100f;
     [Range(0f, 1f)] public float defaultVolume = 1f;
 
@@ -49,7 +49,7 @@ public class GameMenuManager : MonoBehaviour
     public Color corSlot = new Color(0.15f, 0.15f, 0.15f, 1f);
     public Color corImagemVazia = new Color(0.12f, 0.12f, 0.12f, 1f);
 
-    [Header("Cores - Botoes")]
+    [Header("Cores - Botões")]
     public Color corBotaoSair = new Color(0.6f, 0.1f, 0.1f, 1f);
     public Color corBotaoVoltar = new Color(0.15f, 0.15f, 0.15f, 1f);
     public Color corBotaoQualidade = new Color(0.2f, 0.2f, 0.2f, 1f);
@@ -77,7 +77,7 @@ public class GameMenuManager : MonoBehaviour
     [Header("Tamanhos - Janela (0 a 1)")]
     public Vector2 janelaMargem = Vector2.zero;
 
-    [Header("Tamanhos - Slots de Inventario")]
+    [Header("Tamanhos - Slots de Inventário")]
     public float slotTamanho = 90f;
     public float slotEspaco = 8f;
     public int slotsPorLinha = 5;
@@ -137,7 +137,7 @@ public class GameMenuManager : MonoBehaviour
         inventoryAudioSource.volume = inventoryMusicVolume;
 
         InventoryManager.Instance?.AddItem(
-            new InventoryItem("lighter", "Isqueiro", "tool", "Um isqueiro desgastado. A unica fonte de luz."));
+            new InventoryItem("lighter", "Isqueiro", "tool", "Um isqueiro desgastado. A única fonte de luz."));
 
         BuildMenu();
         menuRoot.SetActive(false);
@@ -314,9 +314,44 @@ public class GameMenuManager : MonoBehaviour
     // ---------------------------------------------
     void BuildMenu()
     {
-        menuRoot = CreatePanel(transform, "MenuRoot",
+        // Garantir que existe um Canvas na hierarquia.
+        // Se o GameMenuManager ja estiver dentro de um Canvas, usa esse.
+        // Se nao, cria um Canvas raiz no proprio GameObject.
+        Canvas parentCanvas = GetComponentInParent<Canvas>();
+        Transform menuParent;
+
+        if (parentCanvas != null)
+        {
+            // Ja estamos dentro de um Canvas - usar a raiz desse Canvas
+            menuParent = parentCanvas.transform;
+        }
+        else
+        {
+            // Nao ha Canvas - criar um no proprio GameObject
+            if (GetComponent<Canvas>() == null)
+            {
+                gameObject.AddComponent<Canvas>().renderMode = RenderMode.ScreenSpaceOverlay;
+                gameObject.AddComponent<CanvasScaler>();
+                gameObject.AddComponent<GraphicRaycaster>();
+            }
+
+            Canvas canvas = GetComponent<Canvas>();
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvas.sortingOrder = 100;
+
+            CanvasScaler scaler = GetComponent<CanvasScaler>();
+            scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            scaler.referenceResolution = new Vector2(1920, 1080);
+            scaler.matchWidthOrHeight = 0.5f;
+
+            menuParent = transform;
+        }
+
+        // MenuRoot ocupa todo o ecra (100% do Canvas)
+        menuRoot = CreatePanel(menuParent, "MenuRoot",
             Vector2.zero, Vector2.one, corFundoEscuro);
 
+        // A janela interior respeita a margem configurada
         Vector2 minJ = janelaMargem;
         Vector2 maxJ = Vector2.one - janelaMargem;
         GameObject window = CreatePanel(menuRoot.transform, "Window",
@@ -333,11 +368,11 @@ public class GameMenuManager : MonoBehaviour
         GameObject bar = CreatePanel(parent, "TopBar",
             new Vector2(0f, 0.9f), Vector2.one, corBarraTabs);
 
-        btnInventario = CreateTabButton(bar.transform, "Inventario",
+        btnInventario = CreateTabButton(bar.transform, "Inventário",
             new Vector2(0f, 0f), new Vector2(0.25f, 1f),
             () => ShowTab("inventario"));
 
-        btnDefinicoes = CreateTabButton(bar.transform, "Definicoes",
+        btnDefinicoes = CreateTabButton(bar.transform, "Definições",
             new Vector2(0.25f, 0f), new Vector2(0.5f, 1f),
             () => ShowTab("definicoes"));
 
@@ -415,7 +450,7 @@ public class GameMenuManager : MonoBehaviour
 
         CreateLabel(tabDefinicoes.transform, "Qualidade das Texturas",
             new Vector2(0.05f, 0.45f), new Vector2(0.45f, 0.45f + rowH), fonteDef);
-        string[] qLabels = { "Alta", "Media", "Baixa" };
+        string[] qLabels = { "Alta", "Média", "Baixa" };
         int[] qLevels = { 0, 2, 4 };
         for (int i = 0; i < 3; i++)
         {
@@ -490,7 +525,7 @@ public class GameMenuManager : MonoBehaviour
             rt.anchorMin = Vector2.zero; rt.anchorMax = Vector2.one;
             rt.offsetMin = rt.offsetMax = Vector2.zero;
             TextMeshProUGUI t = msg.GetComponent<TextMeshProUGUI>();
-            t.text = "Inventario vazio"; t.alignment = TMPro.TextAlignmentOptions.Center;
+            t.text = "Inventário vazio"; t.alignment = TMPro.TextAlignmentOptions.Center;
             t.fontSize = fonteVazio; t.enableAutoSizing = false;
             slots.Add(msg);
             return;

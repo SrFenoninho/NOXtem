@@ -19,17 +19,12 @@ public class FPMove : MonoBehaviour
 
     [Header("Camera Settings")]
     public float mouseSensitivity = 100f;
+    public float sprintDownwardOffset = 0.2f;
 
     [Header("Head Bob")]
     public bool useHeadBob = true;
     public float bobSpeed = 14f;
     public float bobAmount = 0.05f;
-
-    [Header("FOV Kick")]
-    public bool useFovKick = true;
-    public float sprintFOV = 75f;
-    private float normalFOV = 60f;
-    public float fovSmoothSpeed = 5f;
 
     [Header("Crouch Settings")]
     public float crouchHeight = 1f;
@@ -48,6 +43,13 @@ public class FPMove : MonoBehaviour
     public float stuckTimeLimit = 2f;
     public float stuckRecoveryHeight = 1.2f;
 
+    [Header("Animation")]
+    public Animator anim;
+
+    [Header("Visuals")]
+    public GameObject bodyRoot;
+    private Renderer[] bodyRenderers;
+
     // ---------------------------------------------
     //  ESTADO PRIVADO
     // ---------------------------------------------
@@ -63,6 +65,7 @@ public class FPMove : MonoBehaviour
 
     private float defaultCameraY;
     private float bobTimer = 0f;
+    private float currentBobOffset = 0f;
     private float defaultSpeed;
 
     private float nextFootstep = 0f;
@@ -92,6 +95,14 @@ public class FPMove : MonoBehaviour
         if (audioSource == null)
             audioSource = gameObject.AddComponent<AudioSource>();
 
+        if (anim == null)
+            anim = GetComponentInChildren<Animator>();
+
+        if (bodyRoot != null)
+        {
+            bodyRenderers = bodyRoot.GetComponentsInChildren<Renderer>();
+        }
+
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
@@ -99,7 +110,6 @@ public class FPMove : MonoBehaviour
             groundMask = ~LayerMask.GetMask("Player");
 
         defaultCameraY = playerCamera.localPosition.y;
-        normalFOV = cam.fieldOfView;
         previousPosition = transform.position;
         defaultSpeed = speed;
 
@@ -123,18 +133,14 @@ public class FPMove : MonoBehaviour
             if (landSound != null) audioSource.PlayOneShot(landSound);
         }
 
-        HandleCrouch();
+        bool currentIsSprinting = !inputBlocked && Input.GetKey(KeyCode.LeftShift) && !isCrouching && isGrounded && Input.GetAxisRaw("Vertical") > 0f;
+
+        HandleCrouch(currentIsSprinting);
 
         if (useHeadBob && isGrounded)
         {
             bool isMoving = !inputBlocked && (Input.GetAxisRaw("Horizontal") != 0 || Input.GetAxisRaw("Vertical") != 0);
-            HandleHeadBob(isMoving ? (Input.GetKey(KeyCode.LeftShift) && !isCrouching ? sprintSpeed : speed) : 0);
-        }
-
-        if (useFovKick)
-        {
-            bool isSprinting = !inputBlocked && Input.GetKey(KeyCode.LeftShift) && !isCrouching && isGrounded && Input.GetAxisRaw("Vertical") > 0f;
-            HandleFOVKick(isSprinting);
+            HandleHeadBob(isMoving ? (currentIsSprinting ? sprintSpeed : speed) : 0);
         }
 
         if (useStuckDetection)
@@ -189,6 +195,15 @@ public class FPMove : MonoBehaviour
 
         if (isGrounded && inputDir.magnitude > 0)
             HandleFootsteps(currentSpeed);
+
+        // Atualizar Animacoes
+        if (anim != null)
+        {
+            bool isMoving = inputDir.magnitude > 0.1f;
+            anim.SetBool("isWalking", isMoving && !isSprinting);
+            anim.SetBool("isRunning", isMoving && isSprinting);
+            anim.SetBool("isCrouching", isCrouching);
+        }
     }
 
     // ---------------------------------------------
@@ -202,25 +217,17 @@ public class FPMove : MonoBehaviour
             float speedMultiplier = rawMultiplier > 1f ? Mathf.Lerp(1f, rawMultiplier, 0.5f) : rawMultiplier;
 
             bobTimer += Time.deltaTime * (bobSpeed * speedMultiplier);
-            float bobOffsetY = Mathf.Sin(bobTimer) * (bobAmount * speedMultiplier);
-
-            Vector3 newPos = playerCamera.localPosition;
-            newPos.y = defaultCameraY + bobOffsetY;
-            playerCamera.localPosition = newPos;
+            currentBobOffset = Mathf.Sin(bobTimer) * (bobAmount * speedMultiplier);
         }
         else
         {
             bobTimer = 0f;
-            Vector3 newPos = playerCamera.localPosition;
-            newPos.y = Mathf.Lerp(newPos.y, defaultCameraY, Time.deltaTime * 5f);
-            playerCamera.localPosition = newPos;
+            currentBobOffset = Mathf.Lerp(currentBobOffset, 0f, Time.deltaTime * 5f);
         }
-    }
 
-    void HandleFOVKick(bool isSprinting)
-    {
-        float targetFOV = isSprinting ? sprintFOV : normalFOV;
-        cam.fieldOfView = Mathf.Lerp(cam.fieldOfView, targetFOV, Time.deltaTime * fovSmoothSpeed);
+        Vector3 newPos = playerCamera.localPosition;
+        newPos.y = defaultCameraY + currentBobOffset;
+        playerCamera.localPosition = newPos;
     }
 
     void HandleFootsteps(float currentSpeed)
@@ -239,9 +246,9 @@ public class FPMove : MonoBehaviour
     }
 
     // ---------------------------------------------
-    //  AGACHAMENTO
+    //  AGACHAMENTO E CÂMARA DE SPRINT
     // ---------------------------------------------
-    void HandleCrouch()
+    void HandleCrouch(bool isSprinting)
     {
         if (inputBlocked) return;
 
@@ -255,18 +262,26 @@ public class FPMove : MonoBehaviour
             else
             {
                 isCrouching = true;
+                SetBodyVisibility(false);
             }
         }
 
         float targetHeight = isCrouching ? crouchHeight : standingHeight;
-        float targetCamY   = isCrouching ? (standingCameraY - crouchCameraOffset) : standingCameraY;
+        
+        float targetCamY = standingCameraY;
+        if (isCrouching) targetCamY -= crouchCameraOffset;
+        else if (isSprinting) targetCamY -= sprintDownwardOffset;
 
         currentHeight = Mathf.Lerp(currentHeight, targetHeight, Time.deltaTime * crouchTransitionSpeed);
         controller.height = currentHeight;
         controller.center = new Vector3(0, currentHeight / 2f, 0);
 
-        float camSpeed = crouchCameraOffset * crouchTransitionSpeed;
-        defaultCameraY = Mathf.MoveTowards(defaultCameraY, targetCamY, Time.deltaTime * camSpeed);
+        defaultCameraY = Mathf.Lerp(defaultCameraY, targetCamY, Time.deltaTime * crouchTransitionSpeed);
+
+        if (!isCrouching && defaultCameraY >= targetCamY - 0.01f)
+        {
+            SetBodyVisibility(true);
+        }
     }
 
     bool CanStandUp()
@@ -296,6 +311,15 @@ public class FPMove : MonoBehaviour
             stuckTimer = 0f;
         }
         previousPosition = transform.position;
+    }
+
+    void SetBodyVisibility(bool visible)
+    {
+        if (bodyRenderers == null) return;
+        foreach (Renderer r in bodyRenderers)
+        {
+            if (r != null) r.enabled = visible;
+        }
     }
 
     public void SyncCameraRotation()

@@ -11,6 +11,8 @@ public class Lighter : MonoBehaviour
 
     [Header("Viewmodel")]
     public GameObject lighterModel;
+    public GameObject rightArmRoot;
+    private Renderer[] armRenderers;
     public Vector3 hiddenPosition = new Vector3(0.4f, -0.5f, 0.6f);
     public Vector3 visiblePosition = new Vector3(0.25f, -0.25f, 0.5f);
     public float drawSpeed = 8f;
@@ -75,6 +77,12 @@ public class Lighter : MonoBehaviour
             lighterModel.transform.localPosition = hiddenPosition;
         }
 
+        if (rightArmRoot != null)
+        {
+            armRenderers = rightArmRoot.GetComponentsInChildren<Renderer>();
+            SetArmVisibility(true);
+        }
+
         currentRadius = radiusOff;
         currentSoftness = softnessOff;
         targetRadius = radiusOff;
@@ -111,6 +119,8 @@ public class Lighter : MonoBehaviour
 
         if (isLit && igniteSound != null) audioSource.PlayOneShot(igniteSound);
         if (!isLit && extinguishSound != null) audioSource.PlayOneShot(extinguishSound);
+
+        SetArmVisibility(!isLit);
 
         Debug.Log(isLit ? "Isqueiro aceso" : "Isqueiro apagado");
     }
@@ -195,6 +205,15 @@ public class Lighter : MonoBehaviour
     // ---------------------------------------------
     void SetAlpha(Image img, float a) { Color c = img.color; c.a = a; img.color = c; }
 
+    void SetArmVisibility(bool visible)
+    {
+        if (armRenderers == null) return;
+        foreach (Renderer r in armRenderers)
+        {
+            if (r != null) r.enabled = visible;
+        }
+    }
+
     public void ForceLight(bool state)
     {
         if (isLit == state) return;
@@ -203,6 +222,8 @@ public class Lighter : MonoBehaviour
         targetSoftness = isLit ? softnessOn : softnessOff;
         if (isLit && igniteSound != null) audioSource.PlayOneShot(igniteSound);
         if (!isLit && extinguishSound != null) audioSource.PlayOneShot(extinguishSound);
+
+        SetArmVisibility(!isLit);
     }
 
     // ---------------------------------------------

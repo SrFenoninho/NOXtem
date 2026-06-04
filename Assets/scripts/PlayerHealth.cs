@@ -25,6 +25,8 @@ public class PlayerHealth : MonoBehaviour
     private float knockbackEndTime;
     private Vector3 knockbackDirection;
     private CharacterController characterController;
+    private Animator anim;
+    private PlayerCombat playerCombat;
 
     // ---------------------------------------------
     //  UNITY
@@ -33,6 +35,8 @@ public class PlayerHealth : MonoBehaviour
     {
         currentHealth = maxHealth;
         characterController = GetComponent<CharacterController>();
+        anim = GetComponentInChildren<Animator>();
+        playerCombat = GetComponent<PlayerCombat>();
     }
 
     void Update()
@@ -63,6 +67,10 @@ public class PlayerHealth : MonoBehaviour
         knockbackDirection.y = 0;
         isKnockedBack = true;
         knockbackEndTime = Time.time + knockbackDuration;
+
+        // Disparar animação de dano e cancelar ataque atual
+        if (anim != null) anim.SetTrigger("takeDamage");
+        if (playerCombat != null) playerCombat.CancelAttack();
 
         if (currentHealth <= 0)
             Die();

@@ -13,10 +13,16 @@ public class TPMove : MonoBehaviour
     public float gravityMultiplier = 2.5f;
     public float stickToGroundForce = 10f;  // forca para manter o jogador no chao em rampas
     public float rotationSpeed = 10f;
+    public float attackSpeedMultiplier = 1.0f; // Removido o limite! Podes meter 2 ou 3 para acelerar.
 
     [Header("Ground Check")]
     public float groundDistance = 0.3f;
     public LayerMask groundMask;
+
+    [Header("Animation")]
+    public Animator anim;
+
+    private float gravitySuspensionEndTime = 0f;
 
     [Header("Audio")]
     public AudioClip[] footstepSounds;
@@ -54,6 +60,7 @@ public class TPMove : MonoBehaviour
     {
         playerCombat = GetComponent<PlayerCombat>();
         controller = GetComponent<CharacterController>();
+        if (anim == null) anim = GetComponentInChildren<Animator>();
 
         if (groundMask == 0)
             groundMask = ~LayerMask.GetMask("Player");
@@ -127,9 +134,6 @@ public class TPMove : MonoBehaviour
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.fixedDeltaTime);
         }
 
-        moveDir.x = inputDir.x * currentSpeed;
-        moveDir.z = inputDir.z * currentSpeed;
-
         if (isGrounded)
         {
             currentSpeed = isSprinting ? sprintSpeed : speed;
@@ -140,12 +144,46 @@ public class TPMove : MonoBehaviour
                 moveDir.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
                 jumpInput = false;
                 isJumping = true;
+                if (anim != null) anim.SetTrigger("doJump");
             }
         }
         else
         {
-            // Aplicar gravidade mais pesada no ar para queda mais natural
-            moveDir += Physics.gravity * gravityMultiplier * Time.fixedDeltaTime;
+            if (Time.time < gravitySuspensionEndTime)
+            {
+                // God of War / DMC float effect (reduz muito a gravidade)
+                moveDir += Physics.gravity * (gravityMultiplier * 0.1f) * Time.fixedDeltaTime;
+                
+                // Nao deixa o jogador continuar a subir se ja estava a descer, mantem no ar
+                if (moveDir.y < 0) moveDir.y = Mathf.Max(moveDir.y, -1f);
+            }
+            else
+            {
+                // Aplicar gravidade mais pesada no ar para queda mais natural
+                moveDir += Physics.gravity * gravityMultiplier * Time.fixedDeltaTime;
+            }
+        }
+
+        // Abranda o personagem se estiver a atacar no chao
+        float activeSpeed = currentSpeed;
+        if (playerCombat != null && playerCombat.IsAttacking && isGrounded)
+        {
+            activeSpeed *= attackSpeedMultiplier;
+        }
+
+        if (playerCombat != null && playerCombat.IsMovementLocked)
+        {
+            activeSpeed = 0f; // Corta a velocidade horizontal para 0
+        }
+
+        moveDir.x = inputDir.x * activeSpeed;
+        moveDir.z = inputDir.z * activeSpeed;
+
+        if (anim != null)
+        {
+            anim.SetBool("isGrounded", isGrounded);
+            float animSpeed = inputDir.magnitude * currentSpeed;
+            anim.SetFloat("Speed", animSpeed);
         }
 
         controller.Move(moveDir * Time.fixedDeltaTime);
@@ -168,6 +206,17 @@ public class TPMove : MonoBehaviour
                 ? footstepInterval * 0.6f
                 : footstepInterval);
         }
+    }
+
+    public void SuspendGravity(float duration)
+    {
+        gravitySuspensionEndTime = Time.time + duration;
+        
+        // Se estava a subir (e.g. no inicio do salto), para de subir para nao voar infinitamente
+        if (moveDir.y > 0) moveDir.y = 0f; 
+        
+        // Se estava a cair, para de cair instantaneamente
+        if (moveDir.y < 0) moveDir.y = 0f; 
     }
 
     // ---------------------------------------------

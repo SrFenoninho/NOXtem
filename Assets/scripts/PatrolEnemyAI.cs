@@ -44,6 +44,10 @@ public class PatrolEnemyAI : MonoBehaviour
     public float attackDamage = 9999f;
     public float attackRange = 1.8f;
 
+    [Header("Animation")]
+    public Animator animator;
+    public string speedParam = "Speed";
+
     // ---------------------------------------------
     //  ESTADO PRIVADO
     // ---------------------------------------------
@@ -85,6 +89,8 @@ public class PatrolEnemyAI : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         agent.speed = patrolSpeed;
 
+        if (animator == null) animator = GetComponentInChildren<Animator>();
+
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
         if (playerObj != null)
         {
@@ -107,6 +113,11 @@ public class PatrolEnemyAI : MonoBehaviour
 
         HandleStateTransitions();
         UpdateStateBehavior();
+
+        if (animator != null)
+        {
+            animator.SetFloat(speedParam, agent.velocity.magnitude);
+        }
     }
 
     // ---------------------------------------------

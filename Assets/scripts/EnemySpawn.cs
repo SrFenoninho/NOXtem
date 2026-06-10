@@ -46,17 +46,33 @@ public class EnemySpawn : MonoBehaviour
             Mathf.Sin(angle) * distance
         );
 
-        GameObject enemy = Instantiate(enemyPrefab, spawnPos, Quaternion.identity);
-        currentEnemies++;
-
-        EnemyAI ai = enemy.GetComponent<EnemyAI>();
-        if (ai != null)
+        if (cloneSpawnerPrefab != null && enemyPrefab != null)
         {
-            ai.isOriginal = false;
-            ai.generation = 0;
-            ai.enemyPrefab = enemyPrefab;
-            ai.cloneSpawnerPrefab = cloneSpawnerPrefab;
-            ai.OnDeath += HandleEnemyDeath;
+            GameObject spawnerObj = Instantiate(cloneSpawnerPrefab, spawnPos, Quaternion.identity);
+            currentEnemies++;
+            
+            EnemyCloneSpawner spawner = spawnerObj.GetComponent<EnemyCloneSpawner>();
+            if (spawner != null)
+            {
+                EnemyAI aiPrefab = enemyPrefab.GetComponent<EnemyAI>();
+                int maxGen = aiPrefab != null ? aiPrefab.maxGeneration : 3;
+                spawner.Initialize(enemyPrefab, cloneSpawnerPrefab, 0, maxGen, HandleEnemyDeath);
+            }
+        }
+        else if (enemyPrefab != null)
+        {
+            GameObject enemy = Instantiate(enemyPrefab, spawnPos, Quaternion.identity);
+            currentEnemies++;
+
+            EnemyAI ai = enemy.GetComponent<EnemyAI>();
+            if (ai != null)
+            {
+                ai.isOriginal = false;
+                ai.generation = 0;
+                ai.enemyPrefab = enemyPrefab;
+                ai.cloneSpawnerPrefab = cloneSpawnerPrefab;
+                ai.OnDeath += HandleEnemyDeath;
+            }
         }
     }
 

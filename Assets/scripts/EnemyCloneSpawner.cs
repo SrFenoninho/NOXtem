@@ -42,9 +42,26 @@ public class EnemyCloneSpawner : MonoBehaviour
         maxGeneration = maxGen;
         OnCloneDeath = onCloneDeath;
 
-        EnemyCombatManager.AddPendingSpawn();
         CreateCircleEffect();
-        StartCoroutine(SpawnCloneAfterDelay());
+
+        if (enemyPrefab != null)
+        {
+            // Criar clone imediatamente na posicao deste objeto
+            GameObject clone = Instantiate(enemyPrefab, transform.position, Quaternion.identity);
+
+            EnemyAI ai = clone.GetComponent<EnemyAI>();
+            if (ai != null)
+            {
+                ai.isOriginal = false;
+                ai.generation = generation;
+                ai.maxGeneration = maxGeneration;
+                ai.enemyPrefab = enemyPrefab;
+                ai.cloneSpawnerPrefab = cloneSpawnerPrefab;
+                ai.OnDeath += () => OnCloneDeath?.Invoke();
+            }
+        }
+
+        StartCoroutine(StopParticlesAfterDelay());
     }
 
     // ---------------------------------------------
@@ -114,31 +131,15 @@ public class EnemyCloneSpawner : MonoBehaviour
     // ---------------------------------------------
     //  SPAWN DO CLONE
     // ---------------------------------------------
-    IEnumerator SpawnCloneAfterDelay()
+    IEnumerator StopParticlesAfterDelay()
     {
         yield return new WaitForSeconds(spawnDelay);
 
         if (particles != null)
             particles.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
 
-        EnemyCombatManager.RemovePendingSpawn();
-
-        if (enemyPrefab == null) yield break;
-
-        // Criar clone na posicao deste objeto (ja calculada pelo EnemyAI antes de morrer)
-        GameObject clone = Instantiate(enemyPrefab, transform.position, Quaternion.identity);
-
-        EnemyAI ai = clone.GetComponent<EnemyAI>();
-        if (ai != null)
-        {
-            ai.isOriginal = false;
-            ai.generation = generation;
-            ai.maxGeneration = maxGeneration;
-            ai.enemyPrefab = enemyPrefab;
-            ai.cloneSpawnerPrefab = cloneSpawnerPrefab; // passar adiante para geracoes futuras
-            ai.OnDeath += () => OnCloneDeath?.Invoke();
-        }
-
+        // Esperar um pouco para as particulas desaparecerem antes de destruir o objeto
+        yield return new WaitForSeconds(1f);
         Destroy(gameObject);
     }
 }

@@ -9,7 +9,6 @@ public static class EnemyCombatManager
     // ---------------------------------------------
     private static List<EnemyAI> registeredEnemies = new List<EnemyAI>();
     private static List<EnemyAI> currentAttackers = new List<EnemyAI>();
-    private static int pendingSpawns = 0;
 
     public static int maxSimultaneousAttackers = 2;
     public static float groupCooldownMin = 0.5f;
@@ -58,8 +57,6 @@ public static class EnemyCombatManager
     //  CONSULTAS
     // ---------------------------------------------
     public static bool HasToken(EnemyAI enemy) => currentAttackers.Contains(enemy);
-    public static void AddPendingSpawn() { pendingSpawns++; }
-    public static void RemovePendingSpawn() { if (pendingSpawns > 0) pendingSpawns--; }
     public static int AttackerCount => currentAttackers.Count;
-    public static int EnemyCount => registeredEnemies.Count + pendingSpawns;
+    public static int EnemyCount => registeredEnemies.Count;
 }

@@ -7,6 +7,7 @@ public class EnemyAI : MonoBehaviour
     // ---------------------------------------------
     private enum Phase
     {
+        Spawning,       // a sair da terra
         OrbitFar,       // estado padrao - a orbitar longe, sem se comprometer
         ApproachClose,  // decide aproximar-se do jogador
         ReadyToAttack,  // chega perto, a espera do token de ataque - recua se demorar demasiado
@@ -17,6 +18,14 @@ public class EnemyAI : MonoBehaviour
     // ---------------------------------------------
     //  INSPETOR
     // ---------------------------------------------
+    [Header("Animation")]
+    public Animator animator;
+    public string spawnTrigger = "Spawn";
+    public string moveXFloat = "MoveX";
+    public string moveZFloat = "MoveZ";
+    public string attackTrigger = "Attack";
+    public float spawnDuration = 1.5f;
+
     [Header("Health")]
     public float maxHealth = 100f;
 
@@ -27,7 +36,7 @@ public class EnemyAI : MonoBehaviour
 
     [Header("Orbit")]
     public float farOrbitRadius = 8f;   // circulo exterior de espera
-    public float closeOrbitRadius = 2.5f; // so entra quando se compromete a atacar
+    public float closeOrbitRadius = 4.5f; // Aumentado para eles começarem a correr de mais longe!
     public float orbitSpeed = 60f;  // graus por segundo
     private float orbitAngle;
 
@@ -127,6 +136,9 @@ public class EnemyAI : MonoBehaviour
     {
         currentHealth = maxHealth;
 
+        if (animator == null)
+            animator = GetComponentInChildren<Animator>();
+
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
         if (playerObj != null)
         {
@@ -146,6 +158,10 @@ public class EnemyAI : MonoBehaviour
 
         // angulo inicial aleatorio para que os inimigos se espalhem imediatamente
         orbitAngle = Random.Range(0f, 360f);
+
+        SetPhase(Phase.Spawning);
+        if (animator != null)
+            animator.SetTrigger(spawnTrigger);
     }
 
     void OnDestroy()
@@ -183,6 +199,32 @@ public class EnemyAI : MonoBehaviour
 
         switch (currentPhase)
         {
+            // -- SPAWNING -----------------------------------------------------
+            case Phase.Spawning:
+                phaseTimer += Time.deltaTime;
+                
+                bool animationFinished = false;
+                if (animator != null)
+                {
+                    AnimatorStateInfo state = animator.GetCurrentAnimatorStateInfo(0);
+                    // Verifica se já está na animação de Spawn e se já chegou ao fim (normalizedTime >= 1)
+                    if (state.IsName("Spawn") && state.normalizedTime >= 0.95f)
+                        animationFinished = true;
+                    // Prevenção caso o animator já tenha saído do estado
+                    else if (!state.IsName("Spawn") && phaseTimer > 0.5f)
+                        animationFinished = true;
+                }
+                else if (phaseTimer >= spawnDuration)
+                {
+                    animationFinished = true;
+                }
+
+                if (animationFinished)
+                {
+                    SetPhase(Phase.OrbitFar);
+                }
+                break;
+
             // -- oRBITA DISTANTE ----------------------------------------------
             // Estado padrao. O inimigo orbita a distancia e ocasionalmente decide aproximar-se.
             case Phase.OrbitFar:
@@ -234,6 +276,7 @@ public class EnemyAI : MonoBehaviour
                 if (Time.time >= nextAttack && EnemyCombatManager.RequestAttackToken(this))
                 {
                     SetPhase(Phase.Attacking);
+                    // O trigger de ataque é disparado apenas quando chega perto, permitindo a corrida inicial
                     break;
                 }
 
@@ -265,6 +308,7 @@ public class EnemyAI : MonoBehaviour
                 // Verificar acerto em cada frame enquanto estiver perto o suficiente - nao apenas durante a janela de investida
                 if (distToPlayer <= attackRange && !hitLanded)
                 {
+                    if (animator != null) animator.SetTrigger(attackTrigger);
                     playerHealth?.TakeDamage(attackDamage, transform.position);
                     nextAttack = Time.time + attackInterval;
                     hitLanded = true; // acertar apenas uma vez por tentativa de ataque
@@ -320,11 +364,20 @@ public class EnemyAI : MonoBehaviour
             return;
         }
 
+        if (currentPhase == Phase.Spawning)
+        {
+            moveDir.x = 0;
+            moveDir.z = 0;
+            ApplyGravity();
+            controller.Move(moveDir * Time.fixedDeltaTime);
+            return; // Nao se move enquanto nasce
+        }
+
         Vector3 targetPos = GetTargetPosition();
         Vector3 toTarget = targetPos - transform.position;
         toTarget.y = 0;
 
-        float speedMult = currentPhase == Phase.Attacking ? 2.5f
+        float speedMult = currentPhase == Phase.Attacking ? 2.2f
                         : currentPhase == Phase.ApproachClose ? 1.2f
                         : currentPhase == Phase.Reposition ? 1.0f
                         : 0.7f; // OrbitFar + ReadyToAttack deslizam lentamente
@@ -346,6 +399,15 @@ public class EnemyAI : MonoBehaviour
         if (lookDir != Vector3.zero)
             transform.rotation = Quaternion.LookRotation(lookDir);
 
+        if (animator != null)
+        {
+            Vector3 flatMoveDir = new Vector3(moveDir.x, 0, moveDir.z);
+            Vector3 localMove = transform.InverseTransformDirection(flatMoveDir);
+            
+            animator.SetFloat(moveXFloat, localMove.x / speed);
+            animator.SetFloat(moveZFloat, localMove.z / speed);
+        }
+
         ApplyGravity();
         controller.Move(moveDir * Time.fixedDeltaTime);
         CheckStuck();
@@ -354,12 +416,17 @@ public class EnemyAI : MonoBehaviour
     Vector3 GetTargetPosition()
     {
         float rad;
+        Vector3 toMe = transform.position - player.position;
+        float currentAngle = Mathf.Atan2(toMe.z, toMe.x) * Mathf.Rad2Deg;
+        float angleDiff = Mathf.DeltaAngle(currentAngle, orbitAngle);
+        // Limita a diferença para não tentar atalhar pelo meio do círculo
+        float clampedAngle = currentAngle + Mathf.Clamp(angleDiff, -15f, 15f);
 
         switch (currentPhase)
         {
             case Phase.OrbitFar:
             case Phase.ReadyToAttack: // ReadyToAttack desliza no raio distante enquanto espera
-                rad = orbitAngle * Mathf.Deg2Rad;
+                rad = clampedAngle * Mathf.Deg2Rad;
                 return player.position + new Vector3(
                     Mathf.Cos(rad) * farOrbitRadius, 0,
                     Mathf.Sin(rad) * farOrbitRadius);
@@ -368,7 +435,7 @@ public class EnemyAI : MonoBehaviour
                 // Espiral para dentro - interpola entre o raio distante e o proximo
                 float t = Mathf.Clamp01(phaseTimer / readyToAttackTimeout);
                 float radius = Mathf.Lerp(farOrbitRadius, closeOrbitRadius, t);
-                rad = orbitAngle * Mathf.Deg2Rad;
+                rad = clampedAngle * Mathf.Deg2Rad;
                 return player.position + new Vector3(
                     Mathf.Cos(rad) * radius, 0,
                     Mathf.Sin(rad) * radius);

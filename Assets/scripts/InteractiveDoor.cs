@@ -139,7 +139,7 @@ public class InteractiveDoor : MonoBehaviour, IInteractable
 
         if (forcePlayerToCrouch && fpMove != null)
         {
-            fpMove.isCrouching = true;
+            fpMove.ForceCrouch();
             StartCoroutine(TeleportAfterDelay(player, controller, fpMove));
         }
         else

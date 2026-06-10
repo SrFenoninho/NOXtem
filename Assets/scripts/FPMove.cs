@@ -322,6 +322,15 @@ public class FPMove : MonoBehaviour
         }
     }
 
+    public void ForceCrouch()
+    {
+        if (!isCrouching)
+        {
+            isCrouching = true;
+            SetBodyVisibility(false);
+        }
+    }
+
     public void SyncCameraRotation()
     {
         xRotation = playerCamera.localEulerAngles.x;

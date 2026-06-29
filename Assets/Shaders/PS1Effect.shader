@@ -4,6 +4,7 @@ Shader "Custom/PS1Effect"
     {
         _MainTex ("Texture", 2D) = "white" {}
         _VertexInaccuracy ("Vertex Inaccuracy", Range(0, 200)) = 50
+        _DistanciaTeste ("Distancia da Distorcao", Range(0.0, 10)) = 1.0 
         _EmissionMap ("Emission Map", 2D) = "black" {}
         _EmissionColor ("Emission Color", Color) = (0, 0, 0, 1)
         _EmissionPower ("Emission Power", Range(0, 10)) = 1
@@ -43,8 +44,9 @@ Shader "Custom/PS1Effect"
             struct Varyings
             {
                 float4 positionCS : SV_POSITION;
-                float2 uv         : TEXCOORD0;
+                float3 uv         : TEXCOORD0; 
                 float3 worldPos   : TEXCOORD1;
+                float2 uv_persp   : TEXCOORD2; 
             };
 
             TEXTURE2D(_MainTex);
@@ -56,6 +58,7 @@ Shader "Custom/PS1Effect"
                 float4 _MainTex_ST;
                 float4 _EmissionMap_ST;
                 float  _VertexInaccuracy;
+                float  _DistanciaTeste;
                 float4 _EmissionColor;
                 float  _EmissionPower;
             CBUFFER_END
@@ -77,7 +80,13 @@ Shader "Custom/PS1Effect"
                     OUT.positionCS.xy = floor(OUT.positionCS.xy * gridSize) / gridSize;
                 }
 
-                OUT.uv       = TRANSFORM_TEX(IN.uv, _MainTex);
+                float2 uv = TRANSFORM_TEX(IN.uv, _MainTex);
+                
+                OUT.uv.xy = uv * OUT.positionCS.w;
+                OUT.uv.z = OUT.positionCS.w;
+                
+                OUT.uv_persp = uv;
+                
                 OUT.worldPos = TransformObjectToWorld(IN.positionOS.xyz);
 
                 return OUT;
@@ -85,16 +94,21 @@ Shader "Custom/PS1Effect"
 
             half4 frag(Varyings IN) : SV_Target
             {
-                half4 col = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, IN.uv);
+                float depth = IN.uv.z;
                 
-                // Amostra o mapa de emissão
-                half4 emissionSample = SAMPLE_TEXTURE2D(_EmissionMap, sampler_EmissionMap, IN.uv);
+                float2 affineUV = IN.uv.xy / IN.uv.z;
+                float2 perspUV = IN.uv_persp;
                 
-                // Calcula emissão pura (não é afetada pelo darkness)
+                float warpFactor = 1.0 - smoothstep(_DistanciaTeste * 0.1, _DistanciaTeste, depth);
+                
+                float2 finalUV = lerp(perspUV, affineUV, warpFactor);
+                
+                half4 col = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, finalUV);
+                
+                half4 emissionSample = SAMPLE_TEXTURE2D(_EmissionMap, sampler_EmissionMap, finalUV);
                 half3 emission = emissionSample.rgb * _EmissionColor.rgb * _EmissionColor.a * _EmissionPower;
 
                 float dist = distance(IN.worldPos, _WorldSpaceCameraPos);
-
                 float visibility = 1.0 - smoothstep(
                     _DarknessRadius - _DarknessSoftness,
                     _DarknessRadius,
@@ -103,9 +117,6 @@ Shader "Custom/PS1Effect"
 
                 visibility = max(visibility, _AmbientLight);
                 col.rgb = lerp(_DarknessColor.rgb, col.rgb, visibility);
-                
-                // Adiciona a emissão (passa através de escuridão/paredes)
-                // Usa max para que emissão nunca fica escura
                 col.rgb = max(col.rgb, emission);
 
                 return col;

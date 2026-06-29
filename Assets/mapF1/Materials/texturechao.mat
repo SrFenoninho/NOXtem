@@ -96,6 +96,7 @@ Material:
     m_Ints: []
     m_Floats:
     - _AddPrecomputedVelocity: 0
+    - _AffineDistance: 4
     - _AffineIntensity: 0.001
     - _AlphaClip: 0
     - _AlphaToMask: 0
@@ -113,8 +114,10 @@ Material:
     - _DistFogDensity: 1
     - _DistFogEnd: 3
     - _DistFogStart: 0.5
+    - _DistanciaTeste: 1
     - _DstBlend: 0
     - _DstBlendAlpha: 0
+    - _EmissionPower: 1
     - _EnvironmentReflections: 1
     - _GlossMapScale: 0
     - _Glossiness: 0

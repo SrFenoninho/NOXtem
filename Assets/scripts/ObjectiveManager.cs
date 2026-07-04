@@ -79,9 +79,11 @@ public class ObjectiveManager : MonoBehaviour
 
     void Update()
     {
-        // TAB para abrir/fechar painel completo
         if (Input.GetKeyDown(KeyCode.Tab))
         {
+            if (!fullPanelOpen && GameStateManager.Instance != null && !GameStateManager.Instance.Is(GameState.Gameplay))
+                return;
+
             if (fullPanelOpen)
                 CloseFullPanel();
             else

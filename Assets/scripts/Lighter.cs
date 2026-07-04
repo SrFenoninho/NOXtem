@@ -112,6 +112,7 @@ public class Lighter : MonoBehaviour
     void Toggle()
     {
         if (inputBlocked) return;
+        if (GameStateManager.Instance != null && !GameStateManager.Instance.Is(GameState.Gameplay)) return;
         isLit = !isLit;
 
         targetRadius = isLit ? radiusOn : radiusOff;

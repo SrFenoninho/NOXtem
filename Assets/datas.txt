@@ -38,3 +38,8 @@
 
 
 //Nota: Dr. Alistair Crowley
+//pitch para a A -> 0.80
+//pitch para a B -> 0.90
+//pitch para a C -> 1.25
+//pitch para a D -> 1
+//pitch para a J -> -0.50

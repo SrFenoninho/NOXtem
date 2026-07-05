@@ -1,4 +1,5 @@
 using System.Collections;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -28,7 +29,7 @@ public class UndergroundIntroManager : MonoBehaviour
     public float punchForce = 1500f;
 
     [Header("UI")]
-    public Text messageText;
+    public TMP_Text messageText;
 
     [Header("Timings")]
     public float shakeDuration = 4f;
@@ -166,6 +167,8 @@ public class UndergroundIntroManager : MonoBehaviour
             messageText.text = "";
 
         BlowDoorAway(door1);
+        if (door1 != null)
+            Destroy(door1.gameObject, 15f);
 
         if (playerMovement != null) playerMovement.inputBlocked = false;
         GameStateManager.Instance?.PopState();

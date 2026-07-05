@@ -94,8 +94,10 @@ Material:
     - _Cutoff: 0.5
     - _DetailAlbedoMapScale: 1
     - _DetailNormalMapScale: 1
+    - _DistanciaTeste: 0.25
     - _DstBlend: 0
     - _DstBlendAlpha: 0
+    - _EmissionPower: 1
     - _EnvironmentReflections: 1
     - _GlossMapScale: 0
     - _Glossiness: 0

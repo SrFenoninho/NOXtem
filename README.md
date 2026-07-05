@@ -36,6 +36,7 @@ This project uses a dual licensing model:
 | Font | Owner |
 |---|---|
 | Mia's Scribblings | Amelia McVinnie |
+| Boiled Pasta | baltdev |
 
 ### Character
 | Character | Owner |

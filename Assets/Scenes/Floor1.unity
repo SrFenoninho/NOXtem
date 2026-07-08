@@ -5422,13 +5422,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enableGlow: 1
   glowColor: {r: 1, g: 1, b: 1, a: 0.5019608}
+  particleTexture: {fileID: 2800000, guid: c26915c2b48b7f34baa3eb8ef11a630f, type: 3}
+  particleOffset: {x: 0, y: -0.2, z: 0}
   emissionRate: 10
   particleSize: 0.3
-  particleLifetime: 1.5
+  particleLifetime: 3
+  particleRotationSpeed: 0.5
   dispersalSpeed: 1
-  pulseSpeed: 1.5
-  pulseMin: 0.3
-  pulseMax: 1.2
 --- !u!1 &315526503
 GameObject:
   m_ObjectHideFlags: 0
@@ -6752,9 +6752,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rotationSpeed: {x: 0, y: 0, z: 0}
   useParticles: 1
+  particleOffset: {x: 0, y: 0.1, z: -0.05}
   particleColor: {r: 1, g: 1, b: 1, a: 1}
+  particleTexture: {fileID: 2800000, guid: c26915c2b48b7f34baa3eb8ef11a630f, type: 3}
   emissionRate: 10
   particleSize: 0.3
+  particleLifetime: 3
+  particleRotationSpeed: 0.5
 --- !u!1 &368407252
 GameObject:
   m_ObjectHideFlags: 0
@@ -6884,22 +6888,22 @@ MonoBehaviour:
   - {fileID: 2800000, guid: 7f22635fea0c3644ea9d73b241988ec9, type: 3}
   playerFPS: 1
   williamFrames:
-  - {fileID: 2800000, guid: 7875607cb2416c2499f652cc704c1201, type: 3}
-  - {fileID: 2800000, guid: e1a39b8120ac8464f812765932189c22, type: 3}
-  - {fileID: 2800000, guid: c889a7297e4b637418b1fa0d08e83c4e, type: 3}
-  - {fileID: 2800000, guid: aaf336b5b7c2ed941acabf6504b59e80, type: 3}
-  - {fileID: 2800000, guid: faf0b1e7f14753a4599abf1377af7857, type: 3}
-  - {fileID: 2800000, guid: 7875607cb2416c2499f652cc704c1201, type: 3}
-  - {fileID: 2800000, guid: 7875607cb2416c2499f652cc704c1201, type: 3}
-  - {fileID: 2800000, guid: 7875607cb2416c2499f652cc704c1201, type: 3}
-  - {fileID: 2800000, guid: 7875607cb2416c2499f652cc704c1201, type: 3}
-  - {fileID: 2800000, guid: 7875607cb2416c2499f652cc704c1201, type: 3}
-  - {fileID: 2800000, guid: 7875607cb2416c2499f652cc704c1201, type: 3}
-  - {fileID: 2800000, guid: 7875607cb2416c2499f652cc704c1201, type: 3}
-  - {fileID: 2800000, guid: 7875607cb2416c2499f652cc704c1201, type: 3}
-  - {fileID: 2800000, guid: 7875607cb2416c2499f652cc704c1201, type: 3}
-  - {fileID: 2800000, guid: 7875607cb2416c2499f652cc704c1201, type: 3}
-  - {fileID: 2800000, guid: 7875607cb2416c2499f652cc704c1201, type: 3}
+  - {fileID: 2800000, guid: 5669d88c10a7e7140a2f9b0e9bc3b520, type: 3}
+  - {fileID: 2800000, guid: 5669d88c10a7e7140a2f9b0e9bc3b520, type: 3}
+  - {fileID: 2800000, guid: 5669d88c10a7e7140a2f9b0e9bc3b520, type: 3}
+  - {fileID: 2800000, guid: 5669d88c10a7e7140a2f9b0e9bc3b520, type: 3}
+  - {fileID: 2800000, guid: 5669d88c10a7e7140a2f9b0e9bc3b520, type: 3}
+  - {fileID: 2800000, guid: 5669d88c10a7e7140a2f9b0e9bc3b520, type: 3}
+  - {fileID: 2800000, guid: 5669d88c10a7e7140a2f9b0e9bc3b520, type: 3}
+  - {fileID: 2800000, guid: 5669d88c10a7e7140a2f9b0e9bc3b520, type: 3}
+  - {fileID: 2800000, guid: 5669d88c10a7e7140a2f9b0e9bc3b520, type: 3}
+  - {fileID: 2800000, guid: 5669d88c10a7e7140a2f9b0e9bc3b520, type: 3}
+  - {fileID: 2800000, guid: 5669d88c10a7e7140a2f9b0e9bc3b520, type: 3}
+  - {fileID: 2800000, guid: ad95e6ae64a6f024ead471a1f08272fb, type: 3}
+  - {fileID: 2800000, guid: 5669d88c10a7e7140a2f9b0e9bc3b520, type: 3}
+  - {fileID: 2800000, guid: ad95e6ae64a6f024ead471a1f08272fb, type: 3}
+  - {fileID: 2800000, guid: 8c9f8a6b4b6d4d9498a861c7c93c06cf, type: 3}
+  - {fileID: 2800000, guid: 5669d88c10a7e7140a2f9b0e9bc3b520, type: 3}
   williamFPS: 8
   keyImages:
   - keyID: 
@@ -12793,6 +12797,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: -8812528941401185217, guid: 7dfba891f13cfa445bbbc22c681f2998, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1401371626}
+    - targetCorrespondingSourceObject: {fileID: -8812528941401185217, guid: 7dfba891f13cfa445bbbc22c681f2998, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1401371630}
     - targetCorrespondingSourceObject: {fileID: 8880597148746634669, guid: 7dfba891f13cfa445bbbc22c681f2998, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1071413692}
@@ -16577,13 +16584,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enableGlow: 1
   glowColor: {r: 1, g: 1, b: 1, a: 0.5019608}
+  particleTexture: {fileID: 2800000, guid: c26915c2b48b7f34baa3eb8ef11a630f, type: 3}
+  particleOffset: {x: 0, y: -0.2, z: 0}
   emissionRate: 10
   particleSize: 0.3
-  particleLifetime: 1.5
+  particleLifetime: 3
+  particleRotationSpeed: 0.5
   dispersalSpeed: 1
-  pulseSpeed: 1.5
-  pulseMin: 0.3
-  pulseMax: 1.2
 --- !u!1 &684670708 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 3d5bee2826dde6c4ea41cb7a6c5cb0f9, type: 3}
@@ -16644,9 +16651,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rotationSpeed: {x: 0, y: 0, z: 0}
   useParticles: 1
+  particleOffset: {x: 0, y: 0, z: -0.5}
   particleColor: {r: 1, g: 1, b: 1, a: 1}
+  particleTexture: {fileID: 0}
   emissionRate: 10
   particleSize: 0.3
+  particleLifetime: 3
+  particleRotationSpeed: 0.5
 --- !u!1 &685690572 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4333702947268403589, guid: 79bd83acb323b564f8290949f66238b4, type: 3}
@@ -22985,9 +22996,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rotationSpeed: {x: 0, y: 0, z: 0}
   useParticles: 1
+  particleOffset: {x: 0, y: 0.1, z: 0}
   particleColor: {r: 1, g: 1, b: 1, a: 1}
+  particleTexture: {fileID: 2800000, guid: c26915c2b48b7f34baa3eb8ef11a630f, type: 3}
   emissionRate: 10
   particleSize: 0.3
+  particleLifetime: 3
+  particleRotationSpeed: 0.5
 --- !u!64 &1099777012
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -26818,9 +26833,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rotationSpeed: {x: 0, y: 0, z: 0}
   useParticles: 1
+  particleOffset: {x: 0, y: 0, z: -0.05}
   particleColor: {r: 1, g: 1, b: 1, a: 1}
+  particleTexture: {fileID: 2800000, guid: c26915c2b48b7f34baa3eb8ef11a630f, type: 3}
   emissionRate: 10
   particleSize: 0.5
+  particleLifetime: 3
+  particleRotationSpeed: 0.5
 --- !u!1 &1256750376 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -5608795295338437619, guid: a96e16f3757bd39439d3f805139be862, type: 3}
@@ -27210,9 +27229,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rotationSpeed: {x: 0, y: 0, z: 0}
   useParticles: 1
+  particleOffset: {x: 0.05, y: 0, z: 0}
   particleColor: {r: 1, g: 1, b: 1, a: 1}
+  particleTexture: {fileID: 2800000, guid: c26915c2b48b7f34baa3eb8ef11a630f, type: 3}
   emissionRate: 10
   particleSize: 0.3
+  particleLifetime: 3
+  particleRotationSpeed: 0.5
 --- !u!1001 &1284881545
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -29085,6 +29108,27 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.75
   m_Center: {x: -0.578125, y: -0.0625, z: 0.03125}
+--- !u!114 &1401371630
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1401371617}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: def2be112b40bc549a2d5fa12500ff5b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enableGlow: 0
+  glowColor: {r: 1, g: 1, b: 1, a: 1}
+  particleTexture: {fileID: 2800000, guid: c26915c2b48b7f34baa3eb8ef11a630f, type: 3}
+  particleOffset: {x: 0, y: -0.3, z: 0}
+  emissionRate: 10
+  particleSize: 0.25
+  particleLifetime: 3
+  particleRotationSpeed: 0.5
+  dispersalSpeed: 1
 --- !u!64 &1404327833
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -39260,13 +39304,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enableGlow: 1
   glowColor: {r: 1, g: 1, b: 1, a: 0.5019608}
+  particleTexture: {fileID: 2800000, guid: c26915c2b48b7f34baa3eb8ef11a630f, type: 3}
+  particleOffset: {x: 0, y: -0.2, z: 0}
   emissionRate: 10
   particleSize: 0.3
-  particleLifetime: 1.5
+  particleLifetime: 3
+  particleRotationSpeed: 0.5
   dispersalSpeed: 1
-  pulseSpeed: 1.5
-  pulseMin: 0.3
-  pulseMax: 1.2
 --- !u!1 &2059147501 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 5bc85e930e9d16f498110c0774d9b90c, type: 3}

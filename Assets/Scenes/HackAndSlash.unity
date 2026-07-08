@@ -2441,24 +2441,28 @@ MonoBehaviour:
   - {fileID: 2800000, guid: 7f22635fea0c3644ea9d73b241988ec9, type: 3}
   playerFPS: 1
   williamFrames:
-  - {fileID: 2800000, guid: 7875607cb2416c2499f652cc704c1201, type: 3}
-  - {fileID: 2800000, guid: e1a39b8120ac8464f812765932189c22, type: 3}
-  - {fileID: 2800000, guid: c889a7297e4b637418b1fa0d08e83c4e, type: 3}
-  - {fileID: 2800000, guid: aaf336b5b7c2ed941acabf6504b59e80, type: 3}
-  - {fileID: 2800000, guid: faf0b1e7f14753a4599abf1377af7857, type: 3}
-  - {fileID: 2800000, guid: 7875607cb2416c2499f652cc704c1201, type: 3}
-  - {fileID: 2800000, guid: 7875607cb2416c2499f652cc704c1201, type: 3}
-  - {fileID: 2800000, guid: 7875607cb2416c2499f652cc704c1201, type: 3}
-  - {fileID: 2800000, guid: 7875607cb2416c2499f652cc704c1201, type: 3}
-  - {fileID: 2800000, guid: 7875607cb2416c2499f652cc704c1201, type: 3}
-  - {fileID: 2800000, guid: 7875607cb2416c2499f652cc704c1201, type: 3}
-  - {fileID: 2800000, guid: 7875607cb2416c2499f652cc704c1201, type: 3}
-  - {fileID: 2800000, guid: 7875607cb2416c2499f652cc704c1201, type: 3}
-  - {fileID: 2800000, guid: 7875607cb2416c2499f652cc704c1201, type: 3}
-  - {fileID: 2800000, guid: 7875607cb2416c2499f652cc704c1201, type: 3}
-  - {fileID: 2800000, guid: 7875607cb2416c2499f652cc704c1201, type: 3}
+  - {fileID: 2800000, guid: 5669d88c10a7e7140a2f9b0e9bc3b520, type: 3}
+  - {fileID: 2800000, guid: 5669d88c10a7e7140a2f9b0e9bc3b520, type: 3}
+  - {fileID: 2800000, guid: 5669d88c10a7e7140a2f9b0e9bc3b520, type: 3}
+  - {fileID: 2800000, guid: 5669d88c10a7e7140a2f9b0e9bc3b520, type: 3}
+  - {fileID: 2800000, guid: 5669d88c10a7e7140a2f9b0e9bc3b520, type: 3}
+  - {fileID: 2800000, guid: 5669d88c10a7e7140a2f9b0e9bc3b520, type: 3}
+  - {fileID: 2800000, guid: 5669d88c10a7e7140a2f9b0e9bc3b520, type: 3}
+  - {fileID: 2800000, guid: 5669d88c10a7e7140a2f9b0e9bc3b520, type: 3}
+  - {fileID: 2800000, guid: 5669d88c10a7e7140a2f9b0e9bc3b520, type: 3}
+  - {fileID: 2800000, guid: 5669d88c10a7e7140a2f9b0e9bc3b520, type: 3}
+  - {fileID: 2800000, guid: 5669d88c10a7e7140a2f9b0e9bc3b520, type: 3}
+  - {fileID: 2800000, guid: ad95e6ae64a6f024ead471a1f08272fb, type: 3}
+  - {fileID: 2800000, guid: 5669d88c10a7e7140a2f9b0e9bc3b520, type: 3}
+  - {fileID: 2800000, guid: ad95e6ae64a6f024ead471a1f08272fb, type: 3}
+  - {fileID: 2800000, guid: 8c9f8a6b4b6d4d9498a861c7c93c06cf, type: 3}
+  - {fileID: 2800000, guid: 5669d88c10a7e7140a2f9b0e9bc3b520, type: 3}
   williamFPS: 8
-  keyImages: []
+  keyImages:
+  - keyID: 
+    keyImage: {fileID: 2800000, guid: 54b107a168d31804a9e7fb3ba7c1a991, type: 3}
+  - keyID: 
+    keyImage: {fileID: 0}
   inventoryMusic: {fileID: 0}
   inventoryMusicVolume: 0.5
   defaultSensitivity: 100

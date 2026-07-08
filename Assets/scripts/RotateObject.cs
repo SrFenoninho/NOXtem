@@ -10,11 +10,15 @@ public class RotateObject : MonoBehaviour
 
     [Header("Particle System Settings")]
     public bool useParticles = true;
+    public Vector3 particleOffset = new Vector3(0f, 0f, -0.5f);
     public Color particleColor = Color.white;
+    public Texture particleTexture;
     [Range(5, 50f)]
     public int emissionRate = 10;
     [Range(0.1f, 2f)]
     public float particleSize = 0.3f;
+    public float particleLifetime = 3f;
+    public float particleRotationSpeed = 0.5f;
 
     // ---------------------------------------------
     //  ESTADO PRIVADO
@@ -67,29 +71,40 @@ public class RotateObject : MonoBehaviour
         else
             particleObj.transform.localPosition = Vector3.zero;
 
+        // Puxar a partícula para fora usando o offset
+        particleObj.transform.Translate(particleOffset, Space.Self);
+
         particles = particleObj.AddComponent<ParticleSystem>();
 
         var main = particles.main;
         main.startColor = particleColor;
         main.startSize = particleSize;
-        main.startSpeed = 0.5f;
-        main.startLifetime = 1.5f;
-        main.maxParticles = 50;
+        main.startSpeed = 0f;
+        main.startLifetime = particleLifetime;
+        main.maxParticles = 1;
         main.simulationSpace = ParticleSystemSimulationSpace.World;
 
         var emission = particles.emission;
-        emission.rateOverTime = emissionRate;
+        emission.rateOverTime = 0f;
+        emission.SetBursts(new ParticleSystem.Burst[] { new ParticleSystem.Burst(0f, 1, 1, 0, particleLifetime) });
 
+        // Desativar shape emite estritamente no centro
         var shape = particles.shape;
-        shape.shapeType = ParticleSystemShapeType.Sphere;
-        shape.radius = 0.5f;
+        shape.enabled = false;
 
-        // Particulas diminuem ao longo do tempo
+        // Rotação sobre o tempo
+        var rotOverLifetime = particles.rotationOverLifetime;
+        rotOverLifetime.enabled = true;
+        rotOverLifetime.z = new ParticleSystem.MinMaxCurve(particleRotationSpeed);
+
+        // Particulas aumentam ao longo do tempo e voltam a encolher no fim
         var sizeOverLifetime = particles.sizeOverLifetime;
         sizeOverLifetime.enabled = true;
         AnimationCurve sizeCurve = new AnimationCurve();
-        sizeCurve.AddKey(0f, 1f);
-        sizeCurve.AddKey(1f, 0f);
+        sizeCurve.AddKey(0f, 0.01f);
+        sizeCurve.AddKey(0.15f, 1f);
+        sizeCurve.AddKey(0.85f, 1f);
+        sizeCurve.AddKey(1f, 0.01f);
         sizeOverLifetime.size = new ParticleSystem.MinMaxCurve(1f, sizeCurve);
 
         // Fade de opacidade ao longo do tempo
@@ -102,15 +117,31 @@ public class RotateObject : MonoBehaviour
                 new GradientColorKey(particleColor, 1f)
             },
             new GradientAlphaKey[] {
-                new GradientAlphaKey(1f, 0f),
+                new GradientAlphaKey(0f, 0f),
+                new GradientAlphaKey(1f, 0.15f),
+                new GradientAlphaKey(1f, 0.85f),
                 new GradientAlphaKey(0f, 1f)
             }
         );
         colorOverLifetime.color = new ParticleSystem.MinMaxGradient(gradient);
 
         var renderer = particles.GetComponent<ParticleSystemRenderer>();
-        renderer.material = new Material(Shader.Find("Mobile/Particles/Additive"));
-        renderer.material.SetColor("_TintColor", particleColor);
+        Shader particleShader = Shader.Find("Legacy Shaders/Particles/Alpha Blended");
+        if (particleShader == null) particleShader = Shader.Find("Particles/Alpha Blended"); // Fallback
+
+        renderer.material = new Material(particleShader);
+        if (particleTexture != null)
+        {
+            renderer.material.mainTexture = particleTexture;
+        }
+        
+        if (renderer.material.HasProperty("_TintColor"))
+            renderer.material.SetColor("_TintColor", particleColor);
+        else if (renderer.material.HasProperty("_Color"))
+            renderer.material.color = particleColor;
+
         renderer.renderMode = ParticleSystemRenderMode.Billboard;
+
+        particles.Play(); // Forçar inicio do sistema
     }
 }

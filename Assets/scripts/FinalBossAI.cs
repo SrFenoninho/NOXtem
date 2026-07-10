@@ -1,67 +1,70 @@
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.SceneManagement;
+using System.Collections;
 
 public class FinalBossAI : MonoBehaviour
 {
-    public enum BossPhase { Phase1, PillarCharge1, Phase2, PillarCharge2, Phase3, ReadyToDie, Cutscene }
+    public enum BossPhase { Phase1, PillarEvent1, Phase2, PillarEvent2, Phase3, ReadyToDie, Cutscene }
+    public enum BossState { Idle, Fighting, Evasion, Charging, ParabolicJump, Stunned, Execution }
     
     [Header("Estado Atual (Apenas leitura)")]
     public BossPhase currentPhase = BossPhase.Phase1;
-    public bool debugMode = true;
+    public BossState currentState = BossState.Idle;
 
-    [Header("Referencias ABSOLUTAS (ARRASTAR NO UNITY)")]
+    [Header("Referencias ABSOLUTAS")]
     public Transform playerTarget;
     public PlayerHealth playerHealthRef;
 
     public float currentHealth;
-    
-    [Header("Configurações Base")]
     public float maxHealth = 300f;
     public string nextSceneName = "Scene_Epilogo";
 
     [Header("Movimento")]
     public float walkSpeed = 3.5f;
     public float runSpeed = 7f;
-    public float retreatSpeed = 4f;
-    public float chargeSpeed = 15f;
+    public float chargeSpeed = 16f;
 
-    [Header("Ataques Básicos")]
+    [Header("Ataque Melee")]
     public float attackRange = 2.5f;
     public float attackDamage = 15f;
     public float attackCooldown = 2.5f;
     private float nextAttackTime = 0f;
 
-    [Header("Jump Attack (Área Imbloqueável)")]
+    [Header("Ataque Salto Parabólico")]
     public float jumpAttackRadius = 6f;
     public float jumpAttackDamage = 30f;
-    public float jumpAttackCooldown = 5f;
+    public float jumpAttackCooldown = 6f;
+    public float jumpHeight = 6f; 
     private float nextJumpAttackTime = 0f;
 
     [Header("Referências Internas")]
     public Animator anim;
     private NavMeshAgent agent;
-
-    private bool isCharging = false;
-    private bool isInvulnerable = false;
-    
+    private Rigidbody rb;
     private BossPillar ultimoPilarNoMapa;
 
     private GameObject bossHealthCanvas;
     private UnityEngine.UI.Text bossHealthText;
 
-    private BossPillar alvoFugaAtual = null;
-    private float tempoInicioFuga = 0f;
-
-    private int consecutiveHitsReceived = 0;
-
     void Start()
     {
         currentHealth = maxHealth;
         agent = GetComponent<NavMeshAgent>();
+        rb = GetComponent<Rigidbody>();
         
         agent.stoppingDistance = attackRange - 1f;
         if (agent.stoppingDistance < 0) agent.stoppingDistance = 0f;
+
+        if (agent.enabled && !agent.isOnNavMesh)
+        {
+            NavMeshHit hit;
+            if (NavMesh.SamplePosition(transform.position, out hit, 15.0f, NavMesh.AllAreas))
+            {
+                transform.position = hit.position;
+                agent.Warp(hit.position);
+            }
+        }
 
         CreateHealthText();
         
@@ -80,239 +83,44 @@ public class FinalBossAI : MonoBehaviour
     {
         if (currentPhase == BossPhase.Cutscene || playerTarget == null) 
         {
-            agent.isStopped = true;
+            StopMovement();
             return;
         }
 
-        CheckPhaseTransitions();
+        if (currentState == BossState.Charging || 
+            currentState == BossState.ParabolicJump || 
+            currentState == BossState.Stunned ||
+            currentState == BossState.Execution)
+        {
+            return;
+        }
 
         switch(currentPhase)
         {
-            case BossPhase.Phase1: UpdatePhase1(); break;
-            case BossPhase.PillarCharge1:
-            case BossPhase.PillarCharge2: UpdatePillarCharge(); break;
-            case BossPhase.Phase2: UpdatePhase2(); break;
-            case BossPhase.Phase3: UpdatePhase3(); break;
-            case BossPhase.ReadyToDie: UpdateReadyToDie(); break; 
+            case BossPhase.Phase1: UpdatePhaseCautious(false); break;
+            case BossPhase.PillarEvent1: UpdatePillarEvent(); break;
+            case BossPhase.Phase2: UpdatePhaseAggressive(); break;
+            case BossPhase.PillarEvent2: UpdatePillarEvent(); break;
+            case BossPhase.Phase3: UpdatePhaseCautious(true); break; 
+            case BossPhase.ReadyToDie: UpdatePhaseExecution(); break; 
         }
 
-        if(anim != null && agent.enabled && currentPhase != BossPhase.Cutscene)
+        if(anim != null && agent.enabled && currentState != BossState.ParabolicJump)
         {
             anim.SetFloat("Speed", agent.velocity.magnitude);
         }
     }
 
-    // ---------------------------------------------
-    //  MUDANÇA DE FASES
-    // ---------------------------------------------
-    void CheckPhaseTransitions()
+    private void StopMovement()
     {
-        if(currentHealth <= 25f && currentPhase != BossPhase.ReadyToDie)
-        {
-            currentPhase = BossPhase.ReadyToDie;
-            isInvulnerable = true;
-            
-            BossPillar[] todosOsPilares = FindObjectsByType<BossPillar>(FindObjectsSortMode.None);
-            foreach(BossPillar p in todosOsPilares)
-            {
-                if(!p.jaDestruido)
-                {
-                    ultimoPilarNoMapa = p;
-                    p.isLastPillar = true; 
-                    p.bossAssociado = this; 
-                    break; 
-                }
-            }
-            return;
-        }
-
-        if(currentHealth <= 125f && currentPhase == BossPhase.Phase2)
-        {
-            currentPhase = BossPhase.PillarCharge2;
-            isInvulnerable = true;
-            isCharging = false;
-        }
-        else if(currentHealth <= 225f && currentPhase == BossPhase.Phase1)
-        {
-            currentPhase = BossPhase.PillarCharge1;
-            isInvulnerable = true;
-            isCharging = false;
-        }
-    }
-
-    // ---------------------------------------------
-    //  COMPORTAMENTOS DE CADA FASE
-    // ---------------------------------------------
-    void UpdatePhase1()
-    {
-        if (playerTarget == null) return;
-        float dist = Vector3.Distance(transform.position, playerTarget.position);
-        
-        if(dist <= attackRange + 2.5f)
+        if (agent != null && agent.enabled && agent.isOnNavMesh) 
         {
             agent.isStopped = true;
-            LookAtPlayer(); 
-
-            if(Time.time >= nextAttackTime)
-            {
-                TryTriggerAnim("Attack1"); 
-                
-                if (playerHealthRef != null) playerHealthRef.TakeDamage(attackDamage, transform.position);
-                else Debug.LogError("ERRO: O BOSS TENTOU ATACAR MAS O playerHealthRef está VAZIO NO INSPECTOR!");
-
-                nextAttackTime = Time.time + attackCooldown;
-                consecutiveHitsReceived = 0; 
-            }
-        }
-        else if (dist <= attackRange + 5f && Time.time < nextAttackTime)
-        {
-            agent.isStopped = false;
-            agent.speed = retreatSpeed;
-            Vector3 pointBehind = transform.position + (transform.position - playerTarget.position).normalized * 5f;
-            agent.SetDestination(pointBehind);
-        }
-        else
-        {
-            agent.isStopped = false;
-            agent.speed = walkSpeed;
-            agent.SetDestination(playerTarget.position);
+            agent.velocity = Vector3.zero;
+            if (agent.hasPath) agent.ResetPath(); 
         }
     }
 
-    void UpdatePhase2()
-    {
-        if (playerTarget == null) return;
-        float dist = Vector3.Distance(transform.position, playerTarget.position);
-        agent.isStopped = false;
-        agent.speed = runSpeed;
-        agent.SetDestination(playerTarget.position);
-
-        if(dist <= jumpAttackRadius + 1.5f && Time.time >= nextJumpAttackTime)
-        {
-            agent.isStopped = true; 
-            LookAtPlayer();
-            TryTriggerAnim("JumpAttack");
-            nextJumpAttackTime = Time.time + jumpAttackCooldown;
-            Invoke("TriggerAoEDamage", 0.7f); 
-            consecutiveHitsReceived = 0;
-            return;
-        }
-
-        if(dist <= attackRange + 2.5f && Time.time >= nextAttackTime)
-        {
-            LookAtPlayer();
-            TryTriggerAnim("Attack2");
-            if (playerHealthRef != null) playerHealthRef.TakeDamage(attackDamage + 10f, transform.position); 
-            nextAttackTime = Time.time + (attackCooldown - 1f); 
-            consecutiveHitsReceived = 0;
-        }
-    }
-
-    void UpdatePhase3()
-    {
-        if (playerTarget == null) return;
-        float dist = Vector3.Distance(transform.position, playerTarget.position);
-        agent.isStopped = false;
-        agent.speed = walkSpeed * 0.6f; 
-        agent.SetDestination(playerTarget.position);
-
-        if(dist <= attackRange + 2.5f && Time.time >= nextAttackTime)
-        {
-            LookAtPlayer();
-            TryTriggerAnim("Attack1");
-            if (playerHealthRef != null) playerHealthRef.TakeDamage(attackDamage - 5f, transform.position);
-            nextAttackTime = Time.time + (attackCooldown + 1.5f); 
-            consecutiveHitsReceived = 0;
-        }
-    }
-
-    void UpdatePillarCharge()
-    {
-        if (playerTarget == null) return;
-        
-        agent.isStopped = false; 
-
-        if(!isCharging)
-        {
-            if (alvoFugaAtual == null)
-            {
-                alvoFugaAtual = GetFarthestPillar();
-                tempoInicioFuga = Time.time;
-            }
-
-            agent.speed = runSpeed;
-            if (alvoFugaAtual != null) agent.SetDestination(alvoFugaAtual.transform.position);
-            
-            float distToAlvo = alvoFugaAtual != null ? Vector3.Distance(transform.position, alvoFugaAtual.transform.position) : 0f;
-            if(distToAlvo < 4f || Time.time - tempoInicioFuga > 3.5f) 
-            {
-                isCharging = true;
-                alvoFugaAtual = null;
-            }
-        }
-        else
-        {
-            agent.speed = chargeSpeed;
-            agent.SetDestination(playerTarget.position);
-            LookAtPlayer();
-            
-            float dist = Vector3.Distance(transform.position, playerTarget.position);
-            if(dist <= attackRange + 2.5f)
-            {
-                if (playerHealthRef != null) playerHealthRef.TakeDamage(30f, transform.position);
-                isCharging = false; 
-                consecutiveHitsReceived = 0;
-            }
-        }
-    }
-
-    private BossPillar GetFarthestPillar()
-    {
-        BossPillar[] pilares = FindObjectsByType<BossPillar>(FindObjectsSortMode.None);
-        BossPillar bestPillar = null;
-        float maxDist = -1f;
-
-        foreach(BossPillar p in pilares)
-        {
-            if (p == null || !p.gameObject.activeInHierarchy || p.jaDestruido) continue;
-
-            float distToPlayer = Vector3.Distance(p.transform.position, playerTarget.position);
-            if(distToPlayer > maxDist)
-            {
-                maxDist = distToPlayer;
-                bestPillar = p;
-            }
-        }
-        
-        return bestPillar;
-    }
-
-    void UpdateReadyToDie()
-    {
-        if(ultimoPilarNoMapa != null)
-        {
-            float distParaPilar = Vector3.Distance(transform.position, ultimoPilarNoMapa.transform.position);
-            
-            if(distParaPilar > 3f)
-            {
-                agent.isStopped = false;
-                agent.speed = walkSpeed * 0.5f; 
-                agent.SetDestination(ultimoPilarNoMapa.transform.position);
-            }
-            else
-            {
-                agent.isStopped = true;
-            }
-        }
-        else
-        {
-            agent.isStopped = true;
-        }
-    }
-
-    // ---------------------------------------------
-    //  MECÂNICAS EXTRAS
-    // ---------------------------------------------
     private void LookAtPlayer()
     {
         if (playerTarget == null) return;
@@ -321,98 +129,342 @@ public class FinalBossAI : MonoBehaviour
         if(dir != Vector3.zero) transform.rotation = Quaternion.LookRotation(dir);
     }
 
-    private void TriggerAoEDamage()
+    // =========================================================
+    // LÓGICA DAS FASES
+    // =========================================================
+
+    private void UpdatePhaseCautious(bool isTired)
     {
-        if (playerTarget == null) return;
-        if(Vector3.Distance(transform.position, playerTarget.position) <= jumpAttackRadius + 2f)
+        currentState = BossState.Fighting;
+        float dist = Vector3.Distance(transform.position, playerTarget.position);
+
+        if (agent.enabled && agent.isOnNavMesh)
+        {
+            agent.isStopped = false;
+            agent.speed = isTired ? walkSpeed : runSpeed * 0.8f; 
+            agent.SetDestination(playerTarget.position);
+        }
+
+        if(dist <= attackRange + 1.5f && Time.time >= nextAttackTime)
+        {
+            StartCoroutine(PerformMeleeAttackRoutine());
+            nextAttackTime = Time.time + attackCooldown;
+        }
+    }
+
+    private void UpdatePhaseAggressive()
+    {
+        currentState = BossState.Fighting;
+        float dist = Vector3.Distance(transform.position, playerTarget.position);
+
+        if(dist > 5.5f && Time.time >= nextJumpAttackTime)
+        {
+            StartCoroutine(PerformParabolicJump());
+            nextJumpAttackTime = Time.time + jumpAttackCooldown;
+            return;
+        }
+
+        if (agent.enabled && agent.isOnNavMesh)
+        {
+            agent.isStopped = false;
+            agent.speed = runSpeed;
+            agent.SetDestination(playerTarget.position);
+        }
+
+        if(dist <= attackRange + 1.5f && Time.time >= nextAttackTime)
+        {
+            StartCoroutine(PerformMeleeAttackRoutine());
+            nextAttackTime = Time.time + attackCooldown;
+        }
+    }
+
+    private void UpdatePillarEvent()
+    {
+        currentState = BossState.Evasion;
+        float dist = Vector3.Distance(transform.position, playerTarget.position);
+
+        // Assim que se conseguir afastar para 12m ou mais, arranca o Charge mortal!
+        if (dist > 12f)
+        {
+            StartCoroutine(PerformPillarCharge());
+            return;
+        }
+
+        // Foge do jogador
+        if (agent.enabled && agent.isOnNavMesh)
+        {
+            agent.isStopped = false;
+            agent.speed = runSpeed * 1.2f; 
+            
+            Vector3 dirAway = (transform.position - playerTarget.position).normalized;
+            Vector3 fleePos = transform.position + dirAway * 8f;
+            
+            NavMeshHit hit;
+            if (NavMesh.SamplePosition(fleePos, out hit, 4f, NavMesh.AllAreas))
+            {
+                agent.SetDestination(hit.position);
+            }
+            else
+            {
+                // Se ficar encurralado, força logo a Carga
+                StartCoroutine(PerformPillarCharge());
+            }
+        }
+    }
+
+    private void UpdatePhaseExecution()
+    {
+        currentState = BossState.Execution;
+        if(ultimoPilarNoMapa != null)
+        {
+            if(Vector3.Distance(transform.position, ultimoPilarNoMapa.transform.position) > 3.5f)
+            {
+                if (agent.enabled && agent.isOnNavMesh)
+                {
+                    agent.isStopped = false;
+                    agent.speed = walkSpeed * 0.4f; 
+                    agent.SetDestination(ultimoPilarNoMapa.transform.position);
+                }
+            }
+            else
+            {
+                StopMovement();
+            }
+        }
+        else
+        {
+            StopMovement();
+        }
+    }
+
+    // =========================================================
+    // ATAQUES ESPECIAIS (COROUTINES)
+    // =========================================================
+
+    private IEnumerator PerformMeleeAttackRoutine()
+    {
+        currentState = BossState.Stunned; 
+        StopMovement();
+        LookAtPlayer();
+        
+        string animName = Random.value > 0.5f ? "Attack1" : "Attack2";
+        TryTriggerAnim(animName);
+
+        yield return new WaitForSeconds(0.8f); 
+        
+        if (playerTarget != null && playerHealthRef != null && Vector3.Distance(transform.position, playerTarget.position) <= attackRange + 2f)
+        {
+            playerHealthRef.TakeDamage(attackDamage, transform.position);
+        }
+
+        yield return new WaitForSeconds(0.6f);
+        currentState = BossState.Idle;
+    }
+
+    private IEnumerator PerformPillarCharge()
+    {
+        currentState = BossState.Charging;
+        StopMovement();
+        LookAtPlayer();
+        
+        TryTriggerAnim("Roar"); 
+        yield return new WaitForSeconds(1.0f);
+
+        if (agent.enabled && agent.isOnNavMesh)
+        {
+            agent.isStopped = false;
+            agent.speed = chargeSpeed;
+            agent.acceleration = 120f; 
+        }
+        
+        float elapsedCharge = 0f;
+        while (currentState == BossState.Charging)
+        {
+            if (agent.enabled && agent.isOnNavMesh) agent.SetDestination(playerTarget.position);
+            
+            if (Vector3.Distance(transform.position, playerTarget.position) <= 2.2f)
+            {
+                if (playerHealthRef != null) playerHealthRef.TakeDamage(30f, transform.position);
+                break; 
+            }
+            
+            elapsedCharge += Time.deltaTime;
+            if (elapsedCharge >= 6f) break; 
+            
+            yield return null;
+        }
+
+        currentState = BossState.Idle;
+        StopMovement();
+    }
+
+    private IEnumerator PerformParabolicJump()
+    {
+        currentState = BossState.ParabolicJump;
+        StopMovement();
+        LookAtPlayer();
+        TryTriggerAnim("JumpAttack");
+
+        yield return new WaitForSeconds(0.4f); 
+
+        bool originalKinematic = false;
+        if (rb != null)
+        {
+            originalKinematic = rb.isKinematic;
+            rb.isKinematic = true;
+        }
+
+        agent.enabled = false;
+        Vector3 startPos = transform.position;
+        Vector3 targetPos = playerTarget.position;
+        float duration = 0.8f; 
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            float normalizedTime = elapsed / duration;
+            Vector3 currentPos = Vector3.Lerp(startPos, targetPos, normalizedTime);
+            currentPos.y += Mathf.Sin(normalizedTime * Mathf.PI) * jumpHeight;
+            transform.position = currentPos;
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        transform.position = targetPos;
+        
+        if (rb != null) rb.isKinematic = originalKinematic;
+
+        agent.enabled = true;
+        if (!agent.isOnNavMesh)
+        {
+            NavMeshHit hit;
+            if (NavMesh.SamplePosition(transform.position, out hit, 5f, NavMesh.AllAreas))
+                agent.Warp(hit.position);
+        }
+        StopMovement();
+
+        if (playerTarget != null && Vector3.Distance(transform.position, playerTarget.position) <= jumpAttackRadius + 2f)
         {
             if (playerHealthRef != null) playerHealthRef.TakeDamage(jumpAttackDamage, transform.position); 
         }
+
+        yield return new WaitForSeconds(1.5f);
+        currentState = BossState.Idle;
     }
+
+    // =========================================================
+    // DANO E TRANSIÇÕES DE VIDA DO BOSS (O SEGREDO)
+    // =========================================================
 
     public void TakeDamage(float amount)
     {
-        if(isInvulnerable) return; 
+        if(currentPhase == BossPhase.ReadyToDie || currentPhase == BossPhase.Cutscene) return; 
+
+        // SÓ FICA IMUNE DURANTE OS EVENTOS DO PILAR! Fora isso, podes bater-lhe livremente.
+        if (currentPhase == BossPhase.PillarEvent1 || currentPhase == BossPhase.PillarEvent2)
+        {
+            return;
+        }
 
         currentHealth -= amount;
-        TryTriggerAnim("Hit");
-        CheckPhaseTransitions();
-
-        if(bossHealthText != null)
-        {
-            bossHealthText.text = "BOSS HP: " + currentHealth;
-        }
-
-        consecutiveHitsReceived++;
-        if (consecutiveHitsReceived >= 4)
-        {
-            consecutiveHitsReceived = 0;
-            ForceRetaliationAttack();
-        }
-    }
-
-    private void ForceRetaliationAttack()
-    {
-        if (playerTarget == null) return;
         
-        if (Vector3.Distance(transform.position, playerTarget.position) <= attackRange + 3.5f)
+        if (currentState == BossState.Idle || currentState == BossState.Fighting)
         {
-            LookAtPlayer();
-            TryTriggerAnim("Attack2");
-            if (playerHealthRef != null) playerHealthRef.TakeDamage(attackDamage + 5f, transform.position);
-            nextAttackTime = Time.time + attackCooldown; 
+            StartCoroutine(HitStunRoutine());
         }
+
+        UpdateHealthUI();
+        CheckPhases();
     }
 
+    private void CheckPhases()
+    {
+        if (currentHealth <= 25f && currentPhase != BossPhase.ReadyToDie)
+        {
+            currentPhase = BossPhase.ReadyToDie;
+            EncontrarUltimoPilar();
+            return;
+        }
+
+        if (currentHealth <= 125f && currentPhase == BossPhase.Phase2)
+        {
+            currentPhase = BossPhase.PillarEvent2;
+            currentState = BossState.Idle;
+            return;
+        }
+
+        if (currentHealth <= 225f && currentPhase == BossPhase.Phase1)
+        {
+            currentPhase = BossPhase.PillarEvent1;
+            currentState = BossState.Idle;
+            return;
+        }
+    }
+    
     private void OnTriggerEnter(Collider other)
     {
-        if(isCharging && other.CompareTag("Pilar"))
+        if(currentState == BossState.Charging && other.CompareTag("Pilar"))
         {
             BossPillar pilar = other.GetComponentInParent<BossPillar>();
             if(pilar != null && !pilar.jaDestruido)
             {
                 pilar.ReceberImpactoDoBoss(); 
-                isCharging = false;
-                isInvulnerable = false;
                 
-                if (currentPhase == BossPhase.PillarCharge1) currentPhase = BossPhase.Phase2;
-                else if (currentPhase == BossPhase.PillarCharge2) currentPhase = BossPhase.Phase3;
-
-                TakeDamage(25f); 
+                currentState = BossState.Idle;
+                StopMovement();
+                
+                // Explodir o pilar força o Boss a avançar de fase no guião!
+                if (currentPhase == BossPhase.PillarEvent1) currentPhase = BossPhase.Phase2;
+                else if (currentPhase == BossPhase.PillarEvent2) currentPhase = BossPhase.Phase3;
             }
         }
     }
 
-    // ---------------------------------------------
-    //  CUTSCENE FINAL DO EPISÓDIO
-    // ---------------------------------------------
+    // =========================================================
+    // UTILS
+    // =========================================================
+
+    private IEnumerator HitStunRoutine()
+    {
+        currentState = BossState.Stunned;
+        StopMovement();
+        TryTriggerAnim("Hit");
+        yield return new WaitForSeconds(0.6f);
+        currentState = BossState.Idle; 
+    }
+
+    private void EncontrarUltimoPilar()
+    {
+        BossPillar[] todosOsPilares = FindObjectsByType<BossPillar>(FindObjectsSortMode.None);
+        foreach(BossPillar p in todosOsPilares)
+        {
+            if(!p.jaDestruido)
+            {
+                ultimoPilarNoMapa = p;
+                p.isLastPillar = true; 
+                p.bossAssociado = this; 
+                break; 
+            }
+        }
+    }
+
     public bool IsReadyForExecution()
     {
-        if(currentPhase == BossPhase.ReadyToDie && agent.isStopped) 
-            return true;
-            
-        return false;
+        return currentPhase == BossPhase.ReadyToDie && agent != null && agent.isStopped;
     }
 
     public void ExecuteFinalCutscene(Transform playerTransform)
     {
         currentPhase = BossPhase.Cutscene;
-        
+        currentState = BossState.Execution;
         if (bossHealthCanvas != null) Destroy(bossHealthCanvas);
-        
-        if(playerHealthRef != null)
-        {
-            playerHealthRef.TakeDamage(9999f, transform.position); 
-        }
         if(anim != null) anim.Play("FinalHit");
-
         Invoke("LoadNextScene", 4f);
     }
 
     private void TryTriggerAnim(string triggerName)
     {
         if(anim == null) return;
-        
         foreach (AnimatorControllerParameter param in anim.parameters)
         {
             if (param.name == triggerName && param.type == AnimatorControllerParameterType.Trigger)
@@ -431,20 +483,32 @@ public class FinalBossAI : MonoBehaviour
         c.sortingOrder = 100;
         bossHealthCanvas.AddComponent<UnityEngine.UI.CanvasScaler>();
 
-        GameObject textObj = new GameObject("HealthText");
-        textObj.transform.SetParent(bossHealthCanvas.transform, false);
+        GameObject textObj = new GameObject("Text");
+        textObj.transform.SetParent(bossHealthCanvas.transform);
         bossHealthText = textObj.AddComponent<UnityEngine.UI.Text>();
-        bossHealthText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-        bossHealthText.color = new Color(0.9f, 0.1f, 0.1f, 1f);
-        bossHealthText.fontSize = 50;
+
+        Font arialFont = (Font)Resources.GetBuiltinResource(typeof(Font), "LegacyRuntime.ttf");
+        bossHealthText.font = arialFont;
+        bossHealthText.fontSize = 24;
+        bossHealthText.color = Color.red;
         bossHealthText.alignment = TextAnchor.UpperCenter;
-        bossHealthText.text = "BOSS HP: " + currentHealth;
         
-        RectTransform rt = textObj.GetComponent<RectTransform>();
-        rt.anchorMin = new Vector2(0, 0.85f);
-        rt.anchorMax = new Vector2(1, 1f);
-        rt.offsetMin = Vector2.zero;
-        rt.offsetMax = Vector2.zero;
+        UpdateHealthUI();
+
+        RectTransform rect = textObj.GetComponent<RectTransform>();
+        rect.anchorMin = new Vector2(0.5f, 1f);
+        rect.anchorMax = new Vector2(0.5f, 1f);
+        rect.pivot = new Vector2(0.5f, 1f);
+        rect.anchoredPosition = new Vector2(0, -20);
+        rect.sizeDelta = new Vector2(300, 50);
+    }
+
+    private void UpdateHealthUI()
+    {
+        if (bossHealthText != null)
+        {
+            bossHealthText.text = "BOSS HP: " + currentHealth;
+        }
     }
 
     private void LoadNextScene()

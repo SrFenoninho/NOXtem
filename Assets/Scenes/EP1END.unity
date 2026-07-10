@@ -416,6 +416,59 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   offsetRange: 0.3
+--- !u!1 &42864080
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 42864082}
+  - component: {fileID: 42864081}
+  m_Layer: 0
+  m_Name: DefeseWall
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!65 &42864081
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 42864080}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 2, z: 1}
+  m_Center: {x: 0, y: 0.5, z: 0}
+--- !u!4 &42864082
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 42864080}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 40.2, y: -15.679998, z: 58.79}
+  m_LocalScale: {x: 4.47, y: 3.8399997, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &43909037
 GameObject:
   m_ObjectHideFlags: 0
@@ -2658,7 +2711,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 4, y: 4, z: 5}
+  m_Size: {x: 2, y: 2, z: 3}
   m_Center: {x: 0, y: 1.7, z: 0}
 --- !u!4 &421295567 stripped
 Transform:
@@ -9189,7 +9242,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 89dfb9b88db54244f8641686d914ec9e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  defenseWallPrefab: {fileID: 0}
+  defenseWallPrefab: {fileID: 42864080}
   spawnPoint: {fileID: 2007201085}
 --- !u!114 &871085921
 MonoBehaviour:
@@ -9270,6 +9323,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 1000
   currentHealth: 0
+  isDefending: 0
   damageCooldown: 1
   knockbackForce: 25
   knockbackDuration: 0.3
@@ -11584,22 +11638,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentPhase: 0
-  debugMode: 1
+  currentState: 0
   playerTarget: {fileID: 871085927}
   playerHealthRef: {fileID: 871085922}
   currentHealth: 0
   maxHealth: 300
   nextSceneName: Scene_Epilogo
-  walkSpeed: 3.5
+  walkSpeed: 5
   runSpeed: 10
-  retreatSpeed: 4
-  chargeSpeed: 15
+  chargeSpeed: 20
   attackRange: 2.5
   attackDamage: 15
   attackCooldown: 2.5
   jumpAttackRadius: 6
   jumpAttackDamage: 30
   jumpAttackCooldown: 5
+  jumpHeight: 6
   anim: {fileID: 1321894433}
 --- !u!136 &1321894439
 CapsuleCollider:
@@ -16726,7 +16780,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 31ed60520825ed948ac0b3db0b004a4b, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 7.59
+      value: 5.58
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 31ed60520825ed948ac0b3db0b004a4b, type: 3}
       propertyPath: m_LocalRotation.w
@@ -17660,6 +17714,7 @@ SceneRoots:
   - {fileID: 1477652922}
   - {fileID: 1820676240}
   - {fileID: 663467948}
+  - {fileID: 42864082}
   - {fileID: 2111927489}
   - {fileID: 986245474}
   - {fileID: 1790278471}

@@ -11,6 +11,7 @@ public class PlayerHealth : MonoBehaviour
     public float currentHealth;
 
     [Header("Damage Settings")]
+    [HideInInspector] public bool isDefending = false;
     public float damageCooldown = 1f;   // tempo de invencibilidade entre danos consecutivos
     private float nextDamage = 0f;
 

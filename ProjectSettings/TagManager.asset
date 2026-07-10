@@ -8,6 +8,7 @@ TagManager:
   - key
   - Objective
   - Enemy
+  - Pilar
   layers:
   - Default
   - TransparentFX

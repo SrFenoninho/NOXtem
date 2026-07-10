@@ -13,6 +13,9 @@ public class DeathZone : MonoBehaviour
     // ---------------------------------------------
     void OnTriggerEnter(Collider other)
     {
+        // SE FOR A ESPADA (HITBOX), IGNORA IMEDIATAMENTE! Assim a espada pode atravessar a Death Zone à vontade.
+        if (other.GetComponent<Hitbox>() != null) return;
+
         // jogador
         if (other.CompareTag("Player"))
         {

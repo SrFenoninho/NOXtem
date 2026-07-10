@@ -48,20 +48,27 @@ public class Hitbox : MonoBehaviour
     // ---------------------------------------------
     void OnTriggerEnter(Collider other)
     {
-        if (!other.CompareTag(targetTag)) return;
-
-        // Ignorar inimigos ja atingidos neste ataque
+        if (other.CompareTag("Player")) return;
         if (enemiesHit.Contains(other.gameObject)) return;
 
-        EnemyAI enemy = other.GetComponent<EnemyAI>();
+        EnemyAI enemy = other.GetComponentInParent<EnemyAI>();
+        FinalBossAI boss = other.GetComponentInParent<FinalBossAI>();
+
         if (enemy != null)
         {
             enemy.TakeDamage(currentDamage, currentKnockback, currentStunDuration);
             enemiesHit.Add(other.gameObject);
-
-            // Registar acerto no sistema de combos
-            if (comboSystem != null)
-                comboSystem.RegisterHit();
+            if (comboSystem != null) comboSystem.RegisterHit();
+        }
+        else if (boss != null)
+        {
+            boss.TakeDamage(currentDamage);
+            enemiesHit.Add(other.gameObject);
+            if (comboSystem != null) comboSystem.RegisterHit();
+        }
+        else if (other.CompareTag(targetTag))
+        {
+            enemiesHit.Add(other.gameObject);
         }
     }
 }

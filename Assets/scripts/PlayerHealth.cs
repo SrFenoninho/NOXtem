@@ -22,6 +22,7 @@ public class PlayerHealth : MonoBehaviour
     // ---------------------------------------------
     //  ESTADO PRIVADO
     // ---------------------------------------------
+    private float currentKnockbackForce;
     private bool isKnockedBack = false;
     private float knockbackEndTime;
     private Vector3 knockbackDirection;
@@ -45,7 +46,7 @@ public class PlayerHealth : MonoBehaviour
         // Aplicar knockback horizontal enquanto ativo
         if (isKnockedBack && characterController != null)
         {
-            characterController.Move(knockbackDirection * knockbackForce * Time.deltaTime);
+            characterController.Move(knockbackDirection * currentKnockbackForce * Time.deltaTime);
             if (Time.time >= knockbackEndTime)
                 isKnockedBack = false;
         }
@@ -63,6 +64,8 @@ public class PlayerHealth : MonoBehaviour
         nextDamage = Time.time + damageCooldown;
         Debug.Log("Player took " + damageAmount + " damage. Health: " + currentHealth);
 
+        currentKnockbackForce = knockbackForce;
+
         // Calcular direcao do knockback (sempre horizontal)
         knockbackDirection = (transform.position - damageSourcePosition).normalized;
         knockbackDirection.y = 0;
@@ -77,19 +80,38 @@ public class PlayerHealth : MonoBehaviour
             Die();
     }
 
+    public void TakeAreaDamageWithKnockback(float damageAmount, Vector3 damageSourcePosition, float customForce, float customDuration)
+    {
+        if (Time.time < nextDamage) return;
+
+        currentHealth -= damageAmount;
+        nextDamage = Time.time + damageCooldown;
+
+        currentKnockbackForce = customForce;
+        
+        knockbackDirection = (transform.position - damageSourcePosition).normalized;
+        knockbackDirection.y = 0;
+        isKnockedBack = true;
+        knockbackEndTime = Time.time + customDuration;
+
+        if (anim != null) anim.SetTrigger("takeDamage");
+        if (playerCombat != null) playerCombat.CancelAttack();
+
+        if (currentHealth <= 0)
+            Die();
+    }
+
     // ---------------------------------------------
     //  MORTE
     // ---------------------------------------------
     void Die()
     {
-        // Recarregar a cena atual ao morrer
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
     // ---------------------------------------------
     //  HUD DE VIDA
     // ---------------------------------------------
-    // Desenha a barra de vida no ecra com OnGUI
     void OnGUI()
     {
         float boxWidth = 200;

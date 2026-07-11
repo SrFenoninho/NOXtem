@@ -53,10 +53,17 @@ public class Hitbox : MonoBehaviour
 
         EnemyAI enemy = other.GetComponentInParent<EnemyAI>();
         FinalBossAI boss = other.GetComponentInParent<FinalBossAI>();
+        BossHealth bossHealthNew = other.GetComponentInParent<BossHealth>();
 
         if (enemy != null)
         {
             enemy.TakeDamage(currentDamage, currentKnockback, currentStunDuration);
+            enemiesHit.Add(other.gameObject);
+            if (comboSystem != null) comboSystem.RegisterHit();
+        }
+        else if (bossHealthNew != null)
+        {
+            bossHealthNew.TakeDamage(currentDamage);
             enemiesHit.Add(other.gameObject);
             if (comboSystem != null) comboSystem.RegisterHit();
         }

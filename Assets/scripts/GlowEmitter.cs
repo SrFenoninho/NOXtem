@@ -63,8 +63,7 @@ public class GlowEmitter : MonoBehaviour
         main.startLifetime = particleLifetime;
         main.maxParticles = 1;
         main.simulationSpace = ParticleSystemSimulationSpace.World;
-
-        // Desativar shape para emitir sempre num ponto fixo perfeito e evitar erros de volume zero
+        
         var shape = particles.shape;
         shape.enabled = false;
 

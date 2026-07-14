@@ -235,10 +235,10 @@ public class FlowFreeGame : MonoBehaviour
             winText.text = "Puzzle Complete!";
         }
 
-        StartCoroutine(CompleteAfterDelay(2.5f));
+        StartCoroutine(CompleteAfterDelay(0.25f));
     }
 
-    IEnumerator CompleteAfterDelay(float delay)
+    System.Collections.IEnumerator CompleteAfterDelay(float delay)
     {
         yield return new WaitForSecondsRealtime(delay);
         if (terminal != null)

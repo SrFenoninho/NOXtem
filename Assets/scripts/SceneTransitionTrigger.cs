@@ -15,6 +15,16 @@ public class SceneTransitionTrigger : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
+            // Salva as chaves acumuladas até o final deste nível para transitarem para o próximo
+            PlayerKeys keys = other.GetComponent<PlayerKeys>();
+            if (keys != null)
+            {
+                string chavesJuntas = string.Join(",", keys.GetKeys());
+                PlayerPrefs.SetString("PlayerKeys", chavesJuntas);
+                PlayerPrefs.Save();
+                Debug.Log($"💾 [SceneTransition] Salvaste chaves para a próxima cena: {chavesJuntas}");
+            }
+
             if (useBuildIndex)
             {
                 SceneManager.LoadScene(sceneBuildIndex);

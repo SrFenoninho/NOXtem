@@ -18,8 +18,8 @@ public class BossState_Phase1_Cautious : IBossState
         float dist = Vector3.Distance(boss.transform.position, boss.playerTarget.position);
         UnityEngine.AI.NavMeshAgent agent = boss.movement.agent;
 
-        // Se o player se aproximar a menos de 8m, transita de imediato para o estado trancado de Fuga (Flee State)
-        if (dist < 8.0f)
+        // Se o player se aproximar a menos de 8m (e o boss não estiver em cooldown de fuga), foge
+        if (dist < 8.0f && boss.fleeCooldownTimer <= 0f)
         {
             boss.ChangeState(new BossState_Flee());
             return;

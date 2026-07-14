@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 public class GameMenuManager : MonoBehaviour
 {
@@ -10,6 +11,7 @@ public class GameMenuManager : MonoBehaviour
     // ---------------------------------------------
     [Header("Referências")]
     public FPMove fPMove;
+    public string mainMenuSceneName = "MainMenu"; // Nome da cena do menu principal para carregar ao sair
 
     [Header("Animação do Inventário")]
     [Header("Player Frames - Por Nível de Vida")]
@@ -90,6 +92,9 @@ public class GameMenuManager : MonoBehaviour
     public int fonteSlotsNome = 10;
     public int fonteVazio = 18;
     public int fonteSairTitulo = 20;
+
+    [Header("Personalização Visual")]
+    public TMP_FontAsset customFont;    // Fonte personalizada para o inventário/menu de pausa (opcional)
 
     // ---------------------------------------------
     //  ESTADO PRIVADO
@@ -479,11 +484,20 @@ public class GameMenuManager : MonoBehaviour
             new Vector2(0.3f, 0.38f), new Vector2(0.7f, 0.52f), corBotaoSair);
         btnSairConfirm.onClick.AddListener(() =>
         {
+            // Salva o progresso físico e inventário do jogador
+            SaveSystem.SalvarProgresso();
+
+            // Salva as configurações do utilizador
             PlayerPrefs.SetFloat("Sensitivity", currentSensitivity);
             PlayerPrefs.SetFloat("Volume", currentVolume);
             PlayerPrefs.SetInt("TextureQuality", currentTextureQuality);
             PlayerPrefs.Save();
-            Application.Quit();
+
+            // Repõe o timeScale (obrigatório para o menu principal não iniciar congelado)
+            Time.timeScale = 1f;
+
+            // Carrega a cena do menu principal
+            SceneManager.LoadScene(mainMenuSceneName);
         });
 
         Button btnVoltar = CreateButton(tabSair.transform, "Voltar ao Jogo",
@@ -527,6 +541,7 @@ public class GameMenuManager : MonoBehaviour
             TextMeshProUGUI t = msg.GetComponent<TextMeshProUGUI>();
             t.text = "Inventário vazio"; t.alignment = TMPro.TextAlignmentOptions.Center;
             t.fontSize = fonteVazio; t.enableAutoSizing = false;
+            if (customFont != null) t.font = customFont;
             slots.Add(msg);
             return;
         }
@@ -576,6 +591,7 @@ public class GameMenuManager : MonoBehaviour
             TextMeshProUGUI nameText = nameObj.GetComponent<TextMeshProUGUI>();
             nameText.text = item.itemName; nameText.alignment = TMPro.TextAlignmentOptions.Center;
             nameText.fontSize = fonteSlotsNome; nameText.enableAutoSizing = false;
+            if (customFont != null) nameText.font = customFont;
 
             slots.Add(slot);
         }
@@ -615,6 +631,7 @@ public class GameMenuManager : MonoBehaviour
         TextMeshProUGUI t = textObj.GetComponent<TextMeshProUGUI>();
         t.text = label; t.alignment = TMPro.TextAlignmentOptions.Center;
         t.fontSize = fonteTabs; t.enableAutoSizing = false;
+        if (customFont != null) t.font = customFont;
 
         Button btn = go.GetComponent<Button>();
         btn.onClick.AddListener(action);
@@ -639,6 +656,7 @@ public class GameMenuManager : MonoBehaviour
         TextMeshProUGUI t = textObj.GetComponent<TextMeshProUGUI>();
         t.text = label; t.alignment = TMPro.TextAlignmentOptions.Center;
         t.fontSize = fonteBotoes; t.enableAutoSizing = false;
+        if (customFont != null) t.font = customFont;
 
         return go.GetComponent<Button>();
     }
@@ -655,6 +673,7 @@ public class GameMenuManager : MonoBehaviour
         TextMeshProUGUI t = go.GetComponent<TextMeshProUGUI>();
         t.text = text; t.alignment = TMPro.TextAlignmentOptions.Left;
         t.fontSize = fontSize; t.enableAutoSizing = false;
+        if (customFont != null) t.font = customFont;
         return t;
     }
 

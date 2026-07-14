@@ -25,4 +25,14 @@ public class PlayerKeys : MonoBehaviour
     {
         keys.Remove(keyID);
     }
+
+    public List<string> GetKeys()
+    {
+        return keys;
+    }
+
+    public void ClearKeys()
+    {
+        keys.Clear();
+    }
 }

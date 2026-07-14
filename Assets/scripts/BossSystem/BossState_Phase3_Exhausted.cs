@@ -18,8 +18,8 @@ public class BossState_Phase3_Exhausted : IBossState
         float dist = Vector3.Distance(boss.transform.position, boss.playerTarget.position);
         UnityEngine.AI.NavMeshAgent agent = boss.movement.agent;
 
-        // Transita para o estado trancado de Fuga
-        if (dist < 8.0f)
+        // Transita para o estado trancado de Fuga se não estiver em cooldown
+        if (dist < 8.0f && boss.fleeCooldownTimer <= 0f)
         {
             boss.ChangeState(new BossState_Flee());
             return;

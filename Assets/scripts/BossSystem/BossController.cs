@@ -26,6 +26,7 @@ public class BossController : MonoBehaviour
 
     public string nextSceneName = "Scene_Epilogo";
     [HideInInspector] public BossPillar ultimoPilarNoMapa;
+    [HideInInspector] public float fleeCooldownTimer = 0f; // Cooldown de segurança para o boss não fugir sem parar
 
     void Awake()
     {
@@ -60,6 +61,12 @@ public class BossController : MonoBehaviour
     {
         if (playerTarget == null) return;
         
+        // Decrementa o temporizador de cooldown de fuga
+        if (fleeCooldownTimer > 0f)
+        {
+            fleeCooldownTimer -= Time.deltaTime;
+        }
+
         if (currentState != null)
         {
             currentState.UpdateState(this);

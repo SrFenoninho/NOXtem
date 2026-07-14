@@ -57,4 +57,20 @@ public class HitboxDefense : MonoBehaviour
         }
         return ph;
     }
+
+    // Desenha um gizmo visual na Scene View do Unity para veres a forma e dimensão da barreira de defesa
+    private void OnDrawGizmos()
+    {
+        if (spawnPoint != null)
+        {
+            Gizmos.color = new Color(0f, 0.6f, 1f, 0.4f); // Azul holográfico semi-transparente
+            Gizmos.matrix = spawnPoint.localToWorldMatrix;
+            
+            // Desenha um cubo a simular o muro físico de defesa (2.6m largura, 2.0m altura, 0.4m espessura)
+            Gizmos.DrawCube(Vector3.zero, new Vector3(2.6f, 2.0f, 0.4f));
+            
+            Gizmos.color = Color.cyan;
+            Gizmos.DrawWireCube(Vector3.zero, new Vector3(2.6f, 2.0f, 0.4f));
+        }
+    }
 }

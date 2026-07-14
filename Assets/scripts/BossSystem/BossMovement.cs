@@ -11,6 +11,7 @@ public class BossMovement : MonoBehaviour
     private BossController boss;
 
     public System.Collections.Generic.List<Vector3> pontosTaticos = new System.Collections.Generic.List<Vector3>();
+    private bool controleManualDeRotacao = true;
 
     public void Initialize(BossController controller)
     {
@@ -23,6 +24,7 @@ public class BossMovement : MonoBehaviour
             agent.acceleration = 30f;
             agent.stoppingDistance = 0.5f;
             agent.autoBraking = true;
+            agent.updateRotation = false; // Desativa a rotação brusca automática do Unity
 
             if (!agent.isOnNavMesh)
             {
@@ -38,20 +40,98 @@ public class BossMovement : MonoBehaviour
         GerarPontosTaticos();
     }
 
+    void Update()
+    {
+        // Rotação suave manual do Boss em curvas
+        if (agent != null && agent.enabled && !agent.isStopped && controleManualDeRotacao)
+        {
+            if (agent.velocity.sqrMagnitude > 0.15f)
+            {
+                Vector3 moveDir = agent.velocity.normalized;
+                moveDir.y = 0;
+                if (moveDir != Vector3.zero)
+                {
+                    Quaternion targetRot = Quaternion.LookRotation(moveDir);
+                    // Rotação suave com interpolação de 7.5f para curvas orgânicas
+                    transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, 7.5f * Time.deltaTime);
+                }
+            }
+
+            // Wall avoidance preventivo: desvia a rota antes de colidir fisicamente com a parede
+            EvitarParedesPreventivamente();
+        }
+    }
+
+    private void EvitarParedesPreventivamente()
+    {
+        if (agent == null || !agent.enabled || !agent.isOnNavMesh || !agent.hasPath) return;
+
+        Vector3 moveDir = agent.velocity.normalized;
+        if (moveDir == Vector3.zero) moveDir = transform.forward;
+
+        // Máscara que colide com todos os obstáculos físicos sólidos do mapa (exclui o Player e IgnoreRaycast)
+        int obstacleMask = ~LayerMask.GetMask("Player", "Ignore Raycast");
+
+        RaycastHit physHit;
+        // O raio nasce 0.8 metros à frente do peito do Boss para nunca colidir com o próprio corpo do Boss
+        Vector3 rayStart = transform.position + Vector3.up * 1.0f + moveDir * 0.8f; 
+        float alcanceDoRaio = 2.0f;
+
+        // Lança o sensor preventivo a 2.0 metros à frente da sua trajetória de movimento
+        if (Physics.Raycast(rayStart, moveDir, out physHit, alcanceDoRaio, obstacleMask))
+        {
+            // Ignora colisores do tipo Trigger (como a CombatZone ou partículas)
+            if (physHit.collider.isTrigger) 
+            {
+                // Desenha linha verde fina de trigger ignorado
+                Debug.DrawLine(rayStart, rayStart + moveDir * alcanceDoRaio, Color.green);
+                return;
+            }
+
+            // Desenha linha VERMELHA até ao ponto exato do impacto (Obstáculo detetado!)
+            Debug.DrawLine(rayStart, physHit.point, Color.red);
+
+            // Obtém a normal da colisão (vetor que aponta para fora do obstáculo/pilar/parede)
+            Vector3 wallNormal = physHit.normal;
+            wallNormal.y = 0;
+
+            // Desenha linha AZUL a sair da parede (mostra a força de empurrão perpendicular)
+            Debug.DrawRay(physHit.point, wallNormal * 2.0f, Color.blue);
+
+            // Cria um desvio lateral suave somando a normal perpendicular ao vetor de movimento
+            Vector3 steeringAvoid = (moveDir + wallNormal * 1.6f).normalized;
+            Vector3 targetAvoidPoint = transform.position + steeringAvoid * 3.5f;
+
+            // Desenha linha AMARELA até ao destino de desvio que o Boss está a tentar tomar
+            Debug.DrawLine(transform.position, targetAvoidPoint, Color.yellow);
+
+            NavMeshHit navHit;
+            // Valida o ponto de desvio no NavMesh e redireciona o agente preventivamente
+            if (NavMesh.SamplePosition(targetAvoidPoint, out navHit, 4f, NavMesh.AllAreas))
+            {
+                agent.SetDestination(navHit.position);
+            }
+        }
+        else
+        {
+            // Se o caminho estiver livre, desenha a linha VERDE (Sensor ativo e limpo de obstáculos)
+            Debug.DrawLine(rayStart, rayStart + moveDir * alcanceDoRaio, Color.green);
+        }
+    }
+
     private void GerarPontosTaticos()
     {
         pontosTaticos.Clear();
         Vector3 centro = transform.position;
         int tentativas = 450;
 
-        // Tenta encontrar a CombatZone incluindo objetos inativos na Scene (evita falhas de loading)
+        // Procura a CombatZone (incluindo objetos inativos)
         CombatZone combatZoneObj = FindFirstObjectByType<CombatZone>();
         if (combatZoneObj == null)
         {
             CombatZone[] todosOsCombatZones = Resources.FindObjectsOfTypeAll<CombatZone>();
             if (todosOsCombatZones != null && todosOsCombatZones.Length > 0)
             {
-                // Garante que o objeto pertence à scene ativa (e não a assets do projeto)
                 foreach (var cz in todosOsCombatZones)
                 {
                     if (cz.gameObject.scene.isLoaded)
@@ -63,64 +143,75 @@ public class BossMovement : MonoBehaviour
             }
         }
 
+        // Tenta buscar o Collider no objeto da CombatZone ou nos seus filhos
         Collider zoneCollider = null;
         if (combatZoneObj != null)
         {
-            zoneCollider = combatZoneObj.GetComponent<Collider>();
+            zoneCollider = combatZoneObj.GetComponentInChildren<Collider>();
         }
 
         for (int i = 0; i < tentativas; i++)
         {
-            // Sorteia um ponto num raio de 25 metros
             Vector3 pontoAleatorio = centro + Random.insideUnitSphere * 25f;
             pontoAleatorio.y = centro.y;
 
             NavMeshHit hit;
             if (NavMesh.SamplePosition(pontoAleatorio, out hit, 10f, NavMesh.AllAreas))
             {
-                // Se a CombatZone existir na scene, valida a distância geométrica das bordas de forma infalível
+                bool pontoValidoNaZona = true;
+
                 if (zoneCollider != null)
                 {
-                    // 1. O próprio ponto tem de estar dentro
-                    Vector3 closestSelf = zoneCollider.ClosestPoint(hit.position);
-                    if (Vector3.Distance(hit.position, closestSelf) > 0.08f)
+                    try
                     {
-                        continue; // Fora da CombatZone!
-                    }
-
-                    // 2. Garante que os limites a 1.7 metros em cruz também estão dentro do trigger da arena
-                    // (Isto impede o Boss de escolher pontos perto de paredes, mesmo que a arena esteja rodada no espaço!)
-                    bool muitoPertoDaParede = false;
-                    Vector3[] testesDeBorda = {
-                        hit.position + Vector3.forward * 1.7f,
-                        hit.position + Vector3.back * 1.7f,
-                        hit.position + Vector3.left * 1.7f,
-                        hit.position + Vector3.right * 1.7f
-                    };
-
-                    foreach (Vector3 pTeste in testesDeBorda)
-                    {
-                        Vector3 closestT = zoneCollider.ClosestPoint(pTeste);
-                        if (Vector3.Distance(pTeste, closestT) > 0.08f)
+                        // 1. O próprio ponto tem de estar dentro
+                        Vector3 closestSelf = zoneCollider.ClosestPoint(hit.position);
+                        if (Vector3.Distance(hit.position, closestSelf) > 0.08f)
                         {
-                            muitoPertoDaParede = true;
-                            break; // Se um dos testes saiu do collider, o ponto original está muito perto da parede
+                            pontoValidoNaZona = false;
+                        }
+                        else
+                        {
+                            // 2. Garante que os limites a 1.7 metros em cruz também estão dentro do trigger da arena
+                            bool muitoPertoDaParede = false;
+                            Vector3[] testesDeBorda = {
+                                hit.position + Vector3.forward * 1.7f,
+                                hit.position + Vector3.back * 1.7f,
+                                hit.position + Vector3.left * 1.7f,
+                                hit.position + Vector3.right * 1.7f
+                            };
+
+                            foreach (Vector3 pTeste in testesDeBorda)
+                            {
+                                Vector3 closestT = zoneCollider.ClosestPoint(pTeste);
+                                if (Vector3.Distance(pTeste, closestT) > 0.08f)
+                                {
+                                    muitoPertoDaParede = true;
+                                    break;
+                                }
+                            }
+
+                            if (muitoPertoDaParede)
+                            {
+                                pontoValidoNaZona = false;
+                            }
                         }
                     }
-
-                    if (muitoPertoDaParede)
+                    catch (System.Exception)
                     {
-                        continue; // Descarta ponto colado à quina/parede
+                        // Se o collider for um MeshCollider não-convexo, o ClosestPoint falha no Unity.
+                        // Nesse caso, desligamos o zoneCollider e confiamos no fallback geral de NavMesh
+                        zoneCollider = null;
                     }
                 }
 
-                // Garante que o ponto está longe das paredes/bordas do NavMesh
+                if (!pontoValidoNaZona) continue;
+
                 NavMeshHit edgeHit;
                 if (NavMesh.FindClosestEdge(hit.position, out edgeHit, NavMesh.AllAreas))
                 {
-                    if (edgeHit.distance >= 1.8f) // Pelo menos 1.8 metros longe de qualquer parede
+                    if (edgeHit.distance >= 1.8f) 
                     {
-                        // Evita acumulação de pontos muito colados para cobrir melhor a sala
                         bool muitoProximo = false;
                         foreach (Vector3 p in pontosTaticos)
                         {
@@ -142,10 +233,45 @@ public class BossMovement : MonoBehaviour
             if (pontosTaticos.Count >= 70) break;
         }
 
+        // FALLBACK SUPREMO: Se a CombatZone não tinha collider válido ou foi restritiva demais
+        if (pontosTaticos.Count < 15)
+        {
+            Debug.LogWarning("⚠️ [BossMovement] Poucos pontos gerados (" + pontosTaticos.Count + "). A ativar fallback no NavMesh geral...");
+            pontosTaticos.Clear();
+            for (int i = 0; i < 200; i++)
+            {
+                Vector3 pontoAleatorio = centro + Random.insideUnitSphere * 25f;
+                pontoAleatorio.y = centro.y;
+
+                NavMeshHit hit;
+                if (NavMesh.SamplePosition(pontoAleatorio, out hit, 12f, NavMesh.AllAreas))
+                {
+                    NavMeshHit edgeHit;
+                    if (NavMesh.FindClosestEdge(hit.position, out edgeHit, NavMesh.AllAreas))
+                    {
+                        if (edgeHit.distance >= 1.7f)
+                        {
+                            bool muitoProximo = false;
+                            foreach (Vector3 p in pontosTaticos)
+                            {
+                                if (Vector3.Distance(p, hit.position) < 2.0f)
+                                {
+                                    muitoProximo = true;
+                                    break;
+                                }
+                            }
+                            if (!muitoProximo) pontosTaticos.Add(hit.position);
+                        }
+                    }
+                }
+                if (pontosTaticos.Count >= 50) break;
+            }
+        }
+
         if (zoneCollider != null)
-            Debug.Log("🎯 [BossMovement] Grelha tática gerada: " + pontosTaticos.Count + " pontos seguros estritamente DENTRO da CombatZone (margem de 1.7m das quinas).");
+            Debug.Log("🎯 [BossMovement] Grelha tática gerada: " + pontosTaticos.Count + " pontos estritamente DENTRO da CombatZone.");
         else
-            Debug.Log("🎯 [BossMovement] Grelha tática gerada: " + pontosTaticos.Count + " pontos seguros (CombatZone não encontrada na Scene, usando NavMesh geral).");
+            Debug.Log("🎯 [BossMovement] Grelha tática gerada: " + pontosTaticos.Count + " pontos (Usando NavMesh geral com margem de segurança).");
     }
 
     public void MoveTo(Vector3 targetPosition, float speed)
@@ -267,7 +393,8 @@ public class BossMovement : MonoBehaviour
 
     public void SetRotationUpdate(bool state)
     {
-        if(agent != null) agent.updateRotation = state;
+        if (agent != null) agent.updateRotation = state;
+        controleManualDeRotacao = state; // Se for false, desliga a rotação suave do Update e deixa o script rodar manualmente
     }
 
     public void LookAt(Vector3 target)

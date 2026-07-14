@@ -39,6 +39,32 @@ public class PlayerHealth : MonoBehaviour
         characterController = GetComponent<CharacterController>();
         anim = GetComponentInChildren<Animator>();
         playerCombat = GetComponent<PlayerCombat>();
+
+        // Restaura sempre as chaves com que o jogador entrou neste nível (do nível anterior)
+        if (PlayerPrefs.HasKey("PlayerKeys"))
+        {
+            PlayerKeys keys = GetComponent<PlayerKeys>();
+            if (keys != null)
+            {
+                keys.ClearKeys();
+                string chavesJuntas = PlayerPrefs.GetString("PlayerKeys", "");
+                if (!string.IsNullOrEmpty(chavesJuntas))
+                {
+                    string[] arrayChaves = chavesJuntas.Split(',');
+                    foreach (string key in arrayChaves)
+                    {
+                        keys.AddKey(key);
+                    }
+                }
+                Debug.Log($"📂 [Player] Inventário restaurado no início da cena com {keys.GetKeys().Count} chaves.");
+            }
+        }
+
+        // Se veio do menu via "Continuar", aplica as definições de cena e flags (a posição padrão é usada)
+        if (SaveSystem.carregarSaveAoIniciar)
+        {
+            SaveSystem.AplicarSaveAoPlayer(gameObject);
+        }
     }
 
     void Update()
@@ -54,9 +80,22 @@ public class PlayerHealth : MonoBehaviour
 
     // ---------------------------------------------
     //  DANO
-    // ---------------------------------------------
     public void TakeDamage(float damageAmount, Vector3 damageSourcePosition)
     {
+        // Se estiver a defender, bloqueia apenas ataques frontais (ângulo até 75 graus para a esquerda ou direita)
+        if (isDefending)
+        {
+            Vector3 dirToSource = (damageSourcePosition - transform.position).normalized;
+            dirToSource.y = 0;
+            float angle = Vector3.Angle(transform.forward, dirToSource);
+
+            if (angle <= 75f)
+            {
+                Debug.Log("🛡️ [PlayerHealth] Dano de " + damageAmount + " bloqueado frontalmente pela Parede de Defesa!");
+                return;
+            }
+        }
+
         // Ignorar dano durante o periodo de invencibilidade
         if (Time.time < nextDamage) return;
 
@@ -114,14 +153,14 @@ public class PlayerHealth : MonoBehaviour
     // ---------------------------------------------
     void OnGUI()
     {
-        float boxWidth = 200;
+        float boxWidth = 50;
         float boxHeight = 25;
-        float margin = 10;
+        float margin = 20;
 
         float xPos = Screen.width - boxWidth - margin;
         float yPos = Screen.height - boxHeight - margin;
 
         GUI.Box(new Rect(xPos, yPos, boxWidth, boxHeight),
-            "Health: " + currentHealth.ToString("F0") + " / " + maxHealth);
+            currentHealth.ToString("F0"));
     }
 }

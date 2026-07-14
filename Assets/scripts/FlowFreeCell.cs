@@ -44,7 +44,8 @@ public class FlowFreeCell : MonoBehaviour
         Color cellColor = game.GetCellColor(x, y);
         bool endpoint = game.IsEndpoint(x, y);
 
-        bgImage.color = Color.white;
+        // Fundo cinzento escuro elegante com transparência para estilo terminal futurista
+        bgImage.color = new Color(0.12f, 0.12f, 0.12f, 0.85f);
 
         if (cellColor == Color.clear)
         {
@@ -63,15 +64,15 @@ public class FlowFreeCell : MonoBehaviour
 
             if (endpoint)
             {
-                // Endpoints sao circulos maiores
+                // Endpoints sao circulos maiores (50x50 para caber melhor na celula de 80)
                 shapeImage.sprite = GetCircleSprite();
-                rt.sizeDelta = new Vector2(60f, 60f);
+                rt.sizeDelta = new Vector2(50f, 50f);
             }
             else
             {
-                // Caminho e um quadrado mais pequeno
-                shapeImage.sprite = null;
-                rt.sizeDelta = new Vector2(40f, 40f);
+                // Caminho e um circulo mais pequeno e elegante (estilo fluxo de energia circular)
+                shapeImage.sprite = GetCircleSprite();
+                rt.sizeDelta = new Vector2(25f, 25f);
             }
         }
     }

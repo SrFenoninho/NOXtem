@@ -381,7 +381,7 @@ public class GameMenuManager : MonoBehaviour
             new Vector2(0.25f, 0f), new Vector2(0.5f, 1f),
             () => ShowTab("definicoes"));
 
-        btnSairTab = CreateTabButton(bar.transform, "Salvar e Sair",
+        btnSairTab = CreateTabButton(bar.transform, "Guardar e Sair",
             new Vector2(0.5f, 0f), new Vector2(0.75f, 1f),
             () => ShowTab("sair"));
     }
@@ -480,14 +480,14 @@ public class GameMenuManager : MonoBehaviour
         CreateLabel(tabSair.transform, "Tens a certeza que queres sair?",
             new Vector2(0.2f, 0.55f), new Vector2(0.8f, 0.7f), fonteSairTitulo);
 
-        Button btnSairConfirm = CreateButton(tabSair.transform, "Salvar e Sair do Jogo",
+        Button btnSairConfirm = CreateButton(tabSair.transform, "Guardar e Sair do Jogo",
             new Vector2(0.3f, 0.38f), new Vector2(0.7f, 0.52f), corBotaoSair);
         btnSairConfirm.onClick.AddListener(() =>
         {
-            // Salva o progresso físico e inventário do jogador
-            SaveSystem.SalvarProgresso();
+            // Guarda o progresso físico e inventário do jogador
+            SaveSystem.GuardarProgresso();
 
-            // Salva as configurações do utilizador
+            // Guarda as definições do utilizador
             PlayerPrefs.SetFloat("Sensitivity", currentSensitivity);
             PlayerPrefs.SetFloat("Volume", currentVolume);
             PlayerPrefs.SetInt("TextureQuality", currentTextureQuality);

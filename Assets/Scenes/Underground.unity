@@ -20292,13 +20292,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d145d3aedd622e4eaa021c0422777f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  initialObjective: Objetivo:\n Arranjar alguma forma de abrir o elevador
-  initialDelay: 1
+  initialObjective: Objetivo:\n Abrir o elevador
+  initialDelay: 18
   notificationPanel: {fileID: 797814490}
   notificationText: {fileID: 1567221770}
   fullPanel: {fileID: 1802903356}
   fullText: {fileID: 1156810475}
-  notificationDuration: 5
+  notificationDuration: 2.5
   fadeDuration: 0.8
   objectiveSound: {fileID: 8300000, guid: 0e22064ec51398348aff4061b388f0e4, type: 3}
 --- !u!4 &1717716181

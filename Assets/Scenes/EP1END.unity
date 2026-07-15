@@ -11159,6 +11159,53 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1156810473}
   m_CullTransparentMesh: 1
+--- !u!1 &1161597451
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1161597453}
+  - component: {fileID: 1161597452}
+  m_Layer: 0
+  m_Name: Music
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1161597452
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1161597451}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e407936d27890aa40b794e8a274e68e1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tracks:
+  - {fileID: 8300000, guid: d8e873ea650b05846805496a3fb25ca8, type: 3}
+  volume: 0.5
+--- !u!4 &1161597453
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1161597451}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -15.585023, y: 0.17831841, z: -10.264671}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1178439155
 GameObject:
   m_ObjectHideFlags: 0
@@ -12718,53 +12765,6 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -4432124805086160128, guid: aba2080e2c3e827489ac90e0ea8ea22e, type: 3}
---- !u!1 &1525637165
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1525637166}
-  - component: {fileID: 1525637167}
-  m_Layer: 0
-  m_Name: Music
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1525637166
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1525637165}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 1.5321376, y: -0.17923531, z: 7.0708246}
-  m_LocalScale: {x: 0.80852586, y: 0.80852586, z: 0.80852586}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 871085927}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1525637167
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1525637165}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e407936d27890aa40b794e8a274e68e1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  tracks:
-  - {fileID: 0}
-  volume: 0.5
 --- !u!1 &1528679290
 GameObject:
   m_ObjectHideFlags: 0
@@ -14038,7 +14038,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d145d3aedd622e4eaa021c0422777f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  initialObjective: Objetivo:\n Arranjar alguma forma de abrir o elevador
+  initialObjective: Objetivo:\n Acabar com o meu pai
   initialDelay: 1
   notificationPanel: {fileID: 797814490}
   notificationText: {fileID: 1567221770}
@@ -15720,9 +15720,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 31ed60520825ed948ac0b3db0b004a4b, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2007201085}
-    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 31ed60520825ed948ac0b3db0b004a4b, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1525637166}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 31ed60520825ed948ac0b3db0b004a4b, type: 3}
       insertIndex: -1
@@ -17969,3 +17966,4 @@ SceneRoots:
   - {fileID: 1790278471}
   - {fileID: 1864717129}
   - {fileID: 1687451765}
+  - {fileID: 1161597453}

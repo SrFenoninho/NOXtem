@@ -7,17 +7,17 @@ public static class SaveSystem
     public static bool carregarSaveAoIniciar = false;
 
     // ---------------------------------------------
-    //  SALVAR PROGRESSO
+    //  GUARDAR PROGRESSO
     // ---------------------------------------------
-    public static void SalvarProgresso()
+    public static void GuardarProgresso()
     {
-        // 1. Salva unicamente a cena ativa
+        // 1. Guarda unicamente a cena ativa
         string currentScene = SceneManager.GetActiveScene().name;
         PlayerPrefs.SetString("SavedScene", currentScene);
 
         // Grava fisicamente no disco/registro do Windows
         PlayerPrefs.Save();
-        Debug.Log($"💾 [SaveSystem] Progresso do jogo salvo com sucesso (Apenas a cena: {currentScene})!");
+        Debug.Log($"💾 [SaveSystem] Progresso do jogo guardado com sucesso (Apenas a cena: {currentScene})!");
     }
 
     // ---------------------------------------------

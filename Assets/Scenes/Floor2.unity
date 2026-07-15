@@ -27632,9 +27632,9 @@ MonoBehaviour:
   lookHoldDuration: 1.5
   searchMoveDistance: 4
   musicManager: {fileID: 1906409036}
-  chaseMusic: {fileID: 8300000, guid: 4be293b28c1934b4fa9a26763fe6bd94, type: 3}
+  chaseMusic: {fileID: 8300000, guid: 3d8eec3fe0ae265428fa5a89370f84ed, type: 3}
   chaseMusicVolume: 0.6
-  chaseFadeDuration: 1
+  chaseFadeDuration: 0
   attackDamage: 100
   attackRange: 2
   animator: {fileID: 0}
@@ -28843,6 +28843,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fPMove: {fileID: 1600505028}
+  mainMenuSceneName: MainMenu
   playerFrames_HP100:
   - {fileID: 2800000, guid: e06eb7a883aefb94cbe7ee2f6b2a2fc4, type: 3}
   playerFrames_HP75:

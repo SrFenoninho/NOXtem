@@ -139,7 +139,7 @@ public class MainMenu : MonoBehaviour
         volumeSlider = CreateSlider(optionsPanel.transform, new Vector2(0.1f, 0.26f), new Vector2(0.9f, 0.36f), 0f, 1f, 1f);
 
         // Botão de Voltar das opções
-        CreateButton(optionsPanel.transform, "Voltar e Salvar", new Vector2(0.2f, 0.04f), new Vector2(0.8f, 0.18f), corBotaoNormal, CloseOptions);
+        CreateButton(optionsPanel.transform, "Voltar e Guardar", new Vector2(0.2f, 0.04f), new Vector2(0.8f, 0.18f), corBotaoNormal, CloseOptions);
 
         // Começa com o painel de opções ocultado
         optionsPanel.SetActive(false);

@@ -469,115 +469,75 @@ MonoBehaviour:
   imagemDaHQ: {fileID: 2108469750}
   imagemFundo: {fileID: 1267480185}
   paineisHQ:
-  - sprite: {fileID: 21300000, guid: b9e7a2c2fd0d44346a69a1654a9ac664, type: 3}
-    tempoDeEspera: 2
+  - sprite: {fileID: 21300000, guid: 3c13f2c5c4185f042ba73fb5ed8cc334, type: 3}
+    tempoDeEspera: 1
     tipoAnimacao: 0
     velocidadeAnimacao: 1
-  - sprite: {fileID: 21300000, guid: 80d4b6aa19d728a40b3ce360607170bf, type: 3}
-    tempoDeEspera: 2
-    tipoAnimacao: 2
-    velocidadeAnimacao: 0.5
-  - sprite: {fileID: 21300000, guid: fba8c6ad326dd7944a9b045fa2074870, type: 3}
-    tempoDeEspera: 2
-    tipoAnimacao: 4
-    velocidadeAnimacao: 0.5
-  - sprite: {fileID: 21300000, guid: 884299674879b2947bdfd1e6aecee880, type: 3}
-    tempoDeEspera: 2
-    tipoAnimacao: 3
-    velocidadeAnimacao: 0.5
-  - sprite: {fileID: 21300000, guid: 20d8a3a4bc2004d44a7a33873cf40700, type: 3}
-    tempoDeEspera: 2
-    tipoAnimacao: 4
-    velocidadeAnimacao: 0.5
-  - sprite: {fileID: 21300000, guid: 6f6b076d6f39b0943be8c7763671b2ae, type: 3}
+  - sprite: {fileID: 21300000, guid: 88a8cfa2151596441b1f47dbf007b04f, type: 3}
     tempoDeEspera: 1
     tipoAnimacao: 2
     velocidadeAnimacao: 0.5
-  - sprite: {fileID: 21300000, guid: 611bf7168a40668448b6684e8aa9d72d, type: 3}
+  - sprite: {fileID: 21300000, guid: 3041c906d9a037a4bb8aae983efc494d, type: 3}
     tempoDeEspera: 1
     tipoAnimacao: 4
     velocidadeAnimacao: 0.5
-  - sprite: {fileID: 21300000, guid: e7a3129485c26e3429f2ba28bd5c3edf, type: 3}
+  - sprite: {fileID: 21300000, guid: a0394a97e451a1d4eaae7d352889c851, type: 3}
     tempoDeEspera: 1
     tipoAnimacao: 3
     velocidadeAnimacao: 0.5
-  - sprite: {fileID: 21300000, guid: bd2c860a48b49824ea2e639e891bbe01, type: 3}
+  - sprite: {fileID: 21300000, guid: 6661acb7357286546aa75b123127f254, type: 3}
     tempoDeEspera: 1
     tipoAnimacao: 4
     velocidadeAnimacao: 0.5
-  - sprite: {fileID: 21300000, guid: 7e5326a3948f717449c52d40001da3a0, type: 3}
+  - sprite: {fileID: 21300000, guid: aa9d143f72e765442860ed4e6feff001, type: 3}
     tempoDeEspera: 1
     tipoAnimacao: 2
     velocidadeAnimacao: 0.5
-  - sprite: {fileID: 21300000, guid: 5e780b052726e8e46b53159d9537b66d, type: 3}
+  - sprite: {fileID: 21300000, guid: 22453134bae223247bbaa7dc47c9bbd8, type: 3}
     tempoDeEspera: 1
     tipoAnimacao: 4
     velocidadeAnimacao: 0.5
-  - sprite: {fileID: 21300000, guid: fe3429f05ee7ec748a72a8daea1de55d, type: 3}
+  - sprite: {fileID: 21300000, guid: e12fed51a0072b34dbb7e56a35e7c5f8, type: 3}
     tempoDeEspera: 1
-    tipoAnimacao: 5
+    tipoAnimacao: 4
+    velocidadeAnimacao: 0.5
+  - sprite: {fileID: 21300000, guid: 7aaa34daab33ddc42965a6cb6782b6b0, type: 3}
+    tempoDeEspera: 1
+    tipoAnimacao: 2
+    velocidadeAnimacao: 0.5
+  - sprite: {fileID: 21300000, guid: 228d12f634b34394fa1f0548fef967f0, type: 3}
+    tempoDeEspera: 0.25
+    tipoAnimacao: 0
+    velocidadeAnimacao: 0.5
+  - sprite: {fileID: 21300000, guid: 529bdec57a6ccce4a9a67a2ce9ef94ad, type: 3}
+    tempoDeEspera: 0.25
+    tipoAnimacao: 0
+    velocidadeAnimacao: 0.5
+  - sprite: {fileID: 21300000, guid: 228d12f634b34394fa1f0548fef967f0, type: 3}
+    tempoDeEspera: 0.25
+    tipoAnimacao: 0
+    velocidadeAnimacao: 0.5
+  - sprite: {fileID: 21300000, guid: 529bdec57a6ccce4a9a67a2ce9ef94ad, type: 3}
+    tempoDeEspera: 0.25
+    tipoAnimacao: 0
+    velocidadeAnimacao: 0.5
+  - sprite: {fileID: 21300000, guid: 228d12f634b34394fa1f0548fef967f0, type: 3}
+    tempoDeEspera: 0.25
+    tipoAnimacao: 0
+    velocidadeAnimacao: 0.5
+  - sprite: {fileID: 21300000, guid: 529bdec57a6ccce4a9a67a2ce9ef94ad, type: 3}
+    tempoDeEspera: 0.25
+    tipoAnimacao: 0
+    velocidadeAnimacao: 0.5
+  - sprite: {fileID: 21300000, guid: 3564084e0e269064aa95bee3d4c02b15, type: 3}
+    tempoDeEspera: 1
+    tipoAnimacao: 1
     velocidadeAnimacao: 1
-  - sprite: {fileID: 21300000, guid: 04cf9e8be19b5984abff62f2ffe6201b, type: 3}
+  - sprite: {fileID: 21300000, guid: 11fa4a9812a6b334bbd24e152bfbc4ce, type: 3}
     tempoDeEspera: 1
-    tipoAnimacao: 2
-    velocidadeAnimacao: 0.5
-  - sprite: {fileID: 21300000, guid: ac52f78eedfc7d04e83c4636a63dbb64, type: 3}
-    tempoDeEspera: 1
-    tipoAnimacao: 4
-    velocidadeAnimacao: 0.5
-  - sprite: {fileID: 21300000, guid: 5ef71af912040374d83ce0261446449a, type: 3}
-    tempoDeEspera: 1
-    tipoAnimacao: 3
-    velocidadeAnimacao: 0.5
-  - sprite: {fileID: 21300000, guid: 58bca8351b7569e4b9eabffaad711a38, type: 3}
-    tempoDeEspera: 1
-    tipoAnimacao: 4
-    velocidadeAnimacao: 0.5
-  - sprite: {fileID: 21300000, guid: 7b3c4b24b967cfb4396a40d97260ee8e, type: 3}
-    tempoDeEspera: 1
-    tipoAnimacao: 2
-    velocidadeAnimacao: 0.5
-  - sprite: {fileID: 21300000, guid: 6d551da6756ea9045ad52692bfa3c99b, type: 3}
-    tempoDeEspera: 1
-    tipoAnimacao: 4
-    velocidadeAnimacao: 0.5
-  - sprite: {fileID: 21300000, guid: f3e0563c11eb91748aadfcef83e1ebe1, type: 3}
-    tempoDeEspera: 1
-    tipoAnimacao: 3
-    velocidadeAnimacao: 0.5
-  - sprite: {fileID: 21300000, guid: 6def93bf50fcfa242b0d1dcac597fc3b, type: 3}
-    tempoDeEspera: 1
-    tipoAnimacao: 4
-    velocidadeAnimacao: 0.5
-  - sprite: {fileID: 21300000, guid: 78766f0b06fff664b8f3d35264b3fc97, type: 3}
-    tempoDeEspera: 1
-    tipoAnimacao: 2
-    velocidadeAnimacao: 0.5
-  - sprite: {fileID: 21300000, guid: 68ad80219ef8cb14db179f329aa8980d, type: 3}
-    tempoDeEspera: 1
-    tipoAnimacao: 4
-    velocidadeAnimacao: 0.5
-  - sprite: {fileID: 21300000, guid: 27944309634579040a125a5d1d53592f, type: 3}
-    tempoDeEspera: 1
-    tipoAnimacao: 3
-    velocidadeAnimacao: 0.5
-  - sprite: {fileID: 21300000, guid: 50309c37c193dfc4aaa5e3fcc1585027, type: 3}
-    tempoDeEspera: 1
-    tipoAnimacao: 4
-    velocidadeAnimacao: 0.5
-  - sprite: {fileID: 21300000, guid: aa672b4eda9bad847ad5b4ebe1541380, type: 3}
-    tempoDeEspera: 1
-    tipoAnimacao: 2
-    velocidadeAnimacao: 0.5
-  - sprite: {fileID: 21300000, guid: 200e70e9d2baa3243a86fc5b1c5a2a95, type: 3}
-    tempoDeEspera: 1
-    tipoAnimacao: 4
-    velocidadeAnimacao: 0.5
-  - sprite: {fileID: 21300000, guid: e2447d4c16dc7dc4ea98850e3c374d17, type: 3}
-    tempoDeEspera: 1
-    tipoAnimacao: 3
-    velocidadeAnimacao: 0.5
-  nomeDaProximaCena: HackAndSlash
+    tipoAnimacao: 1
+    velocidadeAnimacao: 1
+  nomeDaProximaCena: EP1END
 --- !u!114 &1996019121
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -700,7 +660,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: b9e7a2c2fd0d44346a69a1654a9ac664, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 3c13f2c5c4185f042ba73fb5ed8cc334, type: 3}
   m_Type: 3
   m_PreserveAspect: 0
   m_FillCenter: 1

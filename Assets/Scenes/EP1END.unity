@@ -201,7 +201,8 @@ MonoBehaviour:
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 17824eb0f17a99945b7befb8181ed5f4, type: 2}
   m_sharedMaterial: {fileID: -5260790468738354795, guid: 17824eb0f17a99945b7befb8181ed5f4, type: 2}
-  m_fontSharedMaterials: []
+  m_fontSharedMaterials:
+  - {fileID: -5260790468738354795, guid: 17824eb0f17a99945b7befb8181ed5f4, type: 2}
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
@@ -1298,6 +1299,7 @@ MonoBehaviour:
   pilarDestruido: {fileID: 794909714}
   isLastPillar: 0
   bossAssociado: {fileID: 0}
+  novoBossAssociado: {fileID: 0}
   jaDestruido: 0
 --- !u!1 &229489426 stripped
 GameObject:
@@ -2327,7 +2329,8 @@ MonoBehaviour:
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_fontSharedMaterials: []
+  m_fontSharedMaterials:
+  - {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
@@ -6276,9 +6279,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: -8363952193566272906, guid: aba2080e2c3e827489ac90e0ea8ea22e, type: 3}
       insertIndex: -1
       addedObject: {fileID: 795466316}
-    - targetCorrespondingSourceObject: {fileID: -8363952193566272906, guid: aba2080e2c3e827489ac90e0ea8ea22e, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 795466320}
     - targetCorrespondingSourceObject: {fileID: -8839212805925703669, guid: aba2080e2c3e827489ac90e0ea8ea22e, type: 3}
       insertIndex: -1
       addedObject: {fileID: 59508103}
@@ -7884,6 +7884,7 @@ MonoBehaviour:
   pilarDestruido: {fileID: 794909714}
   isLastPillar: 0
   bossAssociado: {fileID: 0}
+  novoBossAssociado: {fileID: 0}
   jaDestruido: 0
 --- !u!1 &687570514 stripped
 GameObject:
@@ -8116,6 +8117,7 @@ MonoBehaviour:
   pilarDestruido: {fileID: 794909714}
   isLastPillar: 0
   bossAssociado: {fileID: 0}
+  novoBossAssociado: {fileID: 0}
   jaDestruido: 0
 --- !u!1 &725882232 stripped
 GameObject:
@@ -8619,19 +8621,6 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -7149311546793564360, guid: aba2080e2c3e827489ac90e0ea8ea22e, type: 3}
---- !u!114 &795466320
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 795466312}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 176b777820584de4b9e578e1ef7ccacd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  offsetRange: 0.3
 --- !u!1 &797814490
 GameObject:
   m_ObjectHideFlags: 0
@@ -9702,7 +9691,8 @@ MonoBehaviour:
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_fontSharedMaterials: []
+  m_fontSharedMaterials:
+  - {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
@@ -9879,7 +9869,8 @@ MonoBehaviour:
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_fontSharedMaterials: []
+  m_fontSharedMaterials:
+  - {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
@@ -11844,7 +11835,7 @@ MonoBehaviour:
   playerTarget: {fileID: 871085927}
   playerHealthRef: {fileID: 871085922}
   anim: {fileID: 1321894433}
-  nextSceneName: Scene_Epilogo
+  nextSceneName: cutscene 3
   ultimoPilarNoMapa: {fileID: 0}
   fleeCooldownTimer: 0
 --- !u!114 &1321894442
@@ -12898,7 +12889,8 @@ MonoBehaviour:
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_fontSharedMaterials: []
+  m_fontSharedMaterials:
+  - {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
@@ -17627,7 +17619,8 @@ MonoBehaviour:
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 17824eb0f17a99945b7befb8181ed5f4, type: 2}
   m_sharedMaterial: {fileID: -5260790468738354795, guid: 17824eb0f17a99945b7befb8181ed5f4, type: 2}
-  m_fontSharedMaterials: []
+  m_fontSharedMaterials:
+  - {fileID: -5260790468738354795, guid: 17824eb0f17a99945b7befb8181ed5f4, type: 2}
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:

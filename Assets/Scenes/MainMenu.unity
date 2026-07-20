@@ -412,6 +412,54 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!1 &1152544284
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1152544286}
+  - component: {fileID: 1152544285}
+  m_Layer: 0
+  m_Name: LoadingManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1152544285
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1152544284}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbdf76bd322bf5d4d9b0b346f7429ce1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  texturaDoFundo: {fileID: 2800000, guid: 241f156581225764797fc28d7ac6e814, type: 3}
+  fonteDoTexto: {fileID: 11400000, guid: 17824eb0f17a99945b7befb8181ed5f4, type: 2}
+  corDaBarra: {r: 1, g: 0, b: 0, a: 1}
+  corFundoDaBarra: {r: 0, g: 0, b: 0, a: 1}
+--- !u!4 &1152544286
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1152544284}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -9.380845, y: 27.498348, z: 42.045933}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1958223641
 GameObject:
   m_ObjectHideFlags: 0
@@ -556,3 +604,4 @@ SceneRoots:
   - {fileID: 1958223644}
   - {fileID: 1085295707}
   - {fileID: 355332829}
+  - {fileID: 1152544286}

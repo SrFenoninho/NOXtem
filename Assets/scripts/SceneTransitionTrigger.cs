@@ -22,22 +22,22 @@ public class SceneTransitionTrigger : MonoBehaviour
                 string chavesJuntas = string.Join(",", keys.GetKeys());
                 PlayerPrefs.SetString("PlayerKeys", chavesJuntas);
                 PlayerPrefs.Save();
-                Debug.Log($"💾 [SceneTransition] Guardaste chaves para a próxima cena: {chavesJuntas}");
+                // Debug.Log($"💾 [SceneTransition] Guardaste chaves para a próxima cena: {chavesJuntas}");
             }
 
             if (useBuildIndex)
             {
-                SceneManager.LoadScene(sceneBuildIndex);
+                LoadingManager.Carregar(sceneBuildIndex);
             }
             else
             {
                 if (!string.IsNullOrEmpty(sceneName))
                 {
-                    SceneManager.LoadScene(sceneName);
+                    LoadingManager.Carregar(sceneName);
                 }
                 else
                 {
-                    Debug.LogWarning("Aviso: O SceneTransitionTrigger não tem nenhum nome de cena definido!");
+                    // Debug.LogWarning("Aviso: O SceneTransitionTrigger não tem nenhum nome de cena definido!");
                 }
             }
         }

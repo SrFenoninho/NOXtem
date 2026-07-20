@@ -60,7 +60,7 @@ public class InventoryManager : MonoBehaviour
         if (HasItem(item.itemID)) return;
         items.Add(item);
         OnInventoryChanged?.Invoke();
-        Debug.Log($"Inventario: adicionado '{item.itemName}'");
+        // Debug.Log($"Inventario: adicionado '{item.itemName}'");
     }
 
     public void RemoveItem(string itemID)

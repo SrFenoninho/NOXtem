@@ -303,7 +303,7 @@ public class FPMove : MonoBehaviour
             {
                 moveDir.y = Mathf.Sqrt(stuckRecoveryHeight * -2f * gravity);
                 stuckTimer = 0f;
-                Debug.Log("Jogador preso - a tentar recuperar!");
+                // Debug.Log("Jogador preso - a tentar recuperar!");
             }
         }
         else

@@ -236,7 +236,7 @@ public class BossMovement : MonoBehaviour
         // FALLBACK SUPREMO: Se a CombatZone não tinha collider válido ou foi restritiva demais
         if (pontosTaticos.Count < 15)
         {
-            Debug.LogWarning("⚠️ [BossMovement] Poucos pontos gerados (" + pontosTaticos.Count + "). A ativar fallback no NavMesh geral...");
+            // Debug.LogWarning("⚠️ [BossMovement] Poucos pontos gerados (" + pontosTaticos.Count + "). A ativar fallback no NavMesh geral...");
             pontosTaticos.Clear();
             for (int i = 0; i < 200; i++)
             {
@@ -268,10 +268,10 @@ public class BossMovement : MonoBehaviour
             }
         }
 
-        if (zoneCollider != null)
-            Debug.Log("🎯 [BossMovement] Grelha tática gerada: " + pontosTaticos.Count + " pontos estritamente DENTRO da CombatZone.");
-        else
-            Debug.Log("🎯 [BossMovement] Grelha tática gerada: " + pontosTaticos.Count + " pontos (Usando NavMesh geral com margem de segurança).");
+        // if (zoneCollider != null)
+            // Debug.Log("🎯 [BossMovement] Grelha tática gerada: " + pontosTaticos.Count + " pontos estritamente DENTRO da CombatZone.");
+        // else
+            // Debug.Log("🎯 [BossMovement] Grelha tática gerada: " + pontosTaticos.Count + " pontos (Usando NavMesh geral com margem de segurança).");
     }
 
     public void MoveTo(Vector3 targetPosition, float speed)

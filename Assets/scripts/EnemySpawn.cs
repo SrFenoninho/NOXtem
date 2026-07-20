@@ -22,6 +22,7 @@ public class EnemySpawn : MonoBehaviour
     // ---------------------------------------------
     void Start()
     {
+        EnemyCombatManager.Clear(); // <-- GARANTIR LIMPEZA ABSOLUTA NA MUDANÇA DE CENA NA BUILD
         SpawnAllEnemies();
     }
 

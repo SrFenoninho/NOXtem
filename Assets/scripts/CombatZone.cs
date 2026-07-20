@@ -27,7 +27,7 @@ public class CombatZone : MonoBehaviour
         if (!other.CompareTag("Player")) return;
         InCombatZone = true;
         Apply(true);
-        Debug.Log("Entrou na zona de combate");
+        // Debug.Log("Entrou na zona de combate");
     }
 
     void OnTriggerExit(Collider other)
@@ -35,7 +35,7 @@ public class CombatZone : MonoBehaviour
         if (!other.CompareTag("Player")) return;
         InCombatZone = false;
         Apply(false);
-        Debug.Log("Saiu da zona de combate");
+        // Debug.Log("Saiu da zona de combate");
     }
 
     void Apply(bool active)

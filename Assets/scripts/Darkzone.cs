@@ -50,7 +50,7 @@ public class DarkZone : MonoBehaviour
         if (containsPlayer && !playerInZone)
         {
             playerInZone = true;
-            Debug.Log($"Entered Dark Zone: {zoneID}");
+            // Debug.Log($"Entered Dark Zone: {zoneID}");
 
             // Avisa o manager global que estamos no escuro
             if (DarknessManager.Instance != null)
@@ -67,7 +67,7 @@ public class DarkZone : MonoBehaviour
         {
             // O jogador acabou de sair da zona
             playerInZone = false;
-            Debug.Log($"Exited Dark Zone: {zoneID}");
+            // Debug.Log($"Exited Dark Zone: {zoneID}");
 
             if (lighter != null)
                 lighter.ClearZoneValues();

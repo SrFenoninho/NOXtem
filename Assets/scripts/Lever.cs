@@ -110,6 +110,6 @@ public class Lever : MonoBehaviour, IInteractable
             ObjectiveManager.Instance?.ShowObjective(nextObjectiveText);
         }
 
-        Debug.Log($"Alavanca {leverID} ativada!");
+        // Debug.Log($"Alavanca {leverID} ativada!");
     }
 }

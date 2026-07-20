@@ -121,8 +121,14 @@ public class EnemyCloneSpawner : MonoBehaviour
         sizeOverLifetime.size = new ParticleSystem.MinMaxCurve(1f, sizeCurve);
 
         var renderer = particles.GetComponent<ParticleSystemRenderer>();
-        renderer.material = new Material(Shader.Find("Particles/Standard Unlit"));
-        renderer.material.SetFloat("_Mode", 2);
+        Shader particleShader = Shader.Find("Universal Render Pipeline/Particles/Unlit");
+        if (particleShader == null) particleShader = Shader.Find("Legacy Shaders/Particles/Alpha Blended"); // Fallback com Alpha
+        
+        if (particleShader != null)
+        {
+            renderer.material = new Material(particleShader);
+            if (renderer.material.HasProperty("_Mode")) renderer.material.SetFloat("_Mode", 2);
+        }
         renderer.renderMode = ParticleSystemRenderMode.Billboard;
 
         particles.Play();

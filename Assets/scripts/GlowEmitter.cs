@@ -110,16 +110,19 @@ public class GlowEmitter : MonoBehaviour
 
         // Renderer
         var renderer = particles.GetComponent<ParticleSystemRenderer>();
-        Shader particleShader = Shader.Find("Legacy Shaders/Particles/Alpha Blended");
-        if (particleShader == null) particleShader = Shader.Find("Particles/Alpha Blended"); // Fallback
+        Shader particleShader = Shader.Find("Universal Render Pipeline/Particles/Unlit");
+        if (particleShader == null) particleShader = Shader.Find("Legacy Shaders/Particles/Alpha Blended"); // Fallback Clássico com Alpha
         
         renderer.material = new Material(particleShader);
         if (particleTexture != null)
         {
-            renderer.material.mainTexture = particleTexture;
+            if (renderer.material.HasProperty("_BaseMap")) renderer.material.SetTexture("_BaseMap", particleTexture);
+            else renderer.material.mainTexture = particleTexture;
         }
         
-        if (renderer.material.HasProperty("_TintColor"))
+        if (renderer.material.HasProperty("_BaseColor"))
+            renderer.material.SetColor("_BaseColor", glowColor);
+        else if (renderer.material.HasProperty("_TintColor"))
             renderer.material.SetColor("_TintColor", glowColor);
         else if (renderer.material.HasProperty("_Color"))
             renderer.material.color = glowColor;

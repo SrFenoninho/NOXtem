@@ -56,7 +56,7 @@ public class PlayerHealth : MonoBehaviour
                         keys.AddKey(key);
                     }
                 }
-                Debug.Log($"📂 [Player] Inventário restaurado no início da cena com {keys.GetKeys().Count} chaves.");
+                // Debug.Log($"📂 [Player] Inventário restaurado no início da cena com {keys.GetKeys().Count} chaves.");
             }
         }
 
@@ -91,7 +91,7 @@ public class PlayerHealth : MonoBehaviour
 
             if (angle <= 75f)
             {
-                Debug.Log("🛡️ [PlayerHealth] Dano de " + damageAmount + " bloqueado frontalmente pela Parede de Defesa!");
+                // Debug.Log("🛡️ [PlayerHealth] Dano de " + damageAmount + " bloqueado frontalmente pela Parede de Defesa!");
                 return;
             }
         }
@@ -101,7 +101,7 @@ public class PlayerHealth : MonoBehaviour
 
         currentHealth -= damageAmount;
         nextDamage = Time.time + damageCooldown;
-        Debug.Log("Player took " + damageAmount + " damage. Health: " + currentHealth);
+        // Debug.Log("Player took " + damageAmount + " damage. Health: " + currentHealth);
 
         currentKnockbackForce = knockbackForce;
 
@@ -145,7 +145,7 @@ public class PlayerHealth : MonoBehaviour
     // ---------------------------------------------
     void Die()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        LoadingManager.Carregar(SceneManager.GetActiveScene().buildIndex);
     }
 
     // ---------------------------------------------

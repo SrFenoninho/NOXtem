@@ -119,7 +119,7 @@ public class DarknessManager : MonoBehaviour
     public void OnPowerRestored()
     {
         powerRestored = true;
-        Debug.Log("DarknessManager: Power restored, illuminating scene...");
+        // Debug.Log("DarknessManager: Power restored, illuminating scene...");
     }
 
     // ---------------------------------------------
@@ -131,7 +131,7 @@ public class DarknessManager : MonoBehaviour
 
         if (!inDarkZone && powerRestored)
         {
-            Debug.Log("DarknessManager: Exited Dark Zone, restoring light transition...");
+            // Debug.Log("DarknessManager: Exited Dark Zone, restoring light transition...");
         }
     }
 

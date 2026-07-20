@@ -109,11 +109,11 @@ public class CardReaderInteraction : MonoBehaviour, IInteractable
         if (doorToUnlock != null)
         {
             doorToUnlock.Unlock();
-            Debug.Log("Porta destrancada pelo leitor de cartao!");
+            // Debug.Log("Porta destrancada pelo leitor de cartao!");
         }
         else
         {
-            Debug.LogWarning("Nenhuma porta atribuida ao leitor de cartao!");
+            // Debug.LogWarning("Nenhuma porta atribuida ao leitor de cartao!");
         }
     }
 

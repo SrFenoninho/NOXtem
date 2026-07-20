@@ -32,7 +32,7 @@ public class OrbitCam : MonoBehaviour
     {
         if (target == null)
         {
-            Debug.LogError("OrbitCamera precisa de um Target!");
+            // Debug.LogError("OrbitCamera precisa de um Target!");
             enabled = false;
             return;
         }

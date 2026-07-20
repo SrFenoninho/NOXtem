@@ -152,7 +152,7 @@ public class MainMenu : MonoBehaviour
     {
         // Começa novo jogo: Limpa o save de progresso antigo para não herdar posições
         SaveSystem.LimparSaveProgresso();
-        SceneManager.LoadScene("Floor1");
+        LoadingManager.Carregar("Floor1");
     }
 
     public void ContinueGame()
@@ -163,7 +163,7 @@ public class MainMenu : MonoBehaviour
             
             // Ativa a flag global para o SaveSystem aplicar o warp no Start da nova cena
             SaveSystem.carregarSaveAoIniciar = true;
-            SceneManager.LoadScene(savedScene);
+            LoadingManager.Carregar(savedScene);
         }
     }
 

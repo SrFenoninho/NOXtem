@@ -17,7 +17,7 @@ public static class SaveSystem
 
         // Grava fisicamente no disco/registro do Windows
         PlayerPrefs.Save();
-        Debug.Log($"💾 [SaveSystem] Progresso do jogo guardado com sucesso (Apenas a cena: {currentScene})!");
+        // Debug.Log($"💾 [SaveSystem] Progresso do jogo guardado com sucesso (Apenas a cena: {currentScene})!");
     }
 
     // ---------------------------------------------
@@ -37,6 +37,6 @@ public static class SaveSystem
         PlayerPrefs.DeleteKey("SavedScene");
         PlayerPrefs.DeleteKey("PlayerKeys"); // Limpa o inventário acumulado para um Novo Jogo do zero
         PlayerPrefs.Save();
-        Debug.Log("🗑️ [SaveSystem] Registro de save de cena e chaves limpo.");
+        // Debug.Log("🗑️ [SaveSystem] Registro de save de cena e chaves limpo.");
     }
 }

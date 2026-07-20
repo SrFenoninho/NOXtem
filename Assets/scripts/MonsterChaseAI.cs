@@ -76,7 +76,7 @@ public class MonsterChaseAI : MonoBehaviour
         {
             playerInZone = false;
             playerHealth = null;
-            Debug.Log("Jogador saiu da zona de dano!");
+            // Debug.Log("Jogador saiu da zona de dano!");
         }
     }
 }

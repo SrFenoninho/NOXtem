@@ -62,7 +62,9 @@ public class EnemyCountKill : MonoBehaviour
         if (!enemiesExisted && count > 0)
             enemiesExisted = true;
 
-        if (enemiesExisted && count <= 1)
+        // Na Build, o spawneo acontece muito rapidamente. Se tivéssemos count <= 1, ele abria o portão quando matássemos o penúltimo,
+        // ou pior: logo a seguir ao Spawner meter o 1º monstro, abria logo a porta!
+        if (enemiesExisted && count <= 0)
         {
             triggered = true;
             StartCoroutine(RewardSequence());

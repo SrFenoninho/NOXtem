@@ -87,11 +87,22 @@ public class Keys : MonoBehaviour, IInteractable
         }
 
         GetComponent<Collider>().enabled = false;
-        MeshRenderer mesh = GetComponent<MeshRenderer>();
-        if (mesh != null) mesh.enabled = false;
+        
+        Renderer[] renderers = GetComponentsInChildren<Renderer>();
+        foreach (Renderer r in renderers)
+        {
+            r.enabled = false;
+        }
 
         if (keyGlow != null)
             keyGlow.DisableGlow();
+            
+        RotateObject rotator = GetComponent<RotateObject>();
+        if (rotator != null)
+            rotator.StopEffects();
+
+        // 100% Garantido que desaparece dos olhos do jogador atirando a chave para fora do mapa instantaneamente
+        transform.position = new Vector3(transform.position.x, transform.position.y - 1000f, transform.position.z);
 
         Destroy(gameObject, 2.1f);
     }

@@ -497,7 +497,7 @@ public class GameMenuManager : MonoBehaviour
             Time.timeScale = 1f;
 
             // Carrega a cena do menu principal
-            SceneManager.LoadScene(mainMenuSceneName);
+            LoadingManager.Carregar(mainMenuSceneName);
         });
 
         Button btnVoltar = CreateButton(tabSair.transform, "Voltar ao Jogo",

@@ -8,6 +8,7 @@ public class BossPillar : MonoBehaviour, IInteractable
     
     [HideInInspector] public bool isLastPillar = false;
     [HideInInspector] public FinalBossAI bossAssociado;
+    [HideInInspector] public BossController novoBossAssociado;
     [HideInInspector] public bool jaDestruido = false; 
 
     private void Start()
@@ -15,21 +16,45 @@ public class BossPillar : MonoBehaviour, IInteractable
         if(pilarIntacto != null) pilarIntacto.SetActive(true);
         if(pilarDestruido != null) pilarDestruido.SetActive(false);
 
-        // Auto-associa o FinalBossAI na cena se não estiver atribuído no Inspector
-        if (bossAssociado == null)
-        {
-            bossAssociado = FindFirstObjectByType<FinalBossAI>();
-        }
+        // Auto-associa os sistemas de AI do Boss na cena
+        if (bossAssociado == null) bossAssociado = FindFirstObjectByType<FinalBossAI>();
+        if (novoBossAssociado == null) novoBossAssociado = FindFirstObjectByType<BossController>();
     }
 
     private void OnTriggerEnter(Collider other)
     {
+        // NOVIDADE: Se for o último pilar, mal o jogador lhe toca (entra no Trigger) ele despoleta o Final!
+        if (isLastPillar && other.CompareTag("Player"))
+        {
+            AtivarCutsceneFinal(other.gameObject);
+            return;
+        }
+
         VerificarColisaoComBoss(other.gameObject);
     }
 
     private void OnCollisionEnter(Collision collision)
     {
+        // NOVIDADE: Mesmo que o collider seja sólido, se o jogador esbarrar nele no final, ativa o fim!
+        if (isLastPillar && collision.gameObject.CompareTag("Player"))
+        {
+            AtivarCutsceneFinal(collision.gameObject);
+            return;
+        }
+
         VerificarColisaoComBoss(collision.gameObject);
+    }
+
+    private void AtivarCutsceneFinal(GameObject jogador)
+    {
+        if (novoBossAssociado != null && novoBossAssociado.currentPhase == BossController.BossPhase.ReadyToDie)
+        {
+            novoBossAssociado.ExecuteFinalCutscene();
+        }
+        else if (bossAssociado != null && bossAssociado.IsReadyForExecution())
+        {
+            bossAssociado.ExecuteFinalCutscene(jogador.transform);
+        }
     }
 
     private void VerificarColisaoComBoss(GameObject obj)
@@ -42,12 +67,21 @@ public class BossPillar : MonoBehaviour, IInteractable
 
         if (boss != null)
         {
-            // Se o Boss estiver no estado de investida (PillarCharge)
+            // Se o Boss estiver no estado de investida (PillarCharge) aos 225 de vida ou 125 de vida
             if (boss.currentState is BossState_PillarCharge chargeState)
             {
-                Debug.Log("💥 [BossPillar] Boss colidiu fisicamente com o pilar intacto! A ativar destruição...");
+                // Debug.Log("💥 [BossPillar] Boss colidiu fisicamente com o pilar intacto! A ativar destruição e causar dano!");
                 ReceberImpactoDoBoss();
                 chargeState.OnPillarHit(boss);
+
+                // NOVIDADE: Aplica 10 de DANO imediato ao colidir (remove a invulnerabilidade de charge temporariamente para garantir)
+                if (boss.health != null)
+                {
+                    bool wasInvul = boss.health.isInvulnerable;
+                    boss.health.isInvulnerable = false; 
+                    boss.health.TakeDamage(10f); // Dá os 10 de dano que pediste
+                    boss.health.isInvulnerable = wasInvul; // Devolve o estado
+                }
             }
         }
     }
@@ -58,7 +92,7 @@ public class BossPillar : MonoBehaviour, IInteractable
         
         jaDestruido = true;
         
-        // Copia (Instantiate) o modelo destruído e teletransporta-o para o ponto exato onde estava o pilar intacto!
+        // Copia (Instantiate) o modelo destruído e teletransporta-o para o ponto exato
         if(pilarDestruido != null) 
         {
             GameObject destrocos = Instantiate(pilarDestruido);
@@ -72,21 +106,20 @@ public class BossPillar : MonoBehaviour, IInteractable
     }
 
     // ---------------------------------------------
-    //  IINTERACTABLE
+    //  IINTERACTABLE (Mantido como redundância se ele clicar no 'E')
     // ---------------------------------------------
     public void Interact(GameObject interactor)
     {
-        if(isLastPillar && bossAssociado != null && bossAssociado.IsReadyForExecution())
-        {
-            bossAssociado.ExecuteFinalCutscene(interactor.transform);
-        }
+        if(isLastPillar) AtivarCutsceneFinal(interactor);
     }
 
     public string GetInteractMessage() 
     {
-        if(isLastPillar && bossAssociado != null && bossAssociado.IsReadyForExecution())
-            return "Agarrar Pilar (Finalizar)";
-            
+        if(isLastPillar)
+        {
+            if (novoBossAssociado != null && novoBossAssociado.currentPhase == BossController.BossPhase.ReadyToDie) return "Finalizar!";
+            if (bossAssociado != null && bossAssociado.IsReadyForExecution()) return "Finalizar!";
+        }
         return "";
     }
 }

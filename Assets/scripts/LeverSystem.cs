@@ -80,7 +80,7 @@ public class LeverSystem : MonoBehaviour
                 Invoke(nameof(ClearMessage), 3f);
         }
 
-        Debug.Log($"Alavanca ativada! {leversActivated}/{levers.Length}");
+        // Debug.Log($"Alavanca ativada! {leversActivated}/{levers.Length}");
 
         // Verificar se todas estao ativas
         if (leversActivated >= levers.Length)
@@ -115,7 +115,7 @@ public class LeverSystem : MonoBehaviour
             ObjectiveManager.Instance?.ShowObjective(nextObjectiveText);
         }
 
-        Debug.Log("Energia restaurada! Todas as alavancas ativas.");
+        // Debug.Log("Energia restaurada! Todas as alavancas ativas.");
     }
 
     // ---------------------------------------------

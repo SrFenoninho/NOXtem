@@ -79,7 +79,7 @@ public class BossController : MonoBehaviour
             // Se o corpo físico do Boss colidir com uma parede e ele não conseguir avançar, força desvio instantâneo!
             if (movement.VerificarSeEstaPreso())
             {
-                Debug.LogWarning("⚠️ [AI] Boss detetou obstrução (parede física). A forçar desvio de rota!");
+                // Debug.LogWarning("⚠️ [AI] Boss detetou obstrução (parede física). A forçar desvio de rota!");
                 movement.StopMovement();
 
                 if (currentState is BossState_Flee)
@@ -95,7 +95,7 @@ public class BossController : MonoBehaviour
                 else if (currentState is BossState_PillarCharge)
                 {
                     // Se estava a carregar/fugir para o pilar e bateu na parede, reinicia a fase para ele recuar em segurança
-                    Debug.LogWarning("⚠️ [AI] Boss ficou obstruído na parede durante a fase do pilar. A resetar investida!");
+                    // Debug.LogWarning("⚠️ [AI] Boss ficou obstruído na parede durante a fase do pilar. A resetar investida!");
                     TriggerPhase(currentPhase);
                 }
             }
@@ -106,7 +106,7 @@ public class BossController : MonoBehaviour
     {
         string oldName = (currentState != null) ? currentState.GetType().Name : "Null";
         string newName = (newState != null) ? newState.GetType().Name : "Null";
-        Debug.Log("🔄 [FSM] Estado alterado de " + oldName + " para " + newName);
+        // Debug.Log("🔄 [FSM] Estado alterado de " + oldName + " para " + newName);
 
         if (currentState != null)
         {
@@ -190,12 +190,22 @@ public class BossController : MonoBehaviour
     {
         currentPhase = BossPhase.Cutscene;
         ChangeState(null); // Desliga states
-        if(anim != null) anim.Play("FinalHit");
+        
+        if (anim != null) 
+        {
+            // Proteção para evitar o aviso "State could not be found" se a animação não existir
+            int estadoID = Animator.StringToHash("FinalHit");
+            if (anim.HasState(0, estadoID))
+            {
+                anim.Play("FinalHit");
+            }
+        }
+        
         Invoke("LoadNextScene", 4f);
     }
 
     private void LoadNextScene()
     {
-        SceneManager.LoadScene(nextSceneName);
+        LoadingManager.Carregar(nextSceneName);
     }
 }

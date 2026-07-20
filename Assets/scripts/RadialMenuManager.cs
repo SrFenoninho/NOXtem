@@ -171,10 +171,10 @@ public class RadialMenuManager : MonoBehaviour
     {
         switch (option)
         {
-            case 1: Debug.Log("Default action 1"); break;
-            case 2: Debug.Log("Default action 2"); break;
-            case 3: Debug.Log("Default action 3"); break;
-            case 4: Debug.Log("Default action 4"); break;
+            // case 1: Debug.Log("Default action 1"); break;
+            // case 2: Debug.Log("Default action 2"); break;
+            // case 3: Debug.Log("Default action 3"); break;
+            // case 4: Debug.Log("Default action 4"); break;
         }
     }
 
@@ -182,10 +182,10 @@ public class RadialMenuManager : MonoBehaviour
     {
         switch (option)
         {
-            case 1: Debug.Log("Try to open door"); break;
-            case 2: Debug.Log("Examine door"); break;
-            case 3: Debug.Log("Use key on door"); break;
-            case 4: Debug.Log("Cancel"); break;
+            // case 1: Debug.Log("Try to open door"); break;
+            // case 2: Debug.Log("Examine door"); break;
+            // case 3: Debug.Log("Use key on door"); break;
+            // case 4: Debug.Log("Cancel"); break;
         }
     }
 
@@ -193,10 +193,10 @@ public class RadialMenuManager : MonoBehaviour
     {
         switch (option)
         {
-            case 1: Debug.Log("Access system"); break;
-            case 2: Debug.Log("Check logs"); break;
-            case 3: Debug.Log("Shutdown"); break;
-            case 4: Debug.Log("Cancel"); break;
+            // case 1: Debug.Log("Access system"); break;
+            // case 2: Debug.Log("Check logs"); break;
+            // case 3: Debug.Log("Shutdown"); break;
+            // case 4: Debug.Log("Cancel"); break;
         }
     }
 

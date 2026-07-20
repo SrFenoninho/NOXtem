@@ -9,7 +9,7 @@ public class TPHackAndSlash : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            SceneManager.LoadScene(sceneToLoad);
+            LoadingManager.Carregar(sceneToLoad);
         }
     }
 }

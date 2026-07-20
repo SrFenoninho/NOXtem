@@ -138,12 +138,19 @@ public class EnemyAI : MonoBehaviour
 
         if (animator == null)
             animator = GetComponentInChildren<Animator>();
+            
+        // FORÇAR PARA FALSE!! Na Build, o Unity por vezes ativa o Apply Root Motion
+        // que faz as animações controlarem a física, lixando a IA toda!
+        if (animator != null)
+            animator.applyRootMotion = false;
 
-        GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
-        if (playerObj != null)
+        // Na Build o FindGameObjectWithTag é traiçoeiro e muitas vezes apanha a Câmara ou outros modelos
+        // com a Tag do Jogador. O Inimigo andava a orbitar a Câmara e não o Boneco!
+        PlayerHealth healthComponent = Object.FindAnyObjectByType<PlayerHealth>();
+        if (healthComponent != null)
         {
-            player = playerObj.transform;
-            playerHealth = playerObj.GetComponent<PlayerHealth>();
+            player = healthComponent.transform;
+            playerHealth = healthComponent;
         }
 
         controller = GetComponent<CharacterController>();
@@ -393,10 +400,10 @@ public class EnemyAI : MonoBehaviour
             moveDir.z = 0;
         }
 
-        // Estar sempre virado para o jogador
+        // Estar sempre virado para o jogador INDEPENDENTEMENTE DO QUE ACONTECER
         Vector3 lookDir = player.position - transform.position;
         lookDir.y = 0;
-        if (lookDir != Vector3.zero)
+        if (lookDir.sqrMagnitude > 0.01f)
             transform.rotation = Quaternion.LookRotation(lookDir);
 
         if (animator != null)
@@ -410,7 +417,7 @@ public class EnemyAI : MonoBehaviour
 
         ApplyGravity();
         controller.Move(moveDir * Time.fixedDeltaTime);
-        CheckStuck();
+        // CheckStuck removido porque em FPS ilimitados (Build) quebra os CharacterControllers
     }
 
     Vector3 GetTargetPosition()

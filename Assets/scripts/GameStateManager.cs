@@ -43,7 +43,7 @@ public class GameStateManager : MonoBehaviour
     public void PushState(GameState state)
     {
         stateStack.Push(state);
-        Debug.Log($"[GameState] Push: {state} | Stack: {stateStack.Count}");
+        // Debug.Log($"[GameState] Push: {state} | Stack: {stateStack.Count}");
     }
 
     public void PopState()
@@ -51,7 +51,7 @@ public class GameStateManager : MonoBehaviour
         if (stateStack.Count > 1)
         {
             GameState removed = stateStack.Pop();
-            Debug.Log($"[GameState] Pop: {removed} | Agora: {CurrentState}");
+            // Debug.Log($"[GameState] Pop: {removed} | Agora: {CurrentState}");
         }
     }
 

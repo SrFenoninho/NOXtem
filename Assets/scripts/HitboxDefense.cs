@@ -29,7 +29,7 @@ public class HitboxDefense : MonoBehaviour
             PlayerHealth ph = GetPlayerHealth();
             if(ph != null) ph.isDefending = true;
 
-            Debug.Log("Parede de defesa criada!");
+            // Debug.Log("Parede de defesa criada!");
         }
     }
 
@@ -43,7 +43,7 @@ public class HitboxDefense : MonoBehaviour
             PlayerHealth ph = GetPlayerHealth();
             if(ph != null) ph.isDefending = false;
 
-            Debug.Log("Parede de defesa destruida!");
+            // Debug.Log("Parede de defesa destruida!");
         }
     }
 

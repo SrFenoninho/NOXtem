@@ -130,6 +130,6 @@ public class FlowFreeTerminal : MonoBehaviour, IInteractable
             ObjectiveManager.Instance?.ShowObjective(nextObjectiveText);
         }
 
-        UnityEngine.SceneManagement.SceneManager.LoadScene(sceneToLoadOnComplete);
+        LoadingManager.Carregar(sceneToLoadOnComplete);
     }
 }

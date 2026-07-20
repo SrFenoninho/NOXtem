@@ -59,4 +59,14 @@ public static class EnemyCombatManager
     public static bool HasToken(EnemyAI enemy) => currentAttackers.Contains(enemy);
     public static int AttackerCount => currentAttackers.Count;
     public static int EnemyCount => registeredEnemies.Count;
+
+    // Reset total para garantir que transições de cena não quebrem a contagem na Build
+    public static void Clear()
+    {
+        // Limpa nulls ou inimigos órfãos
+        registeredEnemies.RemoveAll(e => e == null);
+        registeredEnemies.Clear();
+        currentAttackers.Clear();
+        nextGroupTime = 0f;
+    }
 }

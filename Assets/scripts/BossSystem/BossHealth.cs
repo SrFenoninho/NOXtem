@@ -28,7 +28,7 @@ public class BossHealth : MonoBehaviour
         if (isInvulnerable) return;
 
         currentHealth -= amount;
-        Debug.Log("🔴 BOSS RECEBEU DANO! Dano=" + amount + ". Vida Restante: " + currentHealth);
+        // Debug.Log("🔴 BOSS RECEBEU DANO! Dano=" + amount + ". Vida Restante: " + currentHealth);
 
         if (Time.time - lastHitTime > 2.0f) consecutiveHits = 0;
         lastHitTime = Time.time;
@@ -47,8 +47,11 @@ public class BossHealth : MonoBehaviour
 
     private void CheckThresholds()
     {
-        if (currentHealth <= 25f && boss.currentPhase != BossController.BossPhase.ReadyToDie)
-            boss.TriggerPhase(BossController.BossPhase.ReadyToDie);
+        if (currentHealth <= 25f && boss.currentPhase != BossController.BossPhase.Cutscene)
+        {
+            boss.currentPhase = BossController.BossPhase.Cutscene;
+            boss.ExecuteFinalCutscene();
+        }
         else if (currentHealth <= 125f && boss.currentPhase == BossController.BossPhase.Phase2)
             boss.TriggerPhase(BossController.BossPhase.PillarEvent2);
         else if (currentHealth <= 225f && boss.currentPhase == BossController.BossPhase.Phase1)

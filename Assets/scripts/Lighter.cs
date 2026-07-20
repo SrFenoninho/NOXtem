@@ -123,7 +123,7 @@ public class Lighter : MonoBehaviour
 
         SetArmVisibility(!isLit);
 
-        Debug.Log(isLit ? "Isqueiro aceso" : "Isqueiro apagado");
+        // Debug.Log(isLit ? "Isqueiro aceso" : "Isqueiro apagado");
     }
 
     // ---------------------------------------------

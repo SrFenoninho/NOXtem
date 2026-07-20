@@ -110,16 +110,19 @@ public class BossVFX : MonoBehaviour
         colorOverLifetime.color = new ParticleSystem.MinMaxGradient(gradient);
 
         var renderer = aoeParticles.GetComponent<ParticleSystemRenderer>();
-        Shader particleShader = Shader.Find("Legacy Shaders/Particles/Alpha Blended");
-        if (particleShader == null) particleShader = Shader.Find("Particles/Alpha Blended"); 
+        Shader particleShader = Shader.Find("Universal Render Pipeline/Particles/Unlit");
+        if (particleShader == null) particleShader = Shader.Find("Legacy Shaders/Particles/Alpha Blended"); // Fallback Clássico com Alpha
 
         renderer.material = new Material(particleShader);
         if (aoeParticleTexture != null)
         {
-            renderer.material.mainTexture = aoeParticleTexture;
+            if (renderer.material.HasProperty("_BaseMap")) renderer.material.SetTexture("_BaseMap", aoeParticleTexture);
+            else renderer.material.mainTexture = aoeParticleTexture;
         }
         
-        if (renderer.material.HasProperty("_TintColor"))
+        if (renderer.material.HasProperty("_BaseColor"))
+            renderer.material.SetColor("_BaseColor", aoeParticleColor);
+        else if (renderer.material.HasProperty("_TintColor"))
             renderer.material.SetColor("_TintColor", aoeParticleColor);
         else if (renderer.material.HasProperty("_Color"))
             renderer.material.color = aoeParticleColor;

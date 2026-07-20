@@ -35,6 +35,6 @@ public class SimpleLockedDoor : MonoBehaviour
         if (rb != null)
             rb.isKinematic = false; // ativar fisica - a porta cai
 
-        Debug.Log(gameObject.name + " foi destrancada!");
+        // Debug.Log(gameObject.name + " foi destrancada!");
     }
 }

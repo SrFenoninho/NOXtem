@@ -78,7 +78,7 @@ public class InteractiveDoor : MonoBehaviour, IInteractable
         {
             doorGlow.EnableGlow();
             hasGlowedThisRun = true;
-            Debug.Log("Door glow enabled for key: " + keyName);
+            // Debug.Log("Door glow enabled for key: " + keyName);
         }
     }
 

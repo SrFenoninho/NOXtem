@@ -10,7 +10,10 @@ EditorBuildSettings:
     guid: fcd8b6e279a539a4c8a9aa9fee0089c9
   - enabled: 1
     path: Assets/Scenes/Floor1.unity
-    guid: a5559611097251843bdf4d63539f909f
+    guid: c5a10595603cbec45b52a21d8f4cf45c
+  - enabled: 1
+    path: Assets/Scenes/cutscene 1.unity
+    guid: 370e2a16739fc2446acd5527d99f49b5
   - enabled: 1
     path: Assets/Scenes/HackAndSlash.unity
     guid: d99f87696de54284099098b602dadc83
@@ -21,8 +24,17 @@ EditorBuildSettings:
     path: Assets/Scenes/Underground.unity
     guid: 97a3015a5650c0e4db1e4f77825c8944
   - enabled: 1
+    path: Assets/Scenes/cutscene 2.unity
+    guid: b2517ee6ea9e9e043809995f70a0392f
+  - enabled: 1
     path: Assets/Scenes/EP1END.unity
     guid: 8cf56384fcf748f4092e0b699fa8b342
+  - enabled: 1
+    path: Assets/Scenes/cutscene 3.unity
+    guid: 002a196d6c24ae945bb3891f2df6e28a
+  - enabled: 1
+    path: Assets/Scenes/creditos.unity
+    guid: a6f2911a8c4877943948e5088b576a56
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0

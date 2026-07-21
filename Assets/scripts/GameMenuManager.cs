@@ -142,7 +142,7 @@ public class GameMenuManager : MonoBehaviour
         inventoryAudioSource.volume = inventoryMusicVolume;
 
         InventoryManager.Instance?.AddItem(
-            new InventoryItem("lighter", "Isqueiro", "tool", "Um isqueiro desgastado. A única fonte de luz."));
+            new InventoryItem("lighter", "Lighter", "tool", "A worn-out lighter. The only source of light."));
 
         BuildMenu();
         menuRoot.SetActive(false);
@@ -373,15 +373,15 @@ public class GameMenuManager : MonoBehaviour
         GameObject bar = CreatePanel(parent, "TopBar",
             new Vector2(0f, 0.9f), Vector2.one, corBarraTabs);
 
-        btnInventario = CreateTabButton(bar.transform, "Inventário",
+        btnInventario = CreateTabButton(bar.transform, "Inventory",
             new Vector2(0f, 0f), new Vector2(0.25f, 1f),
             () => ShowTab("inventario"));
 
-        btnDefinicoes = CreateTabButton(bar.transform, "Definições",
+        btnDefinicoes = CreateTabButton(bar.transform, "Settings",
             new Vector2(0.25f, 0f), new Vector2(0.5f, 1f),
             () => ShowTab("definicoes"));
 
-        btnSairTab = CreateTabButton(bar.transform, "Guardar e Sair",
+        btnSairTab = CreateTabButton(bar.transform, "Save and Quit",
             new Vector2(0.5f, 0f), new Vector2(0.75f, 1f),
             () => ShowTab("sair"));
     }
@@ -431,7 +431,7 @@ public class GameMenuManager : MonoBehaviour
 
         float rowH = 0.1f;
 
-        CreateLabel(tabDefinicoes.transform, "Sensibilidade do Rato",
+        CreateLabel(tabDefinicoes.transform, "Mouse Sensitivity",
             new Vector2(0.05f, 0.75f), new Vector2(0.45f, 0.75f + rowH), fonteDef);
         Slider sliderSens = CreateSlider(tabDefinicoes.transform,
             new Vector2(0.45f, 0.75f), new Vector2(0.9f, 0.75f + rowH),
@@ -453,9 +453,9 @@ public class GameMenuManager : MonoBehaviour
             AudioListener.volume = v;
         });
 
-        CreateLabel(tabDefinicoes.transform, "Qualidade das Texturas",
+        CreateLabel(tabDefinicoes.transform, "Texture Quality",
             new Vector2(0.05f, 0.45f), new Vector2(0.45f, 0.45f + rowH), fonteDef);
-        string[] qLabels = { "Alta", "Média", "Baixa" };
+        string[] qLabels = { "High", "Medium", "Low" };
         int[] qLevels = { 0, 2, 4 };
         for (int i = 0; i < 3; i++)
         {
@@ -477,10 +477,10 @@ public class GameMenuManager : MonoBehaviour
         tabSair = CreatePanel(parent, "TabSair",
             Vector2.zero, new Vector2(1f, 0.9f), Color.clear);
 
-        CreateLabel(tabSair.transform, "Tens a certeza que queres sair?",
+        CreateLabel(tabSair.transform, "Are you sure you want to quit?",
             new Vector2(0.2f, 0.55f), new Vector2(0.8f, 0.7f), fonteSairTitulo);
 
-        Button btnSairConfirm = CreateButton(tabSair.transform, "Guardar e Sair do Jogo",
+        Button btnSairConfirm = CreateButton(tabSair.transform, "Save and Quit Game",
             new Vector2(0.3f, 0.38f), new Vector2(0.7f, 0.52f), corBotaoSair);
         btnSairConfirm.onClick.AddListener(() =>
         {
@@ -500,7 +500,7 @@ public class GameMenuManager : MonoBehaviour
             LoadingManager.Carregar(mainMenuSceneName);
         });
 
-        Button btnVoltar = CreateButton(tabSair.transform, "Voltar ao Jogo",
+        Button btnVoltar = CreateButton(tabSair.transform, "Resume Game",
             new Vector2(0.3f, 0.22f), new Vector2(0.7f, 0.36f), corBotaoVoltar);
         btnVoltar.onClick.AddListener(CloseMenu);
     }
@@ -539,7 +539,7 @@ public class GameMenuManager : MonoBehaviour
             rt.anchorMin = Vector2.zero; rt.anchorMax = Vector2.one;
             rt.offsetMin = rt.offsetMax = Vector2.zero;
             TextMeshProUGUI t = msg.GetComponent<TextMeshProUGUI>();
-            t.text = "Inventário vazio"; t.alignment = TMPro.TextAlignmentOptions.Center;
+            t.text = "Inventory empty"; t.alignment = TMPro.TextAlignmentOptions.Center;
             t.fontSize = fonteVazio; t.enableAutoSizing = false;
             if (customFont != null) t.font = customFont;
             slots.Add(msg);

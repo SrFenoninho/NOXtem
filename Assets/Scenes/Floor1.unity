@@ -1442,7 +1442,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &58175873
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4211,6 +4211,144 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 4947660756878429024, guid: 7dfba891f13cfa445bbbc22c681f2998, type: 3}
+--- !u!1 &229175569
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 229175570}
+  - component: {fileID: 229175572}
+  - component: {fileID: 229175573}
+  m_Layer: 5
+  m_Name: Line subtitles
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &229175570
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 229175569}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2141674225}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: -100}
+  m_SizeDelta: {x: 200, y: 50}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!222 &229175572
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 229175569}
+  m_CullTransparentMesh: 1
+--- !u!114 &229175573
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 229175569}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_text: 
+  m_isRightToLeft: 0
+  m_fontAsset: {fileID: 11400000, guid: 17824eb0f17a99945b7befb8181ed5f4, type: 2}
+  m_sharedMaterial: {fileID: -5260790468738354795, guid: 17824eb0f17a99945b7befb8181ed5f4, type: 2}
+  m_fontSharedMaterials:
+  - {fileID: -5260790468738354795, guid: 17824eb0f17a99945b7befb8181ed5f4, type: 2}
+  m_fontMaterial: {fileID: 0}
+  m_fontMaterials: []
+  m_fontColor32:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+  m_enableVertexGradient: 0
+  m_colorMode: 3
+  m_fontColorGradient:
+    topLeft: {r: 1, g: 1, b: 1, a: 1}
+    topRight: {r: 1, g: 1, b: 1, a: 1}
+    bottomLeft: {r: 1, g: 1, b: 1, a: 1}
+    bottomRight: {r: 1, g: 1, b: 1, a: 1}
+  m_fontColorGradientPreset: {fileID: 0}
+  m_spriteAsset: {fileID: 0}
+  m_tintAllSprites: 0
+  m_StyleSheet: {fileID: 0}
+  m_TextStyleHashCode: -1183493901
+  m_overrideHtmlColors: 0
+  m_faceColor:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_fontSize: 50
+  m_fontSizeBase: 50
+  m_fontWeight: 400
+  m_enableAutoSizing: 0
+  m_fontSizeMin: 72
+  m_fontSizeMax: 100
+  m_fontStyle: 0
+  m_HorizontalAlignment: 2
+  m_VerticalAlignment: 256
+  m_textAlignment: 65535
+  m_characterSpacing: 0
+  m_characterHorizontalScale: 1
+  m_wordSpacing: 0
+  m_lineSpacing: 0
+  m_lineSpacingMax: 0
+  m_paragraphSpacing: 0
+  m_charWidthMaxAdj: 50
+  m_TextWrappingMode: 1
+  m_wordWrappingRatios: 0.4
+  m_overflowMode: 0
+  m_linkedTextComponent: {fileID: 0}
+  parentLinkedComponent: {fileID: 0}
+  m_enableKerning: 0
+  m_ActiveFontFeatures: 6e72656b
+  m_enableExtraPadding: 0
+  checkPaddingRequired: 0
+  m_isRichText: 1
+  m_EmojiFallbackSupport: 1
+  m_parseCtrlCharacters: 1
+  m_isOrthographic: 1
+  m_isCullingEnabled: 0
+  m_horizontalMapping: 0
+  m_verticalMapping: 0
+  m_uvLineOffset: 0
+  m_geometrySortingOrder: 0
+  m_IsTextObjectScaleStatic: 0
+  m_VertexBufferAutoSizeReduction: 0
+  m_useMaxVisibleDescender: 1
+  m_pageToDisplay: 1
+  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_isUsingLegacyAnimationComponent: 0
+  m_isVolumetricText: 0
+  m_hasFontAssetChanged: 0
+  m_baseMaterial: {fileID: 0}
+  m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!4 &234265024 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 9af8aa681cff0d848b267c2dedfdc653, type: 3}
@@ -4488,7 +4626,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d145d3aedd622e4eaa021c0422777f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  initialObjective: Objetivo:\n Encontra e liga os disjuntores.
+  initialObjective: Objective:\nFind and turn on the circuit breakers.
   initialDelay: 10
   notificationPanel: {fileID: 2123390529}
   notificationText: {fileID: 2102021985}
@@ -7163,7 +7301,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   keyName: Pantry
-  displayName: Chave da Dispensa
+  displayName: Pantry key
   keyDescription: 
   messageText: {fileID: 412906028}
   updateObjectiveOnInteract: 0
@@ -7291,7 +7429,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: -1
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 99
+  m_SortingOrder: 200
   m_TargetDisplay: 0
 --- !u!114 &368407257
 MonoBehaviour:
@@ -21327,6 +21465,15 @@ MonoBehaviour:
   lookTarget: {fileID: 0}
   lookSpeed: 0
   voiceLine: {fileID: 8300000, guid: 1ca7a3a1d2b1b0f47834b0ab6e281a86, type: 3}
+  subtitleText: {fileID: 229175573}
+  subtitlePanel: {fileID: 0}
+  subtitles:
+  - text: 'William: Do tell... where does that key lead?'
+    duration: 3.5
+    delayBefore: 0
+  - text: 'B: Yeah, the security room, just around the left here.'
+    duration: 3
+    delayBefore: 0
   playerMovement: {fileID: 1951774458}
   slowMultiplier: 0
   lookDuration: 5
@@ -23994,7 +24141,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   keyName: Freezer
-  displayName: "Chave do Frigor\xEDfico"
+  displayName: Freezer key
   keyDescription: 
   messageText: {fileID: 412906028}
   updateObjectiveOnInteract: 0
@@ -24787,6 +24934,18 @@ MonoBehaviour:
   lookTarget: {fileID: 234265024}
   lookSpeed: 3
   voiceLine: {fileID: 8300000, guid: 8ac4e7717d11bf54cb3a83f480ed1e85, type: 3}
+  subtitleText: {fileID: 229175573}
+  subtitlePanel: {fileID: 0}
+  subtitles:
+  - text: 'William: Hmmm... There is something... disturbing about this portrait.'
+    duration: 5
+    delayBefore: 0
+  - text: 'B: My father called this painting God. Or Devil. Depending on his mood.'
+    duration: 3.5
+    delayBefore: 0
+  - text: 'William: How sinister...'
+    duration: 1
+    delayBefore: 0
   playerMovement: {fileID: 1951774458}
   slowMultiplier: 0.3
   lookDuration: 5
@@ -28002,7 +28161,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   keyName: Security
-  displayName: "Chave da Sala de Segura\xE7a"
+  displayName: Security room key
   keyDescription: 
   messageText: {fileID: 412906028}
   updateObjectiveOnInteract: 0
@@ -28397,7 +28556,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   keyName: Basement
-  displayName: Chave da Cave
+  displayName: Basement key
   keyDescription: 
   messageText: {fileID: 412906028}
   updateObjectiveOnInteract: 0
@@ -32209,6 +32368,25 @@ MonoBehaviour:
   lookTarget: {fileID: 0}
   lookSpeed: 0
   voiceLine: {fileID: 8300000, guid: 1b79ee89591ed92439bf59a34a5e2a54, type: 3}
+  subtitleText: {fileID: 229175573}
+  subtitlePanel: {fileID: 0}
+  subtitles:
+  - text: 
+    duration: 1
+    delayBefore: 0
+  - text: 'William: You look rather dreadful.'
+    duration: 2
+    delayBefore: 2
+  - text: 'B: It''s just this gas... he developed it to prevent us from transforming.
+      But why is it everywhere?'
+    duration: 7
+    delayBefore: 0
+  - text: 'William: So you''re vulnerable, then? How delightful...'
+    duration: 5
+    delayBefore: 0
+  - text: 'B: Haha... Quiet, Willy... I''ll be fine.'
+    duration: 4
+    delayBefore: 0
   playerMovement: {fileID: 1951774458}
   slowMultiplier: 0.5
   lookDuration: 8
@@ -34822,7 +35000,7 @@ MonoBehaviour:
   powerOnSound: {fileID: 8300000, guid: 360ff115ddfb6834bb98fa6000023d5e, type: 3}
   messageText: {fileID: 0}
   updateObjectiveOnRestore: 1
-  nextObjectiveText: Objetivo:\nExplore o lugar
+  nextObjectiveText: Objective:\nExplore the area
 --- !u!4 &1756449459
 Transform:
   m_ObjectHideFlags: 0
@@ -35880,7 +36058,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: pressione a tecla "F" para ligar a lanterna
+  m_text: Press 'F' to use the lighter
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 17824eb0f17a99945b7befb8181ed5f4, type: 2}
   m_sharedMaterial: {fileID: -5260790468738354795, guid: 17824eb0f17a99945b7befb8181ed5f4, type: 2}
@@ -36747,7 +36925,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Sair
+  m_text: Quit
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -42247,7 +42425,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Restaurar
+  m_text: Reset
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -42611,7 +42789,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: -1
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 4
   m_TargetDisplay: 0
 --- !u!224 &2141674225
 RectTransform:
@@ -42631,6 +42809,7 @@ RectTransform:
   - {fileID: 1464081046}
   - {fileID: 587455614}
   - {fileID: 1824258240}
+  - {fileID: 229175570}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}

@@ -119,27 +119,27 @@ public class MainMenu : MonoBehaviour
         // D. Painel Principal (Contém os botões Jogar, Continuar, Opções, Sair)
         mainPanel = CreatePanel(bg.transform, "MainPanel", new Vector2(0.35f, 0.12f), new Vector2(0.65f, 0.65f), Color.clear);
         
-        CreateButton(mainPanel.transform, "Novo Jogo", new Vector2(0f, 0.76f), new Vector2(1f, 0.96f), corBotaoNormal, PlayGame);
-        continueButton = CreateButton(mainPanel.transform, "Continuar", new Vector2(0f, 0.51f), new Vector2(1f, 0.71f), corBotaoNormal, ContinueGame);
-        CreateButton(mainPanel.transform, "Opções", new Vector2(0f, 0.26f), new Vector2(1f, 0.46f), corBotaoNormal, OpenOptions);
-        CreateButton(mainPanel.transform, "Sair", new Vector2(0f, 0f), new Vector2(1f, 0.2f), corBotaoSair, QuitGame);
+        CreateButton(mainPanel.transform, "New Game", new Vector2(0f, 0.76f), new Vector2(1f, 0.96f), corBotaoNormal, PlayGame);
+        continueButton = CreateButton(mainPanel.transform, "Continue", new Vector2(0f, 0.51f), new Vector2(1f, 0.71f), corBotaoNormal, ContinueGame);
+        CreateButton(mainPanel.transform, "Options", new Vector2(0f, 0.26f), new Vector2(1f, 0.46f), corBotaoNormal, OpenOptions);
+        CreateButton(mainPanel.transform, "Quit", new Vector2(0f, 0f), new Vector2(1f, 0.2f), corBotaoSair, QuitGame);
 
         // E. Painel de Opções (Contém Sliders e Botão de Voltar)
         optionsPanel = CreatePanel(bg.transform, "OptionsPanel", new Vector2(0.3f, 0.12f), new Vector2(0.7f, 0.68f), corJanela);
 
         // Sub-título do painel de opções
-        CreateLabel(optionsPanel.transform, "Opções", new Vector2(0.1f, 0.82f), new Vector2(0.9f, 0.94f), 32, true);
+        CreateLabel(optionsPanel.transform, "Options", new Vector2(0.1f, 0.82f), new Vector2(0.9f, 0.94f), 32, true);
 
         // Slider de Sensibilidade
-        CreateLabel(optionsPanel.transform, "Sensibilidade do Rato", new Vector2(0.1f, 0.66f), new Vector2(0.9f, 0.76f), 20, false);
+        CreateLabel(optionsPanel.transform, "Mouse Sensitivity", new Vector2(0.1f, 0.66f), new Vector2(0.9f, 0.76f), 20, false);
         sensitivitySlider = CreateSlider(optionsPanel.transform, new Vector2(0.1f, 0.54f), new Vector2(0.9f, 0.64f), 10f, 300f, 100f);
 
         // Slider de Volume
-        CreateLabel(optionsPanel.transform, "Volume Geral", new Vector2(0.1f, 0.38f), new Vector2(0.9f, 0.48f), 20, false);
+        CreateLabel(optionsPanel.transform, "Master Volume", new Vector2(0.1f, 0.38f), new Vector2(0.9f, 0.48f), 20, false);
         volumeSlider = CreateSlider(optionsPanel.transform, new Vector2(0.1f, 0.26f), new Vector2(0.9f, 0.36f), 0f, 1f, 1f);
 
         // Botão de Voltar das opções
-        CreateButton(optionsPanel.transform, "Voltar e Guardar", new Vector2(0.2f, 0.04f), new Vector2(0.8f, 0.18f), corBotaoNormal, CloseOptions);
+        CreateButton(optionsPanel.transform, "Save and Back", new Vector2(0.2f, 0.04f), new Vector2(0.8f, 0.18f), corBotaoNormal, CloseOptions);
 
         // Começa com o painel de opções ocultado
         optionsPanel.SetActive(false);

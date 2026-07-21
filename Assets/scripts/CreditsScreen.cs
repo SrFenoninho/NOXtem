@@ -62,7 +62,7 @@ public class CreditsScreen : MonoBehaviour
         GameObject t1Obj = new GameObject("Texto_Ideia");
         t1Obj.transform.SetParent(canvasObj.transform, false);
         TextMeshProUGUI t1 = t1Obj.AddComponent<TextMeshProUGUI>();
-        t1.text = "Jogo idealizado por:\nJoão Rodrigues";
+        t1.text = "Game designed by:\nSr. Fenoninho (A.K.A. João Rodrigues)";
         if (fonteTextoCima != null) t1.font = fonteTextoCima;
         t1.alignment = TextAlignmentOptions.Center;
         t1.fontSize = 65;
@@ -76,7 +76,7 @@ public class CreditsScreen : MonoBehaviour
         GameObject t2Obj = new GameObject("Texto_Fontes");
         t2Obj.transform.SetParent(canvasObj.transform, false);
         TextMeshProUGUI t2 = t2Obj.AddComponent<TextMeshProUGUI>();
-        t2.text = "Fontes criadas por:\nMia's Scribblings: Amelia McVinnie\nBoiled Pasta: baltdev";
+        t2.text = "Fonts created by:\nMia's Scribblings: Amelia McVinnie\nBoiled Pasta: baltdev";
         if (fonteTextoBaixo != null) t2.font = fonteTextoBaixo;
         t2.alignment = TextAlignmentOptions.Center;
         t2.fontSize = 50;
@@ -103,7 +103,7 @@ public class CreditsScreen : MonoBehaviour
         GameObject btnTextObj = new GameObject("Text");
         btnTextObj.transform.SetParent(btnObj.transform, false);
         TextMeshProUGUI btnText = btnTextObj.AddComponent<TextMeshProUGUI>();
-        btnText.text = "MENU PRINCIPAL";
+        btnText.text = "MAIN MENU";
         if (fonteBotao != null) btnText.font = fonteBotao;
         btnText.alignment = TextAlignmentOptions.Center;
         btnText.fontSize = 35;

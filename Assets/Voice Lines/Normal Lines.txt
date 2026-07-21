@@ -2,26 +2,26 @@
 
 -----LINE: Computer-----
 
-B: Ha... ficava horas a jogar nos computadores desta sala.
+B: Ha... I used to spend hours playing on the computers in this room.
 
 ----------------
 -----LINE: Security key-----
 
-Will: Sabes para onde é essa chave?
-B: Ya, sala de segurança, fica logo aqui à esquerda.
+Will: Do tell... where does that key lead, B?
+B: Yeah, the security room, just around the left here.
 
 ----------------
------LINE: God or Devil painting-----
+-----LINE: God or Devil painting-----   
 
-Will: Há algo bastante perturbador neste quadro…
-B: O meu pai chamava esta pintura Deus. Ou Demónio. Dependendo do humor.
-Will: Sinistro...
+Will: Hmmm... There is something... disturbing about this portrait.
+B: My father called this painting God. Or Devil. Depending on his mood.
+Will: How sinister...
 
 ----------------
 -----LINE: Flow free terminal-----
 
-Will: Ah…  B? Porque é que o sistema de segurança deste portão é tão...
-B: O painel lê a minha retina. Ideia do meu pai. Para treinar a minha inteligência quando era pequena.
+Will: Ah... B? Why is the security system for this gate so... extravagant?
+B: The panel scans my retina. My father's idea. To train my intellect when I was small.
 
 ----------------
 

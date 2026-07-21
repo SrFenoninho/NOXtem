@@ -75,7 +75,7 @@ public class Keys : MonoBehaviour, IInteractable
 
         if (messageText != null)
         {
-            messageText.text = $"Apanhaste a chave: {name}.";
+            messageText.text = $"You picked up: {name}.";
             Invoke(nameof(ClearMessage), 2f);
         }
 

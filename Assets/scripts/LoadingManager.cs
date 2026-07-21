@@ -109,7 +109,7 @@ public class LoadingManager : MonoBehaviour
         GameObject textoObj = new GameObject("TextoLoading");
         textoObj.transform.SetParent(canvasObj.transform, false);
         TextMeshProUGUI textoUI = textoObj.AddComponent<TextMeshProUGUI>();
-        textoUI.text = "A CARREGAR...";
+        textoUI.text = "LOADING...";
         textoUI.alignment = TextAlignmentOptions.Center;
         textoUI.fontSize = 70;
         textoUI.color = Color.white;
@@ -175,7 +175,7 @@ public class LoadingManager : MonoBehaviour
         if (operacao == null)
         {
             // Debug.LogError("A CENA NÃO FOI ENCONTRADA. VAI AO 'BUILD SETTINGS' VER SE O NOME ESTÁ CERTO!");
-            textoUI.text = "ERRO: CENA INEXISTENTE!";
+            textoUI.text = "ERROR: SCENE NOT FOUND!";
             textoUI.color = Color.red;
             yield return new WaitForSeconds(3f);
             Destroy(canvasObj);

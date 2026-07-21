@@ -2,23 +2,23 @@
 
 -----LINE: Gas-----
 
-B: Ah... coof... coof...
-Will: Não pareces bem.
-B: É só este gás... ele desenvolveu-o para nos impedir de transformar. Mas porque está em todo o lugar?
-Will: Então estás vulnerável? Perfeito... (preocupado)
-B: haha... Cala-te, Willy... eu vou ficar bem.
+B: Ah... cough... cough...
+Will: You look rather dreadful.
+B: It's just this gas... he developed it to prevent us from transforming. But why is it everywhere?
+Will: So you're vulnerable, then? How delightful... (concerned)
+B: Haha... Quiet, Willy... I'll be fine.
 
 ----------------
 -----LINE: After Hack and Slash-----
 
-Will: B, estás bem?
-B: Estou.
-Will: Aquela coisa que te mandou para ai... e as outras mais pequenas... pareciam ter sido feitas pela energia da Tempestade.
-B: Como? O J. derrotou o Imperador da Tempestade.
-Will: Disseste que o teu pai estava doente, e que procurava algum meio de prolongar a sua vida... disseste que andava à procura dos fragmentos da tempestade. Ao que parece... ele conseguiu.
-B: Eu bazei em 2019... pensei que o J. tinha destruído tudo o que sobrou...
-Will: Temo que o J. também pensava isso... de qualquer forma, temos de investigar mais a fundo... Senhorita B.
-B: (suspira)
+Will: B, are you alright?
+B: I am.
+Will: That creature that sent you down there... and the smaller ones... they appeared to be crafted from the energy of the Storm.
+B: How? J. defeated the Storm Emperor.
+Will: You mentioned your father was ill, seeking some means to prolong his life... you said he was searching for the Storm fragments. It appears... he succeeded.
+B: I ran away in 2019... I thought J. destroyed everything that remained...
+Will: I fear J. believed so as well... Regardless, we must investigate further... Miss B.
+B: (sighs)
 
 ----------------
 

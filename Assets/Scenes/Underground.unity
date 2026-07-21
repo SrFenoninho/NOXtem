@@ -20301,7 +20301,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d145d3aedd622e4eaa021c0422777f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  initialObjective: Objetivo:\n Abrir o elevador
+  initialObjective: Objective:\nOpen the lift
   initialDelay: 18
   notificationPanel: {fileID: 797814490}
   notificationText: {fileID: 1567221770}
@@ -24109,7 +24109,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: pressione a tecla "F" para ligar a lanterna
+  m_text: Press 'F' to turn on the lighter
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 17824eb0f17a99945b7befb8181ed5f4, type: 2}
   m_sharedMaterial: {fileID: -5260790468738354795, guid: 17824eb0f17a99945b7befb8181ed5f4, type: 2}

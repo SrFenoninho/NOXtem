@@ -77,7 +77,7 @@ public class GeneratorMinigame : MonoBehaviour, IInteractable
         aJogar = true;
     }
 
-    public string GetInteractMessage() => jaResolvido ? "Gerador Ligado" : "Ligar Gerador";
+    public string GetInteractMessage() => jaResolvido ? "Generator On" : "Start Generator";
 
     // ---------------------------------------------
     //  UPDATE COM VAI-E-VEM

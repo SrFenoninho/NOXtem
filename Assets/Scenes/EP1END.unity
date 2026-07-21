@@ -14030,7 +14030,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d145d3aedd622e4eaa021c0422777f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  initialObjective: Objetivo:\n Acabar com o meu pai
+  initialObjective: Objective:\nFinish my father
   initialDelay: 1
   notificationPanel: {fileID: 797814490}
   notificationText: {fileID: 1567221770}

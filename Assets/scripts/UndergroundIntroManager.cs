@@ -123,7 +123,7 @@ public class UndergroundIntroManager : MonoBehaviour
 
         if (messageText != null)
         {
-            messageText.text = "Clique no Mouse 1 para forçar a abertura da porta";
+            messageText.text = "Left Click to force the door open";
         }
         
         waitingForPunch = true;

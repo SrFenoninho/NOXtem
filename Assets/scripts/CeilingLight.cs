@@ -15,12 +15,14 @@ public class CeilingLight : MonoBehaviour
 
     private Light lampLight;
     private MeshRenderer meshRenderer;
+    private MaterialPropertyBlock propBlock;
     private static readonly int EmissionColorProperty = Shader.PropertyToID("_EmissionColor");
 
     void Awake()
     {
         lampLight = GetComponent<Light>() ?? GetComponentInChildren<Light>();
         meshRenderer = GetComponent<MeshRenderer>() ?? GetComponentInChildren<MeshRenderer>();
+        propBlock = new MaterialPropertyBlock();
     }
 
     void Start()
@@ -28,11 +30,17 @@ public class CeilingLight : MonoBehaviour
         if (lampLight != null)
         {
             lampLight.color = lightColor;
-            // Ativar sombras ajustadas para impedir vaza de luz por paredes e tetos finos
             lampLight.shadows = LightShadows.Soft;
             lampLight.shadowBias = 0.005f;
             lampLight.shadowNormalBias = 0.05f;
             lampLight.shadowNearPlane = 0.02f;
+        }
+
+        // Garantir que a câmara principal tem fundo preto em vez do céu azul por defeito da Unity
+        if (Camera.main != null)
+        {
+            Camera.main.clearFlags = CameraClearFlags.SolidColor;
+            Camera.main.backgroundColor = Color.black;
         }
 
         if (startPowered || (DarknessManager.Instance != null && !DarknessManager.Instance.IsDark()))
@@ -97,14 +105,14 @@ public class CeilingLight : MonoBehaviour
             audio.PlayOneShot(powerUpFlickerSound);
         }
 
-        // Piscar 3 vezes estilo lâmpada fluorescente a acender
+        // Piscar 3 vezes estilo lâmpada fluorescente a acender (sem zerar completamente para não piscar azul)
         for (int i = 0; i < 3; i++)
         {
             lampLight.intensity = targetIntensity * 0.3f;
             SetMaterialEmission(true);
             yield return new WaitForSeconds(Random.Range(0.05f, 0.12f));
 
-            lampLight.intensity = 0f;
+            lampLight.intensity = 0.05f;
             SetMaterialEmission(false);
             yield return new WaitForSeconds(Random.Range(0.05f, 0.15f));
         }
@@ -114,17 +122,18 @@ public class CeilingLight : MonoBehaviour
 
     void SetMaterialEmission(bool active)
     {
-        if (meshRenderer != null && meshRenderer.material != null)
+        if (meshRenderer != null)
         {
+            meshRenderer.GetPropertyBlock(propBlock);
             if (active)
             {
-                meshRenderer.material.EnableKeyword("_EMISSION");
-                meshRenderer.material.SetColor(EmissionColorProperty, lightColor * 2f);
+                propBlock.SetColor(EmissionColorProperty, lightColor * 2f);
             }
             else
             {
-                meshRenderer.material.SetColor(EmissionColorProperty, Color.black);
+                propBlock.SetColor(EmissionColorProperty, Color.black);
             }
+            meshRenderer.SetPropertyBlock(propBlock);
         }
     }
 }

@@ -39518,7 +39518,7 @@ MonoBehaviour:
   tintMaxAlpha: 0.015
   tintLerpSpeed: 4
   lighterLight: {fileID: 1167020714}
-  lightIntensityOn: 0.1
+  lightIntensityOn: 0.3
   lightRangeOn: 9
   flameColorPrimary: {r: 1, g: 0.65, b: 0.2, a: 1}
   flameColorSecondary: {r: 1, g: 0.45, b: 0.1, a: 1}

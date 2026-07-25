@@ -123,8 +123,25 @@ public class LeverSystem : MonoBehaviour
     // ---------------------------------------------
     void SetRoomLights(bool on)
     {
-        foreach (Light l in roomLights)
-            if (l != null) l.enabled = on;
+        if (roomLights != null)
+        {
+            foreach (Light l in roomLights)
+                if (l != null) l.enabled = on;
+        }
+
+        // Encontrar todas as lampadas CeilingLight no mapa e acende-las
+        CeilingLight[] ceilingLights = Object.FindFirstObjectByType<CeilingLight>() != null 
+            ? Object.FindObjectsByType<CeilingLight>(FindObjectsSortMode.None) 
+            : new CeilingLight[0];
+
+        foreach (CeilingLight cLight in ceilingLights)
+        {
+            if (cLight != null)
+            {
+                if (on) cLight.TurnOn();
+                else cLight.TurnOff();
+            }
+        }
     }
 
     void ClearMessage()

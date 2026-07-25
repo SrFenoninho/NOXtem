@@ -40,6 +40,8 @@ public class OrbitCam : MonoBehaviour
         // Iniciar atras do jogador
         yaw = target.eulerAngles.y;
 
+        sensitivity = PlayerPrefs.GetFloat("Sensitivity", 100f);
+
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
@@ -55,7 +57,7 @@ public class OrbitCam : MonoBehaviour
     // ---------------------------------------------
     void HandleInput()
     {
-        float mouseX = Input.GetAxis("Mouse X") * sensitivity * Time.deltaTime;
+        float mouseX = Input.GetAxis("Mouse X") * (sensitivity * 0.05f);
         yaw += mouseX;
         // Pitch removido - camera so roda horizontalmente (design intencional)
     }

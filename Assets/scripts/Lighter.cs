@@ -43,6 +43,17 @@ public class Lighter : MonoBehaviour
     public float tintMaxAlpha = 0.12f;
     public float tintLerpSpeed = 4f;
 
+    [Header("Luz Unity Nativa & Efeito de Fogo Vivo")]
+    public Light lighterLight;
+    public float lightIntensityOn = 2.0f;
+    public float lightRangeOn = 4.0f;
+    public Color flameColorPrimary = new Color(1.0f, 0.65f, 0.20f);
+    public Color flameColorSecondary = new Color(1.0f, 0.45f, 0.10f);
+    public bool useFireFlicker = true;
+    public float flickerSpeed = 12f;
+    public float flickerAmount = 0.5f;
+    public float rangeFlickerAmount = 1.0f;
+
     // ---------------------------------------------
     //  ESTADO PRIVADO
     // ---------------------------------------------
@@ -65,6 +76,9 @@ public class Lighter : MonoBehaviour
     void Start()
     {
         audioSource = GetComponent<AudioSource>() ?? gameObject.AddComponent<AudioSource>();
+
+        if (lighterLight == null)
+            lighterLight = GetComponent<Light>() ?? GetComponentInChildren<Light>();
 
         origRadiusOff = radiusOff;
         origRadiusOn = radiusOn;
@@ -92,6 +106,8 @@ public class Lighter : MonoBehaviour
         if (tintImage != null) SetAlpha(tintImage, 0f);
 
         fpMove = GetComponentInParent<FPMove>();
+
+        UpdateLightComponent();
     }
 
     void Update()
@@ -104,6 +120,7 @@ public class Lighter : MonoBehaviour
         UpdateVignette();
         UpdateTint();
         UpdateModel();
+        UpdateLightComponent();
     }
 
     // ---------------------------------------------
@@ -167,6 +184,44 @@ public class Lighter : MonoBehaviour
 
         lighterModel.transform.localPosition = Vector3.Lerp(
             lighterModel.transform.localPosition, target, Time.deltaTime * drawSpeed);
+    }
+
+    void UpdateLightComponent()
+    {
+        if (lighterLight != null)
+        {
+            lighterLight.enabled = isLit;
+            if (isLit)
+            {
+                if (useFireFlicker)
+                {
+                    float n1 = Mathf.PerlinNoise(Time.time * flickerSpeed, 0f);
+                    float n2 = Mathf.PerlinNoise(0f, Time.time * (flickerSpeed * 0.7f));
+
+                    // 1. Transição dinâmica da cor da chama
+                    lighterLight.color = Color.Lerp(flameColorSecondary, flameColorPrimary, n1);
+
+                    // 2. Variação do raio de luz (usando Range Flicker Amount do Inspector)
+                    float rangeDip = (n2 - 0.5f) * rangeFlickerAmount;
+                    lighterLight.range = Mathf.Max(0.2f, lightRangeOn + rangeDip);
+
+                    // 3. Variação da intensidade de luz (usando Flicker Amount do Inspector)
+                    float intensityFlicker = (n1 - 0.5f) * flickerAmount;
+                    lighterLight.intensity = Mathf.Max(0.05f, lightIntensityOn + intensityFlicker);
+                }
+                else
+                {
+                    lighterLight.color = flameColorPrimary;
+                    lighterLight.range = lightRangeOn;
+                    lighterLight.intensity = lightIntensityOn;
+                }
+            }
+            else
+            {
+                lighterLight.intensity = 0f;
+                lighterLight.range = 0.1f;
+            }
+        }
     }
 
     // ---------------------------------------------

@@ -9,10 +9,13 @@ public class MainMenu : MonoBehaviour
     private GameObject canvasObj;
     private GameObject mainPanel;
     private GameObject optionsPanel;
+    private GameObject controlsPanel;
 
     private Button continueButton;
     private Slider sensitivitySlider;
     private Slider volumeSlider;
+    private TextMeshProUGUI sensitivityValueText;
+    private TextMeshProUGUI volumeValueText;
     private AudioSource menuAudioSource; // Referência direta para controlar o volume da música
 
     [Header("Personalização Visual (Opcional)")]
@@ -24,6 +27,7 @@ public class MainMenu : MonoBehaviour
     private Color corJanela = new Color(0.08f, 0.08f, 0.08f, 0.95f); // Janela cinza escura
     private Color corBotaoNormal = new Color(0.15f, 0.15f, 0.15f, 1f);
     private Color corBotaoSair = new Color(0.5f, 0.1f, 0.1f, 1f);
+    private Color corBotaoQualidade = new Color(0.2f, 0.2f, 0.25f, 1f);
     private Color corTextoNormal = Color.white;
     private Color corTextoDesativado = new Color(0.4f, 0.4f, 0.4f, 1f);
     private Color corSliderBg = new Color(0.25f, 0.25f, 0.25f, 1f);
@@ -44,21 +48,24 @@ public class MainMenu : MonoBehaviour
         // 3. Constrói toda a UI dinamicamente por código
         BuildUI();
 
-        // 4. Carrega as definições guardadas de sensibilidade e volume
+        // 4. Carrega as definições guardadas de sensibilidade, volume e qualidade
         float savedSensitivity = PlayerPrefs.GetFloat("Sensitivity", 100f);
         float savedVolume = PlayerPrefs.GetFloat("Volume", 1f);
+        int savedQuality = PlayerPrefs.GetInt("TextureQuality", 0);
+        QualitySettings.globalTextureMipmapLimit = savedQuality;
 
         if (sensitivitySlider != null)
         {
             sensitivitySlider.value = savedSensitivity;
             sensitivitySlider.onValueChanged.AddListener(delegate { ApplySensitivity(); });
+            ApplySensitivity();
         }
 
         if (volumeSlider != null)
         {
             volumeSlider.value = savedVolume;
             volumeSlider.onValueChanged.AddListener(delegate { ApplyVolume(); });
-            AudioListener.volume = savedVolume;
+            ApplyVolume();
         }
 
         // Deteta e controla o AudioSource existente no GameObject para a música de fundo
@@ -114,7 +121,7 @@ public class MainMenu : MonoBehaviour
         }
 
         // C. Título do Jogo
-        CreateLabel(bg.transform, "NØXtem", new Vector2(0.1f, 0.72f), new Vector2(0.9f, 0.9f), 96, true);
+        CreateLabel(bg.transform, "NØXtem", new Vector2(0.1f, 0.76f), new Vector2(0.9f, 0.94f), 96, true);
 
         // D. Painel Principal (Contém os botões Jogar, Continuar, Opções, Sair)
         mainPanel = CreatePanel(bg.transform, "MainPanel", new Vector2(0.35f, 0.12f), new Vector2(0.65f, 0.65f), Color.clear);
@@ -125,24 +132,78 @@ public class MainMenu : MonoBehaviour
         CreateButton(mainPanel.transform, "Quit", new Vector2(0f, 0f), new Vector2(1f, 0.2f), corBotaoSair, QuitGame);
 
         // E. Painel de Opções (Contém Sliders e Botão de Voltar)
-        optionsPanel = CreatePanel(bg.transform, "OptionsPanel", new Vector2(0.3f, 0.12f), new Vector2(0.7f, 0.68f), corJanela);
+        optionsPanel = CreatePanel(bg.transform, "OptionsPanel", new Vector2(0.25f, 0.08f), new Vector2(0.75f, 0.74f), corJanela);
 
         // Sub-título do painel de opções
-        CreateLabel(optionsPanel.transform, "Options", new Vector2(0.1f, 0.82f), new Vector2(0.9f, 0.94f), 32, true);
+        CreateLabel(optionsPanel.transform, "Options", new Vector2(0.1f, 0.86f), new Vector2(0.9f, 0.96f), 32, true);
 
-        // Slider de Sensibilidade
-        CreateLabel(optionsPanel.transform, "Mouse Sensitivity", new Vector2(0.1f, 0.66f), new Vector2(0.9f, 0.76f), 20, false);
-        sensitivitySlider = CreateSlider(optionsPanel.transform, new Vector2(0.1f, 0.54f), new Vector2(0.9f, 0.64f), 10f, 300f, 100f);
+        // Slider de Sensibilidade (10% a 500%)
+        sensitivityValueText = CreateLabel(optionsPanel.transform, "Mouse Sensitivity: 100%", new Vector2(0.1f, 0.72f), new Vector2(0.9f, 0.82f), 20, false);
+        sensitivitySlider = CreateSlider(optionsPanel.transform, new Vector2(0.1f, 0.62f), new Vector2(0.9f, 0.70f), 10f, 500f, 100f);
 
-        // Slider de Volume
-        CreateLabel(optionsPanel.transform, "Master Volume", new Vector2(0.1f, 0.38f), new Vector2(0.9f, 0.48f), 20, false);
-        volumeSlider = CreateSlider(optionsPanel.transform, new Vector2(0.1f, 0.26f), new Vector2(0.9f, 0.36f), 0f, 1f, 1f);
+        // Slider de Volume (0% a 100%)
+        volumeValueText = CreateLabel(optionsPanel.transform, "Master Volume: 100%", new Vector2(0.1f, 0.48f), new Vector2(0.9f, 0.58f), 20, false);
+        volumeSlider = CreateSlider(optionsPanel.transform, new Vector2(0.1f, 0.38f), new Vector2(0.9f, 0.46f), 0f, 1f, 1f);
+
+        // Opções de Qualidade Gráfica
+        CreateLabel(optionsPanel.transform, "Graphics Quality", new Vector2(0.1f, 0.26f), new Vector2(0.4f, 0.34f), 20, false);
+        string[] qLabels = { "High", "Medium", "Low" };
+        int[] qLevels = { 0, 2, 4 };
+        for (int i = 0; i < 3; i++)
+        {
+            int q = qLevels[i];
+            float bx = 0.45f + i * 0.16f;
+            CreateButton(optionsPanel.transform, qLabels[i],
+                new Vector2(bx, 0.25f), new Vector2(bx + 0.14f, 0.34f),
+                corBotaoQualidade, () =>
+                {
+                    QualitySettings.globalTextureMipmapLimit = q;
+                    PlayerPrefs.SetInt("TextureQuality", q);
+                    PlayerPrefs.Save();
+                });
+        }
+
+        // Botão Ver Controlos
+        CreateButton(optionsPanel.transform, "Controls", new Vector2(0.1f, 0.05f), new Vector2(0.45f, 0.17f), corBotaoNormal, OpenControls);
 
         // Botão de Voltar das opções
-        CreateButton(optionsPanel.transform, "Save and Back", new Vector2(0.2f, 0.04f), new Vector2(0.8f, 0.18f), corBotaoNormal, CloseOptions);
+        CreateButton(optionsPanel.transform, "Save and Back", new Vector2(0.55f, 0.05f), new Vector2(0.9f, 0.17f), corBotaoNormal, CloseOptions);
 
-        // Começa com o painel de opções ocultado
+        // F. Painel de Controlos
+        controlsPanel = CreatePanel(bg.transform, "ControlsPanel", new Vector2(0.15f, 0.08f), new Vector2(0.85f, 0.74f), corJanela);
+        CreateLabel(controlsPanel.transform, "Controls Overview", new Vector2(0.1f, 0.88f), new Vector2(0.9f, 0.98f), 32, true);
+
+        // Coluna 1: 1st Person
+        GameObject col1 = CreatePanel(controlsPanel.transform, "Col1", new Vector2(0.04f, 0.18f), new Vector2(0.48f, 0.86f), Color.clear);
+        CreateLabel(col1.transform, "1st Person (Exploration & Horror)", new Vector2(0f, 0.88f), new Vector2(1f, 0.98f), 22, true);
+        string fpText = "W, A, S, D  -  Move\n" +
+                        "Left Shift  -  Sprint\n" +
+                        "Left Ctrl  -  Crouch\n" +
+                        "E  -  Interact\n" +
+                        "F  -  Lighter\n" +
+                        "TAB  -  Inventory\n" +
+                        "ESC  -  Pause Menu";
+        CreateLabel(col1.transform, fpText, new Vector2(0.05f, 0.05f), new Vector2(0.95f, 0.85f), 18, false);
+
+        // Coluna 2: 3rd Person
+        GameObject col2 = CreatePanel(controlsPanel.transform, "Col2", new Vector2(0.52f, 0.18f), new Vector2(0.96f, 0.86f), Color.clear);
+        CreateLabel(col2.transform, "3rd Person (Combat & Boss)", new Vector2(0f, 0.88f), new Vector2(1f, 0.98f), 22, true);
+        string tpText = "W, A, S, D  -  Move\n" +
+                        "Space  -  Jump\n" +
+                        "Left Shift  -  Sprint\n" +
+                        "Left Click  -  Light Attack Combo\n" +
+                        "Right Click  -  Heavy Attack\n" +
+                        "Q  -  Block / Defense\n" +
+                        "TAB  -  Inventory\n" +
+                        "ESC  -  Pause Menu";
+        CreateLabel(col2.transform, tpText, new Vector2(0.05f, 0.05f), new Vector2(0.95f, 0.85f), 18, false);
+
+        // Botão Voltar dos Controlos
+        CreateButton(controlsPanel.transform, "Back to Options", new Vector2(0.35f, 0.03f), new Vector2(0.65f, 0.15f), corBotaoNormal, CloseControls);
+
+        // Começa com os painéis secundários ocultados
         optionsPanel.SetActive(false);
+        controlsPanel.SetActive(false);
     }
 
     // ---------------------------------------------
@@ -175,6 +236,7 @@ public class MainMenu : MonoBehaviour
     public void OpenOptions()
     {
         if (mainPanel != null) mainPanel.SetActive(false);
+        if (controlsPanel != null) controlsPanel.SetActive(false);
         if (optionsPanel != null) optionsPanel.SetActive(true);
     }
 
@@ -187,11 +249,28 @@ public class MainMenu : MonoBehaviour
         PlayerPrefs.Save();
     }
 
+    public void OpenControls()
+    {
+        if (optionsPanel != null) optionsPanel.SetActive(false);
+        if (controlsPanel != null) controlsPanel.SetActive(true);
+    }
+
+    public void CloseControls()
+    {
+        if (controlsPanel != null) controlsPanel.SetActive(false);
+        if (optionsPanel != null) optionsPanel.SetActive(true);
+    }
+
     private void ApplySensitivity()
     {
         if (sensitivitySlider != null)
         {
-            PlayerPrefs.SetFloat("Sensitivity", sensitivitySlider.value);
+            float val = sensitivitySlider.value;
+            PlayerPrefs.SetFloat("Sensitivity", val);
+            if (sensitivityValueText != null)
+            {
+                sensitivityValueText.text = $"Mouse Sensitivity: {Mathf.RoundToInt(val)}%";
+            }
         }
     }
 
@@ -199,13 +278,19 @@ public class MainMenu : MonoBehaviour
     {
         if (volumeSlider != null)
         {
-            PlayerPrefs.SetFloat("Volume", volumeSlider.value);
-            AudioListener.volume = volumeSlider.value; // Aplica o volume global do Unity em tempo real
+            float val = volumeSlider.value;
+            PlayerPrefs.SetFloat("Volume", val);
+            AudioListener.volume = val; // Aplica o volume global do Unity em tempo real
+
+            if (volumeValueText != null)
+            {
+                volumeValueText.text = $"Master Volume: {Mathf.RoundToInt(val * 100f)}%";
+            }
 
             // Sincroniza o volume da música de fundo local
             if (menuAudioSource != null)
             {
-                menuAudioSource.volume = volumeSlider.value;
+                menuAudioSource.volume = val;
             }
         }
     }

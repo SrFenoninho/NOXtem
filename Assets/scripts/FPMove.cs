@@ -103,6 +103,8 @@ public class FPMove : MonoBehaviour
             bodyRenderers = bodyRoot.GetComponentsInChildren<Renderer>();
         }
 
+        mouseSensitivity = PlayerPrefs.GetFloat("Sensitivity", 100f);
+
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
@@ -154,8 +156,8 @@ public class FPMove : MonoBehaviour
     {
         if (inputBlocked || cameraBlocked) return;
 
-        float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
-        float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
+        float mouseX = Input.GetAxis("Mouse X") * (mouseSensitivity * 0.05f);
+        float mouseY = Input.GetAxis("Mouse Y") * (mouseSensitivity * 0.05f);
 
         xRotation -= mouseY;
         xRotation = Mathf.Clamp(xRotation, -70f, 70f);

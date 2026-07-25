@@ -100,8 +100,8 @@ public class GameMenuManager : MonoBehaviour
     //  ESTADO PRIVADO
     // ---------------------------------------------
     private GameObject menuRoot;
-    private GameObject tabInventario, tabDefinicoes, tabSair;
-    private Button btnInventario, btnDefinicoes, btnSairTab;
+    private GameObject tabInventario, tabDefinicoes, tabControlos, tabSair;
+    private Button btnInventario, btnDefinicoes, btnControlosTab, btnSairTab;
 
     private List<GameObject> slots = new List<GameObject>();
     private Transform slotsRoot;
@@ -133,9 +133,13 @@ public class GameMenuManager : MonoBehaviour
     // ---------------------------------------------
     void Start()
     {
-        currentSensitivity = fPMove != null ? fPMove.mouseSensitivity : defaultSensitivity;
-        currentVolume = defaultVolume;
-        currentTextureQuality = QualitySettings.globalTextureMipmapLimit;
+        currentSensitivity = PlayerPrefs.GetFloat("Sensitivity", defaultSensitivity);
+        currentVolume = PlayerPrefs.GetFloat("Volume", defaultVolume);
+        currentTextureQuality = PlayerPrefs.GetInt("TextureQuality", QualitySettings.globalTextureMipmapLimit);
+
+        AudioListener.volume = currentVolume;
+        QualitySettings.globalTextureMipmapLimit = currentTextureQuality;
+        if (fPMove != null) fPMove.mouseSensitivity = currentSensitivity;
 
         inventoryAudioSource = gameObject.AddComponent<AudioSource>();
         inventoryAudioSource.loop = true;
@@ -365,6 +369,7 @@ public class GameMenuManager : MonoBehaviour
         BuildTopBar(window.transform);
         BuildTabInventario(window.transform);
         BuildTabDefinicoes(window.transform);
+        BuildTabControlos(window.transform);
         BuildTabSair(window.transform);
     }
 
@@ -381,8 +386,12 @@ public class GameMenuManager : MonoBehaviour
             new Vector2(0.25f, 0f), new Vector2(0.5f, 1f),
             () => ShowTab("definicoes"));
 
-        btnSairTab = CreateTabButton(bar.transform, "Save and Quit",
+        btnControlosTab = CreateTabButton(bar.transform, "Controls",
             new Vector2(0.5f, 0f), new Vector2(0.75f, 1f),
+            () => ShowTab("controlos"));
+
+        btnSairTab = CreateTabButton(bar.transform, "Save and Quit",
+            new Vector2(0.75f, 0f), new Vector2(1f, 1f),
             () => ShowTab("sair"));
     }
 
@@ -431,18 +440,21 @@ public class GameMenuManager : MonoBehaviour
 
         float rowH = 0.1f;
 
-        CreateLabel(tabDefinicoes.transform, "Mouse Sensitivity",
+        TextMeshProUGUI sensLabel = CreateLabel(tabDefinicoes.transform, $"Mouse Sensitivity: {Mathf.RoundToInt(currentSensitivity)}%",
             new Vector2(0.05f, 0.75f), new Vector2(0.45f, 0.75f + rowH), fonteDef);
         Slider sliderSens = CreateSlider(tabDefinicoes.transform,
             new Vector2(0.45f, 0.75f), new Vector2(0.9f, 0.75f + rowH),
-            10f, 300f, currentSensitivity);
+            10f, 500f, currentSensitivity);
         sliderSens.onValueChanged.AddListener(v =>
         {
             currentSensitivity = v;
+            if (sensLabel != null) sensLabel.text = $"Mouse Sensitivity: {Mathf.RoundToInt(v)}%";
             if (fPMove != null) fPMove.mouseSensitivity = v;
+            PlayerPrefs.SetFloat("Sensitivity", v);
+            PlayerPrefs.Save();
         });
 
-        CreateLabel(tabDefinicoes.transform, "Volume",
+        TextMeshProUGUI volLabel = CreateLabel(tabDefinicoes.transform, $"Volume: {Mathf.RoundToInt(currentVolume * 100f)}%",
             new Vector2(0.05f, 0.6f), new Vector2(0.45f, 0.6f + rowH), fonteDef);
         Slider sliderVol = CreateSlider(tabDefinicoes.transform,
             new Vector2(0.45f, 0.6f), new Vector2(0.9f, 0.6f + rowH),
@@ -450,7 +462,10 @@ public class GameMenuManager : MonoBehaviour
         sliderVol.onValueChanged.AddListener(v =>
         {
             currentVolume = v;
+            if (volLabel != null) volLabel.text = $"Volume: {Mathf.RoundToInt(v * 100f)}%";
             AudioListener.volume = v;
+            PlayerPrefs.SetFloat("Volume", v);
+            PlayerPrefs.Save();
         });
 
         CreateLabel(tabDefinicoes.transform, "Texture Quality",
@@ -468,8 +483,41 @@ public class GameMenuManager : MonoBehaviour
             {
                 currentTextureQuality = q;
                 QualitySettings.globalTextureMipmapLimit = q;
+                PlayerPrefs.SetInt("TextureQuality", q);
+                PlayerPrefs.Save();
             });
         }
+    }
+
+    void BuildTabControlos(Transform parent)
+    {
+        tabControlos = CreatePanel(parent, "TabControlos",
+            Vector2.zero, new Vector2(1f, 0.9f), Color.clear);
+
+        // Coluna 1: 1ª Pessoa
+        GameObject col1 = CreatePanel(tabControlos.transform, "Col1", new Vector2(0.04f, 0.1f), new Vector2(0.48f, 0.9f), Color.clear);
+        CreateLabel(col1.transform, "1st Person (Exploration & Horror)", new Vector2(0f, 0.88f), new Vector2(1f, 0.98f), fonteLabels, corTextoLabels);
+        string fpText = "W, A, S, D  -  Move\n" +
+                        "Left Shift  -  Sprint\n" +
+                        "Left Ctrl  -  Crouch\n" +
+                        "E  -  Interact\n" +
+                        "F  -  Lighter\n" +
+                        "TAB  -  Inventory\n" +
+                        "ESC  -  Pause Menu";
+        CreateLabel(col1.transform, fpText, new Vector2(0.05f, 0.05f), new Vector2(0.95f, 0.85f), fonteDef, corTextoNormal);
+
+        // Coluna 2: 3ª Pessoa
+        GameObject col2 = CreatePanel(tabControlos.transform, "Col2", new Vector2(0.52f, 0.1f), new Vector2(0.96f, 0.9f), Color.clear);
+        CreateLabel(col2.transform, "3rd Person (Combat & Boss)", new Vector2(0f, 0.88f), new Vector2(1f, 0.98f), fonteLabels, corTextoLabels);
+        string tpText = "W, A, S, D  -  Move\n" +
+                        "Space  -  Jump\n" +
+                        "Left Shift  -  Sprint\n" +
+                        "Left Click  -  Light Attack Combo\n" +
+                        "Right Click  -  Heavy Attack\n" +
+                        "Q  -  Block / Defense\n" +
+                        "TAB  -  Inventory\n" +
+                        "ESC  -  Pause Menu";
+        CreateLabel(col2.transform, tpText, new Vector2(0.05f, 0.05f), new Vector2(0.95f, 0.85f), fonteDef, corTextoNormal);
     }
 
     void BuildTabSair(Transform parent)
@@ -513,10 +561,12 @@ public class GameMenuManager : MonoBehaviour
         tabInventario.SetActive(tab == "inventario");
         if (tab == "inventario") RefreshInventory();
         tabDefinicoes.SetActive(tab == "definicoes");
+        if (tabControlos != null) tabControlos.SetActive(tab == "controlos");
         tabSair.SetActive(tab == "sair");
 
         btnInventario.GetComponent<Image>().color = tab == "inventario" ? corTabAtiva : corTabInativa;
         btnDefinicoes.GetComponent<Image>().color = tab == "definicoes" ? corTabAtiva : corTabInativa;
+        if (btnControlosTab != null) btnControlosTab.GetComponent<Image>().color = tab == "controlos" ? corTabAtiva : corTabInativa;
         btnSairTab.GetComponent<Image>().color = tab == "sair" ? corTabAtiva : corTabInativa;
     }
 

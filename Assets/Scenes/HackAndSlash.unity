@@ -7248,6 +7248,7 @@ GameObject:
   - component: {fileID: 1942857034}
   - component: {fileID: 1942857037}
   - component: {fileID: 1942857038}
+  - component: {fileID: 1942857039}
   m_Layer: 0
   m_Name: TPCAM
   m_TagString: MainCamera
@@ -7395,6 +7396,20 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   collisionRadius: 0.3
+--- !u!114 &1942857039
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1942857033}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cffdcaab34294c249bd7c4eb9a5036ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pixelScale: 0.3
+  enablePixelation: 1
 --- !u!1 &1967019435 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -902707911792423654, guid: 9a737bb354cb25b459d37fbba5493b5d, type: 3}

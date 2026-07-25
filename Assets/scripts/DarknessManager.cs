@@ -119,7 +119,16 @@ public class DarknessManager : MonoBehaviour
     public void OnPowerRestored()
     {
         powerRestored = true;
-        // Debug.Log("DarknessManager: Power restored, illuminating scene...");
+        
+        // Acender todas as lampadas do teto registradas no mapa com efeito de piscar
+        CeilingLight[] ceilingLights = Object.FindFirstObjectByType<CeilingLight>() != null 
+            ? Object.FindObjectsByType<CeilingLight>(FindObjectsSortMode.None) 
+            : new CeilingLight[0];
+
+        foreach (CeilingLight light in ceilingLights)
+        {
+            if (light != null) light.TurnOn();
+        }
     }
 
     // ---------------------------------------------

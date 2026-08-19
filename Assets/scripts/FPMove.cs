@@ -3,8 +3,12 @@ using UnityEngine;
 
 public class FPMove : MonoBehaviour
 {
+
+
+
+
     // ---------------------------------------------
-    //  INSPETOR
+    //  INSPECTOR
     // ---------------------------------------------
     [Header("Movement Settings")]
     public float speed = 5f;
@@ -15,6 +19,7 @@ public class FPMove : MonoBehaviour
 
     [Header("Ground Check")]
     public float groundDistance = 0.3f;
+
     public LayerMask groundMask;
 
     [Header("Camera Settings")]
@@ -48,11 +53,15 @@ public class FPMove : MonoBehaviour
 
     [Header("Visuals")]
     public GameObject bodyRoot;
-    private Renderer[] bodyRenderers;
+
+
+
 
     // ---------------------------------------------
-    //  ESTADO PRIVADO
+    //  PRIVATE STATE
     // ---------------------------------------------
+    private Renderer[] bodyRenderers;
+
     CharacterController controller;
     Transform playerCamera;
     Camera cam;
@@ -80,6 +89,10 @@ public class FPMove : MonoBehaviour
 
     [HideInInspector] public bool inputBlocked = false;
     [HideInInspector] public bool cameraBlocked = false;
+
+
+
+
 
     // ---------------------------------------------
     //  UNITY
@@ -149,9 +162,6 @@ public class FPMove : MonoBehaviour
             HandleStuckDetection();
     }
 
-    // ---------------------------------------------
-    //  VISAO DA CAMARA
-    // ---------------------------------------------
     void LateUpdate()
     {
         if (inputBlocked || cameraBlocked) return;
@@ -166,9 +176,6 @@ public class FPMove : MonoBehaviour
         transform.Rotate(Vector3.up * mouseX);
     }
 
-    // ---------------------------------------------
-    //  MOVIMENTO
-    // ---------------------------------------------
     void FixedUpdate()
     {
         if (inputBlocked) return;
@@ -198,7 +205,6 @@ public class FPMove : MonoBehaviour
         if (isGrounded && inputDir.magnitude > 0)
             HandleFootsteps(currentSpeed);
 
-        // Atualizar Animacoes
         if (anim != null)
         {
             bool isMoving = inputDir.magnitude > 0.1f;
@@ -208,8 +214,11 @@ public class FPMove : MonoBehaviour
         }
     }
 
+
+
+
     // ---------------------------------------------
-    //  EFEITOS VISUAIS / AUDIO
+    //  PRIVATE METHODS
     // ---------------------------------------------
     void HandleHeadBob(float currentSpeed)
     {
@@ -247,9 +256,6 @@ public class FPMove : MonoBehaviour
         }
     }
 
-    // ---------------------------------------------
-    //  AGACHAMENTO E CÂMARA DE SPRINT
-    // ---------------------------------------------
     void HandleCrouch(bool isSprinting)
     {
         if (inputBlocked) return;
@@ -269,7 +275,7 @@ public class FPMove : MonoBehaviour
         }
 
         float targetHeight = isCrouching ? crouchHeight : standingHeight;
-        
+
         float targetCamY = standingCameraY;
         if (isCrouching) targetCamY -= crouchCameraOffset;
         else if (isSprinting) targetCamY -= sprintDownwardOffset;
@@ -293,9 +299,6 @@ public class FPMove : MonoBehaviour
         return !Physics.Raycast(origin, Vector3.up, checkDistance, groundMask);
     }
 
-    // ---------------------------------------------
-    //  DETECAO DE BLOQUEIO
-    // ---------------------------------------------
     void HandleStuckDetection()
     {
         if (Vector3.Distance(previousPosition, transform.position) < stuckThreshold && !isGrounded)
@@ -305,7 +308,6 @@ public class FPMove : MonoBehaviour
             {
                 moveDir.y = Mathf.Sqrt(stuckRecoveryHeight * -2f * gravity);
                 stuckTimer = 0f;
-                // Debug.Log("Jogador preso - a tentar recuperar!");
             }
         }
         else
@@ -324,6 +326,13 @@ public class FPMove : MonoBehaviour
         }
     }
 
+
+
+
+
+    // ---------------------------------------------
+    //  PUBLIC METHODS
+    // ---------------------------------------------
     public void ForceCrouch()
     {
         if (!isCrouching)

@@ -3,22 +3,34 @@ using TMPro;
 
 public class LighterText : MonoBehaviour
 {
+
+
+
+
     // ---------------------------------------------
-    //  INSPETOR
+    //  INSPECTOR
     // ---------------------------------------------
     [Header("Definicoes")]
     public float fadeSpeed = 4f;
 
+
+
+
+
     // ---------------------------------------------
-    //  ESTADO PRIVADO
+    //  PRIVATE STATE
     // ---------------------------------------------
     private Lighter lighter;
     private TMP_Text textComponent;
     private IntroManager introManager;
-    
+
     private float currentAlpha = 0f;
     private float targetAlpha = 0f;
     private Color originalColor;
+
+
+
+
 
     // ---------------------------------------------
     //  UNITY
@@ -55,7 +67,7 @@ public class LighterText : MonoBehaviour
 
         bool isDark = DarknessManager.Instance.IsDark() || DarknessManager.Instance.IsInDarkZone();
         bool lighterIsOff = !lighter.IsLit();
-        
+
         bool showPrompt = isDark && lighterIsOff;
 
         targetAlpha = showPrompt ? 1f : 0f;
@@ -63,15 +75,19 @@ public class LighterText : MonoBehaviour
         ApplyFade();
     }
 
+
+
+
+
     // ---------------------------------------------
-    //  FADE LOGIC
+    //  PRIVATE METHODS
     // ---------------------------------------------
     private void ApplyFade()
     {
         if (textComponent == null) return;
 
         currentAlpha = Mathf.Lerp(currentAlpha, targetAlpha, Time.deltaTime * fadeSpeed);
-        
+
         SetAlpha(currentAlpha);
     }
 

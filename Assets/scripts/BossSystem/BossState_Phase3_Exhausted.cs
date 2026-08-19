@@ -2,10 +2,24 @@ using UnityEngine;
 
 public class BossState_Phase3_Exhausted : IBossState
 {
+
+
+
+
+    // ---------------------------------------------
+    //  PRIVATE STATE
+    // ---------------------------------------------
     private Vector3 currentPatrolTarget;
     private bool hasTarget = false;
     private float reevaluateTimer = 0f;
 
+
+
+
+
+    // ---------------------------------------------
+    //  PUBLIC METHODS
+    // ---------------------------------------------
     public void EnterState(BossController boss)
     {
         boss.health.isInvulnerable = false;
@@ -18,7 +32,6 @@ public class BossState_Phase3_Exhausted : IBossState
         float dist = Vector3.Distance(boss.transform.position, boss.playerTarget.position);
         UnityEngine.AI.NavMeshAgent agent = boss.movement.agent;
 
-        // Transita para o estado trancado de Fuga se não estiver em cooldown
         if (dist < 8.0f && boss.fleeCooldownTimer <= 0f)
         {
             boss.ChangeState(new BossState_Flee());
@@ -26,7 +39,7 @@ public class BossState_Phase3_Exhausted : IBossState
         }
 
         reevaluateTimer += Time.deltaTime;
-        
+
         bool reachedDestination = hasTarget && agent != null && agent.enabled && agent.isOnNavMesh && 
                                   !agent.pathPending && agent.remainingDistance <= agent.stoppingDistance + 0.5f;
 
@@ -38,13 +51,20 @@ public class BossState_Phase3_Exhausted : IBossState
             {
                 currentPatrolTarget = newTarget;
                 hasTarget = true;
-                boss.movement.MoveTo(currentPatrolTarget, boss.movement.walkSpeed * 0.5f); // Anda devagar, cansado
+                boss.movement.MoveTo(currentPatrolTarget, boss.movement.walkSpeed * 0.5f);
             }
         }
     }
 
     public void ExitState(BossController boss) {}
 
+
+
+
+
+    // ---------------------------------------------
+    //  PRIVATE METHODS
+    // ---------------------------------------------
     private bool EncontrarPontoPatrulhaSeguro(BossController boss, out Vector3 target)
     {
         target = boss.transform.position;
@@ -58,7 +78,7 @@ public class BossState_Phase3_Exhausted : IBossState
             Vector3 pontoCandidato = boss.movement.pontosTaticos[Random.Range(0, boss.movement.pontosTaticos.Count)];
 
             float testDist = Vector3.Distance(pontoCandidato, boss.playerTarget.position);
-            
+
             if (testDist >= 9f)
             {
                 target = pontoCandidato;

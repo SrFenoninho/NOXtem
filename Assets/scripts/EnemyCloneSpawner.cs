@@ -3,8 +3,12 @@ using System.Collections;
 
 public class EnemyCloneSpawner : MonoBehaviour
 {
+
+
+
+
     // ---------------------------------------------
-    //  DADOS PASSADOS PELO ENEMYAI AO MORRER
+    //  INSPECTOR
     // ---------------------------------------------
     [HideInInspector] public GameObject enemyPrefab;
     [HideInInspector] public GameObject cloneSpawnerPrefab;
@@ -12,28 +16,31 @@ public class EnemyCloneSpawner : MonoBehaviour
     [HideInInspector] public int maxGeneration;
     [HideInInspector] public System.Action OnCloneDeath;
 
-    // ---------------------------------------------
-    //  INSPETOR
-    // ---------------------------------------------
     [Header("Spawn Settings")]
-    public float spawnDelay = 1.5f;     // tempo de espera antes de criar o clone
+    public float spawnDelay = 1.5f;
 
     [Header("Particle Circle")]
     public float circleRadius = 1.2f;
+
     public Color particleColor = new Color(0.5f, 0f, 1f, 1f);
     public float particleSize = 0.2f;
+
+
+
+    // ---------------------------------------------
+    //  PRIVATE STATE
+    // ---------------------------------------------
     [Range(5, 50)]
     public int emissionRate = 30;
 
-    // ---------------------------------------------
-    //  ESTADO PRIVADO
-    // ---------------------------------------------
     private ParticleSystem particles;
 
+
+
+
     // ---------------------------------------------
-    //  INICIALIZAcaO
+    //  PUBLIC METHODS
     // ---------------------------------------------
-    // Chamado pelo EnemyAI ao morrer - configura e inicia o processo de spawn
     public void Initialize(GameObject prefab, GameObject spawnerPrefab, int gen, int maxGen, System.Action onCloneDeath)
     {
         enemyPrefab = prefab;
@@ -46,7 +53,6 @@ public class EnemyCloneSpawner : MonoBehaviour
 
         if (enemyPrefab != null)
         {
-            // Criar clone imediatamente na posicao deste objeto
             GameObject clone = Instantiate(enemyPrefab, transform.position, Quaternion.identity);
 
             EnemyAI ai = clone.GetComponent<EnemyAI>();
@@ -64,8 +70,11 @@ public class EnemyCloneSpawner : MonoBehaviour
         StartCoroutine(StopParticlesAfterDelay());
     }
 
+
+
+
     // ---------------------------------------------
-    //  EFEITO DE PARTiCULAS
+    //  PRIVATE METHODS
     // ---------------------------------------------
     void CreateCircleEffect()
     {
@@ -87,14 +96,12 @@ public class EnemyCloneSpawner : MonoBehaviour
         var emission = particles.emission;
         emission.rateOverTime = emissionRate;
 
-        // Circulo horizontal no chao
         var shape = particles.shape;
         shape.shapeType = ParticleSystemShapeType.Circle;
         shape.radius = circleRadius;
         shape.radiusThickness = 0.05f;
         shape.rotation = new Vector3(90f, 0f, 0f);
 
-        // Gradiente de cor ao longo da vida da particula
         var colorOverLifetime = particles.colorOverLifetime;
         colorOverLifetime.enabled = true;
         Gradient gradient = new Gradient();
@@ -112,7 +119,6 @@ public class EnemyCloneSpawner : MonoBehaviour
         );
         colorOverLifetime.color = new ParticleSystem.MinMaxGradient(gradient);
 
-        // Diminuir ao longo do tempo
         var sizeOverLifetime = particles.sizeOverLifetime;
         sizeOverLifetime.enabled = true;
         AnimationCurve sizeCurve = new AnimationCurve();
@@ -122,8 +128,8 @@ public class EnemyCloneSpawner : MonoBehaviour
 
         var renderer = particles.GetComponent<ParticleSystemRenderer>();
         Shader particleShader = Shader.Find("Universal Render Pipeline/Particles/Unlit");
-        if (particleShader == null) particleShader = Shader.Find("Legacy Shaders/Particles/Alpha Blended"); // Fallback com Alpha
-        
+        if (particleShader == null) particleShader = Shader.Find("Legacy Shaders/Particles/Alpha Blended");
+
         if (particleShader != null)
         {
             renderer.material = new Material(particleShader);
@@ -134,9 +140,6 @@ public class EnemyCloneSpawner : MonoBehaviour
         particles.Play();
     }
 
-    // ---------------------------------------------
-    //  SPAWN DO CLONE
-    // ---------------------------------------------
     IEnumerator StopParticlesAfterDelay()
     {
         yield return new WaitForSeconds(spawnDelay);
@@ -144,7 +147,6 @@ public class EnemyCloneSpawner : MonoBehaviour
         if (particles != null)
             particles.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
 
-        // Esperar um pouco para as particulas desaparecerem antes de destruir o objeto
         yield return new WaitForSeconds(1f);
         Destroy(gameObject);
     }

@@ -3,12 +3,17 @@ using UnityEngine.UI;
 
 public class CardReaderInteraction : MonoBehaviour, IInteractable
 {
+
+
+
+
     // ---------------------------------------------
-    //  INSPETOR
+    //  INSPECTOR
     // ---------------------------------------------
     [Header("Door Settings")]
-    public SimpleLockedDoor doorToUnlock;   // porta que este leitor controla
-    public string keyName = "Keycard";      // ID do cartao necessario
+
+    public SimpleLockedDoor doorToUnlock;
+    public string keyName = "Keycard";
 
     [Header("UI")]
     public Text messageText;
@@ -20,11 +25,19 @@ public class CardReaderInteraction : MonoBehaviour, IInteractable
     [Header("Glow Settings")]
     public bool enableGlow = true;
 
+
+
+
+
     // ---------------------------------------------
-    //  ESTADO PRIVADO
+    //  PRIVATE STATE
     // ---------------------------------------------
     private bool isUnlocked = false;
     private GlowEmitter readerGlow;
+
+
+
+
 
     // ---------------------------------------------
     //  UNITY
@@ -34,8 +47,11 @@ public class CardReaderInteraction : MonoBehaviour, IInteractable
         InitializeGlow();
     }
 
+
+
+
     // ---------------------------------------------
-    //  INICIALIZACAO DO GLOW
+    //  PRIVATE METHODS
     // ---------------------------------------------
     void InitializeGlow()
     {
@@ -50,15 +66,19 @@ public class CardReaderInteraction : MonoBehaviour, IInteractable
         }
     }
 
+
+
+
+
+    // ---------------------------------------------
+    //  PUBLIC METHODS
+    // ---------------------------------------------
     public void OnKeyPickedUp(string keyName)
     {
         if (keyName == this.keyName && enableGlow && readerGlow != null)
             readerGlow.EnableGlow();
     }
 
-    // ---------------------------------------------
-    //  INTERFACE IInteractable
-    // ---------------------------------------------
     public string GetInteractMessage()
     {
         return isUnlocked ? "Already unlocked" : "Press E to use card reader";
@@ -101,25 +121,17 @@ public class CardReaderInteraction : MonoBehaviour, IInteractable
         }
     }
 
-    // ---------------------------------------------
-    //  DESBLOQUEIO
-    // ---------------------------------------------
     void UnlockDoor()
     {
         if (doorToUnlock != null)
         {
             doorToUnlock.Unlock();
-            // Debug.Log("Porta destrancada pelo leitor de cartao!");
         }
         else
         {
-            // Debug.LogWarning("Nenhuma porta atribuida ao leitor de cartao!");
         }
     }
 
-    // ---------------------------------------------
-    //  UI
-    // ---------------------------------------------
     void ClearMessage()
     {
         if (messageText != null)

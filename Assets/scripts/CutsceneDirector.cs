@@ -3,21 +3,30 @@ using System.Collections.Generic;
 
 public class CutsceneDirector : MonoBehaviour
 {
+
+
+
+
     // ---------------------------------------------
-    //  INSPETOR
+    //  INSPECTOR
     // ---------------------------------------------
     [Header("Atores")]
+
     public CutsceneActor[] elenco;
 
-    [Header("Câmaras")]
+    [Header("Cï¿½maras")]
     public Camera camaraDoFilme;
     public Camera camaraDoJogador;
 
-    [Header("Configurações da Cena")]
+    [Header("Configuraï¿½ï¿½es da Cena")]
     public float tempoTotalDaCutscene = 15f;
 
+
+
+
+
     // ---------------------------------------------
-    //  CONTROLO DA CENA
+    //  PUBLIC METHODS
     // ---------------------------------------------
     public void DispararCena()
     {
@@ -35,6 +44,13 @@ public class CutsceneDirector : MonoBehaviour
         Invoke("TerminarCena", tempoTotalDaCutscene);
     }
 
+
+
+
+
+    // ---------------------------------------------
+    //  PRIVATE METHODS
+    // ---------------------------------------------
     private void TerminarCena()
     {
         if (camaraDoFilme != null) camaraDoFilme.gameObject.SetActive(false);

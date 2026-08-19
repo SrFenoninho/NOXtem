@@ -3,23 +3,35 @@ using UnityEngine.UI;
 
 public class FlowFreeCell : MonoBehaviour
 {
+
+
+
+
+
     // ---------------------------------------------
-    //  INSPETOR
+    //  INSPECTOR
     // ---------------------------------------------
     public int x;
     public int y;
-    public Image bgImage;       // fundo branco da celula
-    public Image shapeImage;    // circulo (endpoint) ou quadrado (caminho)
+    public Image bgImage;
+    public Image shapeImage;
+
+
+
+
 
     // ---------------------------------------------
-    //  ESTADO PRIVADO
+    //  PRIVATE STATE
     // ---------------------------------------------
     private FlowFreeGame game;
 
+
+
+
+
     // ---------------------------------------------
-    //  INICIALIZAcaO
+    //  PUBLIC METHODS
     // ---------------------------------------------
-    // Chamado pelo FlowFreeUI ao criar a grelha
     public void Initialize(int gridX, int gridY, FlowFreeGame gameManager)
     {
         x = gridX;
@@ -33,10 +45,6 @@ public class FlowFreeCell : MonoBehaviour
         UpdateVisual();
     }
 
-    // ---------------------------------------------
-    //  VISUAL
-    // ---------------------------------------------
-    // Atualiza o aspeto da celula com base no estado atual da grelha
     public void UpdateVisual()
     {
         if (game == null) return;
@@ -44,12 +52,10 @@ public class FlowFreeCell : MonoBehaviour
         Color cellColor = game.GetCellColor(x, y);
         bool endpoint = game.IsEndpoint(x, y);
 
-        // Fundo cinzento escuro elegante com transparência para estilo terminal futurista
         bgImage.color = new Color(0.12f, 0.12f, 0.12f, 0.85f);
 
         if (cellColor == Color.clear)
         {
-            // Celula vazia - esconder forma
             if (shapeImage != null)
                 shapeImage.gameObject.SetActive(false);
             return;
@@ -64,23 +70,23 @@ public class FlowFreeCell : MonoBehaviour
 
             if (endpoint)
             {
-                // Endpoints sao circulos maiores (50x50 para caber melhor na celula de 80)
                 shapeImage.sprite = GetCircleSprite();
                 rt.sizeDelta = new Vector2(50f, 50f);
             }
             else
             {
-                // Caminho e um circulo mais pequeno e elegante (estilo fluxo de energia circular)
                 shapeImage.sprite = GetCircleSprite();
                 rt.sizeDelta = new Vector2(25f, 25f);
             }
         }
     }
 
+
+
+
     // ---------------------------------------------
-    //  GERAcaO DE SPRITE CIRCULAR
+    //  PRIVATE METHODS
     // ---------------------------------------------
-    // Gera um sprite circular em runtime - sem assets externos necessarios
     Sprite GetCircleSprite()
     {
         int size = 64;

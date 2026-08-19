@@ -2,17 +2,28 @@ using UnityEngine;
 
 public class RotateObject : MonoBehaviour
 {
+
+
+
+
     // ---------------------------------------------
-    //  INSPETOR
+    //  INSPECTOR
     // ---------------------------------------------
     [Header("Rotation Settings")]
-    public Vector3 rotationSpeed = new Vector3(0, 0, 0); // graus por segundo em cada eixo
+
+    public Vector3 rotationSpeed = new Vector3(0, 0, 0);
 
     [Header("Particle System Settings")]
     public bool useParticles = true;
     public Vector3 particleOffset = new Vector3(0f, 0f, -0.5f);
     public Color particleColor = Color.white;
     public Texture particleTexture;
+
+
+
+    // ---------------------------------------------
+    //  PRIVATE STATE
+    // ---------------------------------------------
     [Range(5, 50f)]
     public int emissionRate = 10;
     [Range(0.1f, 2f)]
@@ -20,12 +31,13 @@ public class RotateObject : MonoBehaviour
     public float particleLifetime = 3f;
     public float particleRotationSpeed = 0.5f;
 
-    // ---------------------------------------------
-    //  ESTADO PRIVADO
-    // ---------------------------------------------
     private ParticleSystem particles;
     private MeshRenderer meshRenderer;
-    private bool effectsStopped = false; // evita parar os efeitos mais do que uma vez
+    private bool effectsStopped = false;
+
+
+
+
 
     // ---------------------------------------------
     //  UNITY
@@ -39,7 +51,6 @@ public class RotateObject : MonoBehaviour
 
     void Update()
     {
-        // Se o mesh foi desativado (ex: objeto apanhado), parar efeitos e rotacao
         if (!effectsStopped && meshRenderer != null && !meshRenderer.enabled)
         {
             StopEffects();
@@ -49,8 +60,11 @@ public class RotateObject : MonoBehaviour
             transform.Rotate(rotationSpeed * Time.deltaTime);
     }
 
+
+
+
     // ---------------------------------------------
-    //  EFEITOS
+    //  PUBLIC METHODS
     // ---------------------------------------------
     public void StopEffects()
     {
@@ -59,19 +73,23 @@ public class RotateObject : MonoBehaviour
             particles.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
     }
 
+
+
+
+    // ---------------------------------------------
+    //  PRIVATE METHODS
+    // ---------------------------------------------
     void CreateParticleSystem()
     {
         GameObject particleObj = new GameObject("Particles");
         particleObj.transform.SetParent(transform);
 
-        // Centrar as particulas no renderer do objeto
         Renderer rend = GetComponent<Renderer>();
         if (rend != null)
             particleObj.transform.position = rend.bounds.center;
         else
             particleObj.transform.localPosition = Vector3.zero;
 
-        // Puxar a partícula para fora usando o offset
         particleObj.transform.Translate(particleOffset, Space.Self);
 
         particles = particleObj.AddComponent<ParticleSystem>();
@@ -88,16 +106,13 @@ public class RotateObject : MonoBehaviour
         emission.rateOverTime = 0f;
         emission.SetBursts(new ParticleSystem.Burst[] { new ParticleSystem.Burst(0f, 1, 1, 0, particleLifetime) });
 
-        // Desativar shape emite estritamente no centro
         var shape = particles.shape;
         shape.enabled = false;
 
-        // Rotação sobre o tempo
         var rotOverLifetime = particles.rotationOverLifetime;
         rotOverLifetime.enabled = true;
         rotOverLifetime.z = new ParticleSystem.MinMaxCurve(particleRotationSpeed);
 
-        // Particulas aumentam ao longo do tempo e voltam a encolher no fim
         var sizeOverLifetime = particles.sizeOverLifetime;
         sizeOverLifetime.enabled = true;
         AnimationCurve sizeCurve = new AnimationCurve();
@@ -107,7 +122,6 @@ public class RotateObject : MonoBehaviour
         sizeCurve.AddKey(1f, 0.01f);
         sizeOverLifetime.size = new ParticleSystem.MinMaxCurve(1f, sizeCurve);
 
-        // Fade de opacidade ao longo do tempo
         var colorOverLifetime = particles.colorOverLifetime;
         colorOverLifetime.enabled = true;
         Gradient gradient = new Gradient();
@@ -127,7 +141,7 @@ public class RotateObject : MonoBehaviour
 
         var renderer = particles.GetComponent<ParticleSystemRenderer>();
         Shader particleShader = Shader.Find("Universal Render Pipeline/Particles/Unlit");
-        if (particleShader == null) particleShader = Shader.Find("Legacy Shaders/Particles/Alpha Blended"); // Fallback Clássico com Alpha
+        if (particleShader == null) particleShader = Shader.Find("Legacy Shaders/Particles/Alpha Blended");
 
         renderer.material = new Material(particleShader);
         if (particleTexture != null)
@@ -135,7 +149,7 @@ public class RotateObject : MonoBehaviour
             if (renderer.material.HasProperty("_BaseMap")) renderer.material.SetTexture("_BaseMap", particleTexture);
             else renderer.material.mainTexture = particleTexture;
         }
-        
+
         if (renderer.material.HasProperty("_BaseColor"))
             renderer.material.SetColor("_BaseColor", particleColor);
         else if (renderer.material.HasProperty("_TintColor"))
@@ -145,6 +159,6 @@ public class RotateObject : MonoBehaviour
 
         renderer.renderMode = ParticleSystemRenderMode.Billboard;
 
-        particles.Play(); // Forçar inicio do sistema
+        particles.Play();
     }
 }

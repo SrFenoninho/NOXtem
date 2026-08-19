@@ -6,7 +6,7 @@ using System.Collections;
 public enum TipoTransicao
 {
     SemAnimacao,
-    FadeSuave, // Fade de transparência clássico (Dissolve)
+    FadeSuave,
     EsquerdaParaDireita,
     DireitaParaEsquerda,
     CimaParaBaixo,
@@ -16,15 +16,28 @@ public enum TipoTransicao
 [System.Serializable]
 public class PainelHQ
 {
+
+
+
+    // ---------------------------------------------
+    //  PRIVATE STATE
+    // ---------------------------------------------
     [Tooltip("A imagem/desenho que queres mostrar")]
+
+
+
+
+    // ---------------------------------------------
+    //  INSPECTOR
+    // ---------------------------------------------
     public Sprite sprite;
-    
+
     [Tooltip("Tempo (em segundos) que a imagem fica no ecrã antes de avançar sozinha (Mete 0 se quiseres que avance APENAS pelo clique)")]
     public float tempoDeEspera = 3f;
 
     [Tooltip("Qual é a animação para este desenho aparecer?")]
     public TipoTransicao tipoAnimacao = TipoTransicao.EsquerdaParaDireita;
-    
+
     [Tooltip("Velocidade da transição (em segundos)")]
     public float velocidadeAnimacao = 1f;
 }
@@ -38,10 +51,10 @@ public class HQCutscene : MonoBehaviour
     [Header("Configurações Visuais")]
     [Tooltip("O teu painel principal onde o desenho novo aparece (Image Type deve ser Filled)")]
     public Image imagemDaHQ;
-    
+
     [Tooltip("NOVO: Cria uma SEGUNDA Image no Unity para ficar por trás da imagemDaHQ, e arrasta-a para aqui! Isto vai mostrar a foto antiga durante a transição.")]
     public Image imagemFundo;
-    
+
     [Tooltip("Cria aqui a lista de todas as tuas imagens")]
     public PainelHQ[] paineisHQ;
 
@@ -49,14 +62,21 @@ public class HQCutscene : MonoBehaviour
     [Tooltip("Nome exato da cena (Ex: Floor1)")]
     public string nomeDaProximaCena;
 
+
     private int indiceAtual = 0;
     private bool cutsceneAtiva = false;
     private bool emAnimacao = false;
     private float timerLeitura = 0f;
 
+
+
+
+
+    // ---------------------------------------------
+    //  UNITY
+    // ---------------------------------------------
     void Start()
     {
-        // Garante que o Image Type está correto no Unity automaticamente
         if (imagemDaHQ != null) imagemDaHQ.type = Image.Type.Filled;
         if (imagemFundo != null) imagemFundo.type = Image.Type.Simple;
 
@@ -67,12 +87,10 @@ public class HQCutscene : MonoBehaviour
     {
         if (!cutsceneAtiva || emAnimacao) return;
 
-        // 1. Passar pelo clique
         if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Return))
         {
             AvancarPainel();
         }
-        // 2. Passar pelo tempo
         else if (paineisHQ[indiceAtual].tempoDeEspera > 0)
         {
             timerLeitura += Time.deltaTime;
@@ -83,6 +101,13 @@ public class HQCutscene : MonoBehaviour
         }
     }
 
+
+
+
+
+    // ---------------------------------------------
+    //  PUBLIC METHODS
+    // ---------------------------------------------
     public void IniciarHQ()
     {
         if (paineisHQ == null || paineisHQ.Length == 0) return;
@@ -90,12 +115,18 @@ public class HQCutscene : MonoBehaviour
         indiceAtual = 0;
         imagemDaHQ.gameObject.SetActive(true);
         if (imagemFundo != null) imagemFundo.gameObject.SetActive(true);
-        
+
         cutsceneAtiva = true;
 
         StartCoroutine(AnimarPainel(paineisHQ[indiceAtual]));
     }
 
+
+
+
+    // ---------------------------------------------
+    //  PRIVATE METHODS
+    // ---------------------------------------------
     void AvancarPainel()
     {
         indiceAtual++;
@@ -114,47 +145,40 @@ public class HQCutscene : MonoBehaviour
     IEnumerator AnimarPainel(PainelHQ painelAtual)
     {
         emAnimacao = true;
-        
-        // --- 1. CONFIGURAR O FUNDO (FOTO ANTERIOR) ---
+
         if (imagemFundo != null)
         {
-            // Se for o primeiro desenho de todos, deixamos o fundo preto ou transparente
             if (indiceAtual == 0) 
                 imagemFundo.sprite = null; 
             else 
-                imagemFundo.sprite = paineisHQ[indiceAtual - 1].sprite; // Mostra a imagem antiga!
-            
-            // Fundo é sempre 100% visível durante a transição
+                imagemFundo.sprite = paineisHQ[indiceAtual - 1].sprite;
+
             imagemFundo.color = new Color(1f, 1f, 1f, 1f); 
         }
 
-        // --- 2. CONFIGURAR A FRENTE (NOVA FOTO) ---
         imagemDaHQ.sprite = painelAtual.sprite;
-        imagemDaHQ.color = new Color(1f, 1f, 1f, 1f); // Reset ao alpha
-        
+        imagemDaHQ.color = new Color(1f, 1f, 1f, 1f);
+
         ConfigurarDirecaoImage(painelAtual.tipoAnimacao);
 
-        // --- 3. EXECUTAR ANIMAÇÃO ---
         if (painelAtual.tipoAnimacao == TipoTransicao.SemAnimacao || painelAtual.velocidadeAnimacao <= 0)
         {
             imagemDaHQ.fillAmount = 1f;
         }
         else if (painelAtual.tipoAnimacao == TipoTransicao.FadeSuave)
         {
-            imagemDaHQ.fillAmount = 1f; // A imagem tem de estar toda preenchida
-            
+            imagemDaHQ.fillAmount = 1f;
+
             float progresso = 0f;
             while (progresso < 1f)
             {
                 progresso += Time.deltaTime / painelAtual.velocidadeAnimacao;
-                // Fade In pelo Alpha (Transparência) da Imagem da Frente
                 imagemDaHQ.color = new Color(1f, 1f, 1f, Mathf.Clamp01(progresso));
                 yield return null;
             }
         }
         else
         {
-            // Animar pelo preenchimento (Slide / Wipe de Direções)
             float progresso = 0f;
             while (progresso < 1f)
             {
@@ -164,7 +188,6 @@ public class HQCutscene : MonoBehaviour
             }
         }
 
-        // No fim da animação, garante que está 100% visível
         imagemDaHQ.color = new Color(1f, 1f, 1f, 1f);
         imagemDaHQ.fillAmount = 1f;
         emAnimacao = false;
@@ -191,8 +214,7 @@ public class HQCutscene : MonoBehaviour
                 imagemDaHQ.fillOrigin = (int)Image.OriginVertical.Bottom;
                 break;
         }
-        
-        // Se a transição for de direção (deslizar/wipe), o fillAmount começa vazio (0%)
+
         if (direcao != TipoTransicao.SemAnimacao && direcao != TipoTransicao.FadeSuave)
         {
             imagemDaHQ.fillAmount = 0f;
@@ -202,14 +224,13 @@ public class HQCutscene : MonoBehaviour
     void FinalizarHQ()
     {
         cutsceneAtiva = false;
-        
+
         if (!string.IsNullOrEmpty(nomeDaProximaCena))
         {
             LoadingManager.Carregar(nomeDaProximaCena);
         }
         else
         {
-            // Debug.LogWarning("HQ acabou, mas não puseste o nome da próxima cena!");
             imagemDaHQ.gameObject.SetActive(false);
             if (imagemFundo != null) imagemFundo.gameObject.SetActive(false);
         }

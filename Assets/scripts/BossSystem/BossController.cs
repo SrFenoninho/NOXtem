@@ -7,8 +7,15 @@ using UnityEngine.SceneManagement;
 [RequireComponent(typeof(BossVFX))]
 public class BossController : MonoBehaviour
 {
+
+
+
+
+    // ---------------------------------------------
+    //  INSPECTOR
+    // ---------------------------------------------
     public enum BossPhase { Phase1, PillarEvent1, Phase2, PillarEvent2, Phase3, ReadyToDie, Cutscene }
-    
+
     [Header("Estado Central")]
     public BossPhase currentPhase = BossPhase.Phase1;
     public IBossState currentState;
@@ -18,7 +25,6 @@ public class BossController : MonoBehaviour
     public PlayerHealth playerHealthRef;
     public Animator anim;
 
-    // Componentes Modulares
     public BossHealth health { get; private set; }
     public BossMovement movement { get; private set; }
     public BossCombat combat { get; private set; }
@@ -26,8 +32,15 @@ public class BossController : MonoBehaviour
 
     public string nextSceneName = "Scene_Epilogo";
     [HideInInspector] public BossPillar ultimoPilarNoMapa;
-    [HideInInspector] public float fleeCooldownTimer = 0f; // Cooldown de segurança para o boss não fugir sem parar
+    [HideInInspector] public float fleeCooldownTimer = 0f;
 
+
+
+
+
+    // ---------------------------------------------
+    //  UNITY
+    // ---------------------------------------------
     void Awake()
     {
         health = GetComponent<BossHealth>();
@@ -60,8 +73,7 @@ public class BossController : MonoBehaviour
     void Update()
     {
         if (playerTarget == null) return;
-        
-        // Decrementa o temporizador de cooldown de fuga
+
         if (fleeCooldownTimer > 0f)
         {
             fleeCooldownTimer -= Time.deltaTime;
@@ -76,45 +88,45 @@ public class BossController : MonoBehaviour
         {
             movement.UpdateAnimatorSpeed();
 
-            // Se o corpo físico do Boss colidir com uma parede e ele não conseguir avançar, força desvio instantâneo!
             if (movement.VerificarSeEstaPreso())
             {
-                // Debug.LogWarning("⚠️ [AI] Boss detetou obstrução (parede física). A forçar desvio de rota!");
                 movement.StopMovement();
 
                 if (currentState is BossState_Flee)
                 {
-                    // Se estava a fugir, força uma nova fuga para outro ponto tático livre
                     ChangeState(new BossState_Flee());
                 }
                 else if (currentState is BossState_Phase1_Cautious || currentState is BossState_Phase3_Exhausted)
                 {
-                    // Se estava a patrulhar, força a recriação do estado para limpar o hasTarget e escolher novo ponto
                     TriggerPhase(currentPhase);
                 }
                 else if (currentState is BossState_PillarCharge)
                 {
-                    // Se estava a carregar/fugir para o pilar e bateu na parede, reinicia a fase para ele recuar em segurança
-                    // Debug.LogWarning("⚠️ [AI] Boss ficou obstruído na parede durante a fase do pilar. A resetar investida!");
                     TriggerPhase(currentPhase);
                 }
             }
         }
     }
 
+
+
+
+
+    // ---------------------------------------------
+    //  PUBLIC METHODS
+    // ---------------------------------------------
     public void ChangeState(IBossState newState)
     {
         string oldName = (currentState != null) ? currentState.GetType().Name : "Null";
         string newName = (newState != null) ? newState.GetType().Name : "Null";
-        // Debug.Log("🔄 [FSM] Estado alterado de " + oldName + " para " + newName);
 
         if (currentState != null)
         {
             currentState.ExitState(this);
         }
-        
+
         currentState = newState;
-        
+
         if (currentState != null)
         {
             currentState.EnterState(this);
@@ -124,7 +136,7 @@ public class BossController : MonoBehaviour
     public void TriggerPhase(BossPhase newPhase)
     {
         currentPhase = newPhase;
-        
+
         switch(currentPhase)
         {
             case BossPhase.Phase1:
@@ -149,7 +161,6 @@ public class BossController : MonoBehaviour
 
     public void OnTookDamage(int consecutiveHits)
     {
-        // Se já está a atacar, a saltar, na carga ao pilar ou na cutscene final, ele tem Hyper Armor (ignora hits)
         if (currentState is BossState_MeleeAttack || currentState is BossState_JumpAttack || currentState is BossState_PillarCharge || currentState is BossState_ReadyForCutscene)
             return;
 
@@ -160,10 +171,16 @@ public class BossController : MonoBehaviour
             return;
         }
 
-        // Se levar hit 1 ou 2, entra/renova o atordoamento (Stun)
         ChangeState(new BossState_Stunned());
     }
 
+
+
+
+
+    // ---------------------------------------------
+    //  PRIVATE METHODS
+    // ---------------------------------------------
     private void EncontrarUltimoPilar()
     {
         BossPillar[] todosOsPilares = FindObjectsByType<BossPillar>(FindObjectsSortMode.None);
@@ -189,18 +206,17 @@ public class BossController : MonoBehaviour
     public void ExecuteFinalCutscene()
     {
         currentPhase = BossPhase.Cutscene;
-        ChangeState(null); // Desliga states
-        
+        ChangeState(null);
+
         if (anim != null) 
         {
-            // Proteção para evitar o aviso "State could not be found" se a animação não existir
             int estadoID = Animator.StringToHash("FinalHit");
             if (anim.HasState(0, estadoID))
             {
                 anim.Play("FinalHit");
             }
         }
-        
+
         Invoke("LoadNextScene", 4f);
     }
 

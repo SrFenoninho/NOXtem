@@ -2,6 +2,13 @@ using UnityEngine;
 
 public class BossState_ReadyForCutscene : IBossState
 {
+
+
+
+
+    // ---------------------------------------------
+    //  PUBLIC METHODS
+    // ---------------------------------------------
     public void EnterState(BossController boss)
     {
         boss.health.isInvulnerable = true;

@@ -3,10 +3,15 @@ using UnityEngine.UI;
 
 public class RadialMenuManager : MonoBehaviour
 {
+
+
+
+
     // ---------------------------------------------
-    //  INSPETOR
+    //  INSPECTOR
     // ---------------------------------------------
     [Header("UI")]
+
     public GameObject radialMenuUI;
 
     [Header("UI Buttons")]
@@ -18,6 +23,13 @@ public class RadialMenuManager : MonoBehaviour
     [Header("Audio")]
     public AudioClip[] voiceLines;
     public AudioClip[] optionAudios;
+
+
+
+
+    // ---------------------------------------------
+    //  PRIVATE STATE
+    // ---------------------------------------------
     private AudioSource audioSource;
 
     [Header("Menu State")]
@@ -31,6 +43,10 @@ public class RadialMenuManager : MonoBehaviour
     public string option2 = "Option 2";
     public string option3 = "Option 3";
     public string option4 = "Option 4";
+
+
+
+
 
     // ---------------------------------------------
     //  UNITY
@@ -97,8 +113,11 @@ public class RadialMenuManager : MonoBehaviour
         }
     }
 
+
+
+
     // ---------------------------------------------
-    //  ABRIR / FECHAR MENU
+    //  PRIVATE METHODS
     // ---------------------------------------------
     void OpenMenu()
     {
@@ -133,9 +152,6 @@ public class RadialMenuManager : MonoBehaviour
         Time.timeScale = 1;
     }
 
-    // ---------------------------------------------
-    //  SELEcaO DE OPcoES
-    // ---------------------------------------------
     void SelectOption(int optionNumber)
     {
         radialMenuUI.SetActive(false);
@@ -154,9 +170,6 @@ public class RadialMenuManager : MonoBehaviour
         }
     }
 
-    // ---------------------------------------------
-    //  EXECUcaO DE OPcoES
-    // ---------------------------------------------
     void ExecuteOption(int optionNumber)
     {
         switch (currentContext)
@@ -171,10 +184,6 @@ public class RadialMenuManager : MonoBehaviour
     {
         switch (option)
         {
-            // case 1: Debug.Log("Default action 1"); break;
-            // case 2: Debug.Log("Default action 2"); break;
-            // case 3: Debug.Log("Default action 3"); break;
-            // case 4: Debug.Log("Default action 4"); break;
         }
     }
 
@@ -182,10 +191,6 @@ public class RadialMenuManager : MonoBehaviour
     {
         switch (option)
         {
-            // case 1: Debug.Log("Try to open door"); break;
-            // case 2: Debug.Log("Examine door"); break;
-            // case 3: Debug.Log("Use key on door"); break;
-            // case 4: Debug.Log("Cancel"); break;
         }
     }
 
@@ -193,24 +198,21 @@ public class RadialMenuManager : MonoBehaviour
     {
         switch (option)
         {
-            // case 1: Debug.Log("Access system"); break;
-            // case 2: Debug.Log("Check logs"); break;
-            // case 3: Debug.Log("Shutdown"); break;
-            // case 4: Debug.Log("Cancel"); break;
         }
     }
 
+
+
+
+
     // ---------------------------------------------
-    //  CLIQUES DOS BOToES
+    //  PUBLIC METHODS
     // ---------------------------------------------
     public void ClickOption1() { SelectOption(1); }
     public void ClickOption2() { SelectOption(2); }
     public void ClickOption3() { SelectOption(3); }
     public void ClickOption4() { SelectOption(4); }
 
-    // ---------------------------------------------
-    //  CONTEXTO
-    // ---------------------------------------------
     public void SetContext(string newContext, string opt1, string opt2, string opt3, string opt4)
     {
         currentContext = newContext;

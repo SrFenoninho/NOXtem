@@ -1,22 +1,36 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-// Apos todos terminarem, um breve tempo de espera antes do proximo grupo se formar.
 public static class EnemyCombatManager
 {
+
+
+
+
     // ---------------------------------------------
-    //  ESTADO
+    //  PRIVATE STATE
     // ---------------------------------------------
     private static List<EnemyAI> registeredEnemies = new List<EnemyAI>();
     private static List<EnemyAI> currentAttackers = new List<EnemyAI>();
 
+
+
+
+    // ---------------------------------------------
+    //  INSPECTOR
+    // ---------------------------------------------
     public static int maxSimultaneousAttackers = 2;
     public static float groupCooldownMin = 0.5f;
     public static float groupCooldownMax = 1.2f;
+
     private static float nextGroupTime = 0f;
 
+
+
+
+
     // ---------------------------------------------
-    //  REGISTO
+    //  PUBLIC METHODS
     // ---------------------------------------------
     public static void Register(EnemyAI enemy)
     {
@@ -30,10 +44,6 @@ public static class EnemyCombatManager
         currentAttackers.Remove(enemy);
     }
 
-    // ---------------------------------------------
-    //  TOKENS DE ATAQUE
-    // ---------------------------------------------
-    // Conceder token se houver vagas abertas e o tempo de espera tiver passado
     public static bool RequestAttackToken(EnemyAI requester)
     {
         if (currentAttackers.Contains(requester)) return false;
@@ -48,22 +58,16 @@ public static class EnemyCombatManager
     {
         if (!currentAttackers.Remove(attacker)) return;
 
-        // O tempo de espera so comeca quando o ultimo atacante do grupo termina
         if (currentAttackers.Count == 0)
             nextGroupTime = Time.time + Random.Range(groupCooldownMin, groupCooldownMax);
     }
 
-    // ---------------------------------------------
-    //  CONSULTAS
-    // ---------------------------------------------
     public static bool HasToken(EnemyAI enemy) => currentAttackers.Contains(enemy);
     public static int AttackerCount => currentAttackers.Count;
     public static int EnemyCount => registeredEnemies.Count;
 
-    // Reset total para garantir que transições de cena não quebrem a contagem na Build
     public static void Clear()
     {
-        // Limpa nulls ou inimigos órfãos
         registeredEnemies.RemoveAll(e => e == null);
         registeredEnemies.Clear();
         currentAttackers.Clear();

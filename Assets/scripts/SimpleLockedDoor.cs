@@ -2,15 +2,27 @@ using UnityEngine;
 
 public class SimpleLockedDoor : MonoBehaviour
 {
+
+
+
+
     // ---------------------------------------------
-    //  INSPETOR
+    //  INSPECTOR
     // ---------------------------------------------
     public bool isLocked = true;
 
+
+
+
+
     // ---------------------------------------------
-    //  ESTADO PRIVADO
+    //  PRIVATE STATE
     // ---------------------------------------------
     private Rigidbody rb;
+
+
+
+
 
     // ---------------------------------------------
     //  UNITY
@@ -19,13 +31,16 @@ public class SimpleLockedDoor : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         if (rb != null)
-            rb.isKinematic = isLocked; // cinematico enquanto trancada
+            rb.isKinematic = isLocked;
     }
 
+
+
+
+
     // ---------------------------------------------
-    //  DESBLOQUEIO
+    //  PUBLIC METHODS
     // ---------------------------------------------
-    // Chamado externamente (ex: CardReaderInteraction) para destrancar a porta
     public void Unlock()
     {
         if (!isLocked) return;
@@ -33,8 +48,7 @@ public class SimpleLockedDoor : MonoBehaviour
         isLocked = false;
 
         if (rb != null)
-            rb.isKinematic = false; // ativar fisica - a porta cai
+            rb.isKinematic = false;
 
-        // Debug.Log(gameObject.name + " foi destrancada!");
     }
 }

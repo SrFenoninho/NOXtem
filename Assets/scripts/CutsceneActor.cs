@@ -4,6 +4,13 @@ using System.Collections;
 [System.Serializable]
 public class CutsceneKeyframe
 {
+
+
+
+
+    // ---------------------------------------------
+    //  INSPECTOR
+    // ---------------------------------------------
     public Transform targetTransform;
     public float duration = 2f;
     public string animTrigger;
@@ -11,24 +18,33 @@ public class CutsceneKeyframe
 
 public class CutsceneActor : MonoBehaviour
 {
-    // ---------------------------------------------
-    //  INSPETOR
-    // ---------------------------------------------
-    [Header("Configurações do Ator")]
+
+    [Header("Configuraï¿½ï¿½es do Ator")]
     public float delayInicial = 0f;
     public Animator atorAnimator;
 
-    [Header("Guião")]
+    [Header("Guiï¿½o")]
     public CutsceneKeyframe[] rotina;
 
+
+
+
+
     // ---------------------------------------------
-    //  CONTROLO DE ANIMACAO
+    //  PUBLIC METHODS
     // ---------------------------------------------
     public void IniciarAcao()
     {
         StartCoroutine(ExecutarRotina());
     }
 
+
+
+
+
+    // ---------------------------------------------
+    //  PRIVATE METHODS
+    // ---------------------------------------------
     private IEnumerator ExecutarRotina()
     {
         if (delayInicial > 0)

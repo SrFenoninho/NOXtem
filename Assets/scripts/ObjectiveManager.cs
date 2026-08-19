@@ -4,11 +4,15 @@ using System.Collections;
 
 public class ObjectiveManager : MonoBehaviour
 {
-    public static ObjectiveManager Instance { get; private set; }
+
+
+
 
     // ---------------------------------------------
-    //  INSPETOR
+    //  INSPECTOR
     // ---------------------------------------------
+    public static ObjectiveManager Instance { get; private set; }
+
     [Header("Objetivo Inicial")]
     [TextArea] public string initialObjective = "Objetivo: Liga os geradores.";
     public float initialDelay = 10f;
@@ -28,8 +32,12 @@ public class ObjectiveManager : MonoBehaviour
     [Header("Audio")]
     public AudioClip objectiveSound;
 
+
+
+
+
     // ---------------------------------------------
-    //  ESTADO PRIVADO
+    //  PRIVATE STATE
     // ---------------------------------------------
     private string currentObjective = "";
     private bool fullPanelOpen = false;
@@ -37,9 +45,12 @@ public class ObjectiveManager : MonoBehaviour
     private AudioSource audioSource;
     private CanvasGroup notificationCanvasGroup;
 
-    // Referencias para bloquear movimento
     private TPMove tpMove;
     private FPMove fpMove;
+
+
+
+
 
     // ---------------------------------------------
     //  UNITY
@@ -52,12 +63,10 @@ public class ObjectiveManager : MonoBehaviour
 
     void Start()
     {
-        // Audio
         audioSource = GetComponent<AudioSource>();
         if (audioSource == null)
             audioSource = gameObject.AddComponent<AudioSource>();
 
-        // Garantir CanvasGroup no Painel de Notificacao para fade
         if (notificationPanel != null)
         {
             notificationCanvasGroup = notificationPanel.GetComponent<CanvasGroup>();
@@ -65,15 +74,12 @@ public class ObjectiveManager : MonoBehaviour
                 notificationCanvasGroup = notificationPanel.AddComponent<CanvasGroup>();
         }
 
-        // Encontrar scripts de movimento
         tpMove = FindAnyObjectByType<TPMove>();
         fpMove = FindAnyObjectByType<FPMove>();
 
-        // Esconder paineis ao iniciar
         if (notificationPanel != null) notificationPanel.SetActive(false);
         if (fullPanel != null) fullPanel.SetActive(false);
 
-        // Objetivo inicial com delay
         StartCoroutine(ShowInitialObjective());
     }
 
@@ -91,8 +97,11 @@ public class ObjectiveManager : MonoBehaviour
         }
     }
 
+
+
+
     // ---------------------------------------------
-    //  OBJETIVO INICIAL
+    //  PRIVATE METHODS
     // ---------------------------------------------
     IEnumerator ShowInitialObjective()
     {
@@ -100,28 +109,26 @@ public class ObjectiveManager : MonoBehaviour
         ShowObjective(initialObjective);
     }
 
+
+
+
+
     // ---------------------------------------------
-    //  MOSTRAR OBJETIVO (chamado pelo ObjectiveTrigger)
+    //  PUBLIC METHODS
     // ---------------------------------------------
     public void ShowObjective(string text)
     {
         currentObjective = text;
 
-        // Atualizar texto do painel completo
         if (fullText != null)
             fullText.text = currentObjective;
 
-        // Som ao mudar de objetivo
         if (objectiveSound != null)
             audioSource.PlayOneShot(objectiveSound);
 
-        // Mostrar notificacao no canto inferior
         ShowNotification();
     }
 
-    // ---------------------------------------------
-    //  notificacao (canto inferior - 5 segundos)
-    // ---------------------------------------------
     void ShowNotification()
     {
         if (notificationPanel == null || notificationText == null) return;
@@ -137,13 +144,10 @@ public class ObjectiveManager : MonoBehaviour
         notificationText.text = currentObjective;
         notificationPanel.SetActive(true);
 
-        // Fade in
         yield return StartCoroutine(FadeCanvasGroup(notificationCanvasGroup, 0f, 1f, fadeDuration));
 
-        // Manter visivel
         yield return new WaitForSeconds(notificationDuration);
 
-        // Fade out
         yield return StartCoroutine(FadeCanvasGroup(notificationCanvasGroup, 1f, 0f, fadeDuration));
 
         notificationPanel.SetActive(false);
@@ -163,9 +167,6 @@ public class ObjectiveManager : MonoBehaviour
         cg.alpha = to;
     }
 
-    // ---------------------------------------------
-    //  PAINEL COMPLETO (TAB - permanente)
-    // ---------------------------------------------
     void OpenFullPanel()
     {
         if (fullPanel == null) return;
@@ -175,7 +176,6 @@ public class ObjectiveManager : MonoBehaviour
         fullText.text = currentObjective;
         fullPanel.SetActive(true);
 
-        // Esconder notificacao se estiver visivel
         if (notificationCoroutine != null)
         {
             StopCoroutine(notificationCoroutine);
@@ -184,10 +184,8 @@ public class ObjectiveManager : MonoBehaviour
         if (notificationPanel != null)
             notificationPanel.SetActive(false);
 
-        // Bloquear movimento
         SetMovementBlocked(true);
 
-        // Mostrar cursor
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
     }
@@ -198,17 +196,12 @@ public class ObjectiveManager : MonoBehaviour
         if (fullPanel != null)
             fullPanel.SetActive(false);
 
-        // Desbloquear movimento
         SetMovementBlocked(false);
 
-        // Esconder cursor
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
 
-    // ---------------------------------------------
-    //  BLOQUEIO DE MOVIMENTO
-    // ---------------------------------------------
     void SetMovementBlocked(bool blocked)
     {
         if (tpMove != null) tpMove.inputBlocked = blocked;

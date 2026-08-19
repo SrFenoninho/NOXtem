@@ -4,17 +4,28 @@ using System.Collections;
 
 public class InteractiveDoor : MonoBehaviour, IInteractable
 {
+
+
+
+
     // ---------------------------------------------
-    //  INSPETOR
+    //  INSPECTOR
     // ---------------------------------------------
     [Header("Door Settings")]
     public string requiredKeyName = "MainDoor";
     public bool isLocked = true;
 
     [Header("Teleport")]
+
     public Transform destination;
 
     [Header("Camera Angle After Teleport")]
+
+
+
+    // ---------------------------------------------
+    //  PRIVATE STATE
+    // ---------------------------------------------
     [Range(0f, 360f)]
     public float cameraHorizontalAngle = 0f;
 
@@ -24,6 +35,7 @@ public class InteractiveDoor : MonoBehaviour, IInteractable
     [Header("audio")]
     public AudioClip doorLockedSound;
     public AudioClip doorOpenSound;
+
     private AudioSource audioSource;
 
     [Header("Agachamento & Delay")]
@@ -37,11 +49,12 @@ public class InteractiveDoor : MonoBehaviour, IInteractable
     [Header("Glow Settings")]
     public bool enableGlowWhenKeyAvailable = true;
 
-    // ---------------------------------------------
-    //  ESTADO PRIVADO
-    // ---------------------------------------------
     private GlowEmitter doorGlow;
     private bool hasGlowedThisRun = false;
+
+
+
+
 
     // ---------------------------------------------
     //  UNITY
@@ -55,8 +68,11 @@ public class InteractiveDoor : MonoBehaviour, IInteractable
         InitializeGlow();
     }
 
+
+
+
     // ---------------------------------------------
-    //  GLOW
+    //  PRIVATE METHODS
     // ---------------------------------------------
     void InitializeGlow()
     {
@@ -72,19 +88,22 @@ public class InteractiveDoor : MonoBehaviour, IInteractable
         doorGlow.DisableGlow();
     }
 
+
+
+
+
+    // ---------------------------------------------
+    //  PUBLIC METHODS
+    // ---------------------------------------------
     public void OnKeyPickedUp(string keyName)
     {
         if (keyName == requiredKeyName && !hasGlowedThisRun && enableGlowWhenKeyAvailable && doorGlow != null)
         {
             doorGlow.EnableGlow();
             hasGlowedThisRun = true;
-            // Debug.Log("Door glow enabled for key: " + keyName);
         }
     }
 
-    // ---------------------------------------------
-    //  INTERFACE IInteractable
-    // ---------------------------------------------
     public string GetInteractMessage()
     {
         return isLocked
@@ -124,9 +143,6 @@ public class InteractiveDoor : MonoBehaviour, IInteractable
         }
     }
 
-    // ---------------------------------------------
-    //  ABRIR PORTA / TELETRANSPORTE
-    // ---------------------------------------------
     public void OpenDoor(GameObject player)
     {
         if (destination == null) return;
@@ -191,9 +207,6 @@ public class InteractiveDoor : MonoBehaviour, IInteractable
         }
     }
 
-    // ---------------------------------------------
-    //  UI
-    // ---------------------------------------------
     void ClearMessage()
     {
         if (messageText != null) messageText.text = "";

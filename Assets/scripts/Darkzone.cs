@@ -2,22 +2,34 @@ using UnityEngine;
 
 public class DarkZone : MonoBehaviour
 {
+
+
+
+
     // ---------------------------------------------
-    //  INSPETOR
+    //  INSPECTOR
     // ---------------------------------------------
     public string zoneID = "DarkZone_1";
 
     [Header("Agachamento")]
     public bool forceCrouch = false;
 
+
+
+
+
     // ---------------------------------------------
-    //  ESTADO PRIVADO
+    //  PRIVATE STATE
     // ---------------------------------------------
     private Transform player;
     private Collider zoneCollider;
     private Lighter lighter;
     private bool playerInZone = false;
     private FPMove fpMove;
+
+
+
+
 
     // ---------------------------------------------
     //  UNITY
@@ -41,7 +53,6 @@ public class DarkZone : MonoBehaviour
     {
         if (player == null || zoneCollider == null) return;
 
-        // Verifica a cada frame se o jogador esta dentro da hitbox da zona
         bool containsPlayer = zoneCollider.bounds.Contains(player.position);
 
         if (forceCrouch && playerInZone && fpMove != null && !fpMove.isCrouching)
@@ -50,9 +61,7 @@ public class DarkZone : MonoBehaviour
         if (containsPlayer && !playerInZone)
         {
             playerInZone = true;
-            // Debug.Log($"Entered Dark Zone: {zoneID}");
 
-            // Avisa o manager global que estamos no escuro
             if (DarknessManager.Instance != null)
             {
                 DarknessManager.Instance.SetInDarkZone(true);
@@ -65,9 +74,7 @@ public class DarkZone : MonoBehaviour
         }
         else if (!containsPlayer && playerInZone)
         {
-            // O jogador acabou de sair da zona
             playerInZone = false;
-            // Debug.Log($"Exited Dark Zone: {zoneID}");
 
             if (lighter != null)
                 lighter.ClearZoneValues();

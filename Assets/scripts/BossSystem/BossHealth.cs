@@ -2,19 +2,40 @@ using UnityEngine;
 
 public class BossHealth : MonoBehaviour
 {
+
+
+
+    // ---------------------------------------------
+    //  INSPECTOR
+    // ---------------------------------------------
     public float maxHealth = 300f;
+
     public float currentHealth;
-    
+
     public bool isInvulnerable = false;
 
+
+
+
+
+    // ---------------------------------------------
+    //  PRIVATE STATE
+    // ---------------------------------------------
     private BossController boss;
-    
+
     private GameObject bossHealthCanvas;
     private UnityEngine.UI.Text bossHealthText;
 
     private int consecutiveHits = 0;
     private float lastHitTime = 0f;
 
+
+
+
+
+    // ---------------------------------------------
+    //  PUBLIC METHODS
+    // ---------------------------------------------
     public void Initialize(BossController controller)
     {
         boss = controller;
@@ -28,14 +49,13 @@ public class BossHealth : MonoBehaviour
         if (isInvulnerable) return;
 
         currentHealth -= amount;
-        // Debug.Log("🔴 BOSS RECEBEU DANO! Dano=" + amount + ". Vida Restante: " + currentHealth);
 
         if (Time.time - lastHitTime > 2.0f) consecutiveHits = 0;
         lastHitTime = Time.time;
         consecutiveHits++;
 
         boss.OnTookDamage(consecutiveHits);
-        
+
         UpdateHealthUI();
         CheckThresholds();
     }
@@ -45,6 +65,13 @@ public class BossHealth : MonoBehaviour
         consecutiveHits = 0;
     }
 
+
+
+
+
+    // ---------------------------------------------
+    //  PRIVATE METHODS
+    // ---------------------------------------------
     private void CheckThresholds()
     {
         if (currentHealth <= 25f && boss.currentPhase != BossController.BossPhase.Cutscene)
@@ -75,7 +102,7 @@ public class BossHealth : MonoBehaviour
         bossHealthText.fontSize = 24;
         bossHealthText.color = Color.red;
         bossHealthText.alignment = TextAnchor.UpperCenter;
-        
+
         UpdateHealthUI();
 
         RectTransform rect = textObj.GetComponent<RectTransform>();

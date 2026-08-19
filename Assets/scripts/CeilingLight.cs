@@ -3,26 +3,55 @@ using UnityEngine;
 
 public class CeilingLight : MonoBehaviour
 {
+
+
+
+    // ---------------------------------------------
+    //  INSPECTOR
+    // ---------------------------------------------
     [Header("Configuração da Lâmpada do Teto")]
     public bool startPowered = false;
     public float targetIntensity = 3.0f;
     public float targetRange = 10.0f;
+
     public Color lightColor = new Color(1.0f, 0.95f, 0.8f);
 
     [Header("Efeito ao Ligar a Energia")]
     public bool flickerOnPowerUp = true;
     public AudioClip powerUpFlickerSound;
 
+    [Header("Brilho Retro PSX")]
+    public bool addPSXFlare = true;
+
+
+
+
+    // ---------------------------------------------
+    //  PRIVATE STATE
+    // ---------------------------------------------
     private Light lampLight;
     private MeshRenderer meshRenderer;
     private MaterialPropertyBlock propBlock;
+
     private static readonly int EmissionColorProperty = Shader.PropertyToID("_EmissionColor");
 
+
+
+
+
+    // ---------------------------------------------
+    //  UNITY
+    // ---------------------------------------------
     void Awake()
     {
         lampLight = GetComponent<Light>() ?? GetComponentInChildren<Light>();
         meshRenderer = GetComponent<MeshRenderer>() ?? GetComponentInChildren<MeshRenderer>();
         propBlock = new MaterialPropertyBlock();
+
+        if (addPSXFlare && lampLight != null && lampLight.GetComponent<PSXLightFlare>() == null)
+        {
+            lampLight.gameObject.AddComponent<PSXLightFlare>();
+        }
     }
 
     void Start()
@@ -30,13 +59,10 @@ public class CeilingLight : MonoBehaviour
         if (lampLight != null)
         {
             lampLight.color = lightColor;
-            lampLight.shadows = LightShadows.Soft;
-            lampLight.shadowBias = 0.005f;
-            lampLight.shadowNormalBias = 0.05f;
-            lampLight.shadowNearPlane = 0.02f;
+            lampLight.range = targetRange;
+            lampLight.renderMode = LightRenderMode.ForcePixel;
         }
 
-        // Garantir que a câmara principal tem fundo preto em vez do céu azul por defeito da Unity
         if (Camera.main != null)
         {
             Camera.main.clearFlags = CameraClearFlags.SolidColor;
@@ -53,6 +79,12 @@ public class CeilingLight : MonoBehaviour
         }
     }
 
+
+
+
+    // ---------------------------------------------
+    //  PUBLIC METHODS
+    // ---------------------------------------------
     public void TurnOn()
     {
         if (flickerOnPowerUp)
@@ -70,6 +102,12 @@ public class CeilingLight : MonoBehaviour
         TurnOffImmediate();
     }
 
+
+
+
+    // ---------------------------------------------
+    //  PRIVATE METHODS
+    // ---------------------------------------------
     void TurnOnImmediate()
     {
         if (lampLight != null)
@@ -77,6 +115,7 @@ public class CeilingLight : MonoBehaviour
             lampLight.enabled = true;
             lampLight.intensity = targetIntensity;
             lampLight.range = targetRange;
+            lampLight.renderMode = LightRenderMode.ForcePixel;
         }
 
         SetMaterialEmission(true);
@@ -105,7 +144,6 @@ public class CeilingLight : MonoBehaviour
             audio.PlayOneShot(powerUpFlickerSound);
         }
 
-        // Piscar 3 vezes estilo lâmpada fluorescente a acender (sem zerar completamente para não piscar azul)
         for (int i = 0; i < 3; i++)
         {
             lampLight.intensity = targetIntensity * 0.3f;

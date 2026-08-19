@@ -313,8 +313,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 61468955814fef749978c614532158ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  backgroundTexture: {fileID: 2800000, guid: 241f156581225764797fc28d7ac6e814, type: 3}
+  backgroundTexture: {fileID: 0}
   customFont: {fileID: 11400000, guid: 17824eb0f17a99945b7befb8181ed5f4, type: 2}
+  tunnelRotateSpeed: 2
+  tunnelZoomSpeed: 2
+  tunnelLayerCount: 40
+  tunnelMinSize: 12
+  tunnelMaxSize: 2500
+  tunnelColorA: {r: 1, g: 1, b: 1, a: 1}
+  tunnelColorB: {r: 0.86, g: 0.86, b: 0.86, a: 1}
+  tunnelBgColor: {r: 0.96, g: 0.96, b: 0.96, a: 1}
 --- !u!82 &1085295709
 AudioSource:
   m_ObjectHideFlags: 0

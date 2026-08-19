@@ -6,30 +6,34 @@ using UnityEngine.SceneManagement;
 
 public class GameMenuManager : MonoBehaviour
 {
+
+
+
+
     // ---------------------------------------------
-    //  INSPETOR - REFERENCIAS
+    //  INSPECTOR
     // ---------------------------------------------
     [Header("Referências")]
+
     public FPMove fPMove;
-    public string mainMenuSceneName = "MainMenu"; // Nome da cena do menu principal para carregar ao sair
+    public string mainMenuSceneName = "MainMenu";
 
     [Header("Animação do Inventário")]
     [Header("Player Frames - Por Nível de Vida")]
-    public Texture2D[] playerFrames_HP100;  // Vida > 75
-    public Texture2D[] playerFrames_HP75;   // Vida <= 75 e > 50
-    public Texture2D[] playerFrames_HP50;   // Vida <= 50 e > 25
-    public Texture2D[] playerFrames_HP25;   // Vida <= 25 e > 10
-    public Texture2D[] playerFrames_HP10;   // Vida <= 10 e > 5
-    public Texture2D[] playerFrames_HP5;    // Vida <= 5
+    public Texture2D[] playerFrames_HP100;
+    public Texture2D[] playerFrames_HP75;
+    public Texture2D[] playerFrames_HP50;
+    public Texture2D[] playerFrames_HP25;
+    public Texture2D[] playerFrames_HP10;
+    public Texture2D[] playerFrames_HP5;
     public float playerFPS = 8f;
-    
+
     public Texture2D[] williamFrames;
     public float williamFPS = 6f;
 
     [Header("Ícones dos Itens")]
-    public KeyIconEntry[] keyImages; // Mapeia cada keyName (ID) a uma imagem
+    public KeyIconEntry[] keyImages;
 
-    // Campo para a musica do inventario - arrasta o ficheiro de audio aqui no Unity
     [Header("Áudio do Inventário")]
     public AudioClip inventoryMusic;
     public float inventoryMusicVolume = 0.5f;
@@ -38,10 +42,8 @@ public class GameMenuManager : MonoBehaviour
     [Range(10f, 300f)] public float defaultSensitivity = 100f;
     [Range(0f, 1f)] public float defaultVolume = 1f;
 
-    // ---------------------------------------------
-    //  INSPETOR - CORES
-    // ---------------------------------------------
     [Header("Cores - Fundo")]
+
     public Color corFundoEscuro = new Color(0f, 0f, 0f, 0.88f);
     public Color corJanela = new Color(0.08f, 0.08f, 0.08f, 1f);
     public Color corBarraTabs = new Color(0.05f, 0.05f, 0.05f, 1f);
@@ -71,11 +73,6 @@ public class GameMenuManager : MonoBehaviour
     public Color corItemFerramenta = new Color(0.5f, 0.8f, 1f);
     public Color corItemDesconhecido = new Color(0.5f, 0.5f, 0.5f);
 
-
-
-    // ---------------------------------------------
-    //  INSPETOR - TAMANHOS
-    // ---------------------------------------------
     [Header("Tamanhos - Janela (0 a 1)")]
     public Vector2 janelaMargem = Vector2.zero;
 
@@ -94,14 +91,18 @@ public class GameMenuManager : MonoBehaviour
     public int fonteSairTitulo = 20;
 
     [Header("Personalização Visual")]
-    public TMP_FontAsset customFont;    // Fonte personalizada para o inventário/menu de pausa (opcional)
+    public TMP_FontAsset customFont;
+
+
+
 
     // ---------------------------------------------
-    //  ESTADO PRIVADO
+    //  PRIVATE STATE
     // ---------------------------------------------
     private GameObject menuRoot;
     private GameObject tabInventario, tabDefinicoes, tabControlos, tabSair;
     private Button btnInventario, btnDefinicoes, btnControlosTab, btnSairTab;
+
 
     private List<GameObject> slots = new List<GameObject>();
     private Transform slotsRoot;
@@ -118,15 +119,16 @@ public class GameMenuManager : MonoBehaviour
     private float williamAnimTimer = 0f;
     private int playerFrameIndex = 0;
     private int williamFrameIndex = 0;
-    
-    // Controlo de mudancas de array de frames
+
     private Texture2D[] currentPlayerFrameArray;
     private Texture2D[] previousPlayerFrameArray;
 
-    // AudioSource dedicado a musica do inventario
     private AudioSource inventoryAudioSource;
-    // Lista dos sons que pausamos ao abrir (para os retomar ao fechar)
     private List<AudioSource> pausedSources = new List<AudioSource>();
+
+
+
+
 
     // ---------------------------------------------
     //  UNITY
@@ -166,19 +168,17 @@ public class GameMenuManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape))
             ToggleMenu();
 
-        // unscaledDeltaTime para as animacoes funcionarem mesmo com o jogo pausado
         if (playerRawImage != null)
         {
             currentPlayerFrameArray = GetCurrentPlayerFrameArray();
-            
-            // Se mudou de array, resetar o index
+
             if (currentPlayerFrameArray != previousPlayerFrameArray)
             {
                 playerFrameIndex = 0;
                 previousPlayerFrameArray = currentPlayerFrameArray;
                 playerAnimTimer = 0f;
             }
-            
+
             if (currentPlayerFrameArray != null && currentPlayerFrameArray.Length > 0)
             {
                 playerAnimTimer += Time.unscaledDeltaTime;
@@ -205,14 +205,16 @@ public class GameMenuManager : MonoBehaviour
         }
     }
 
+
+
+
     // ---------------------------------------------
-    //  ABRIR / FECHAR
+    //  PRIVATE METHODS
     // ---------------------------------------------
     void ToggleMenu()
     {
         if (!isOpen)
         {
-            // So abre se o jogo estiver em estado normal
             if (GameStateManager.Instance != null && !GameStateManager.Instance.CanOpenInventory())
                 return;
 
@@ -263,9 +265,6 @@ public class GameMenuManager : MonoBehaviour
         GameStateManager.Instance?.PopState();
     }
 
-    // ---------------------------------------------
-    //  GESTAO DE AUDIO
-    // ---------------------------------------------
     void PauseAllAudio()
     {
         pausedSources.Clear();
@@ -290,21 +289,16 @@ public class GameMenuManager : MonoBehaviour
         pausedSources.Clear();
     }
 
-    // ---------------------------------------------
-    //  SELECAO DE FRAMES DO PLAYER POR VIDA
-    // ---------------------------------------------
     Texture2D[] GetCurrentPlayerFrameArray()
     {
-        // Obter a vida do player
         PlayerHealth playerHealth = FindFirstObjectByType<PlayerHealth>();
         if (playerHealth == null)
-            return playerFrames_HP100; // Default se nao encontrar
+            return playerFrames_HP100;
 
         float currentHealth = playerHealth.currentHealth;
         float maxHealth = playerHealth.maxHealth;
         float healthPercent = (currentHealth / maxHealth) * 100f;
 
-        // Determinar qual array usar baseado na percentagem de vida
         if (healthPercent > 75f)
             return playerFrames_HP100;
         else if (healthPercent > 50f)
@@ -318,25 +312,18 @@ public class GameMenuManager : MonoBehaviour
         else
             return playerFrames_HP5;
     }
-    // ---------------------------------------------
-    //  CONSTRUCAO DO MENU
-    // ---------------------------------------------
+
     void BuildMenu()
     {
-        // Garantir que existe um Canvas na hierarquia.
-        // Se o GameMenuManager ja estiver dentro de um Canvas, usa esse.
-        // Se nao, cria um Canvas raiz no proprio GameObject.
         Canvas parentCanvas = GetComponentInParent<Canvas>();
         Transform menuParent;
 
         if (parentCanvas != null)
         {
-            // Ja estamos dentro de um Canvas - usar a raiz desse Canvas
             menuParent = parentCanvas.transform;
         }
         else
         {
-            // Nao ha Canvas - criar um no proprio GameObject
             if (GetComponent<Canvas>() == null)
             {
                 gameObject.AddComponent<Canvas>().renderMode = RenderMode.ScreenSpaceOverlay;
@@ -356,11 +343,9 @@ public class GameMenuManager : MonoBehaviour
             menuParent = transform;
         }
 
-        // MenuRoot ocupa todo o ecra (100% do Canvas)
         menuRoot = CreatePanel(menuParent, "MenuRoot",
             Vector2.zero, Vector2.one, corFundoEscuro);
 
-        // A janela interior respeita a margem configurada
         Vector2 minJ = janelaMargem;
         Vector2 maxJ = Vector2.one - janelaMargem;
         GameObject window = CreatePanel(menuRoot.transform, "Window",
@@ -494,7 +479,6 @@ public class GameMenuManager : MonoBehaviour
         tabControlos = CreatePanel(parent, "TabControlos",
             Vector2.zero, new Vector2(1f, 0.9f), Color.clear);
 
-        // Coluna 1: 1ª Pessoa
         GameObject col1 = CreatePanel(tabControlos.transform, "Col1", new Vector2(0.04f, 0.1f), new Vector2(0.48f, 0.9f), Color.clear);
         CreateLabel(col1.transform, "1st Person (Exploration & Horror)", new Vector2(0f, 0.88f), new Vector2(1f, 0.98f), fonteLabels, corTextoLabels);
         string fpText = "W, A, S, D  -  Move\n" +
@@ -506,7 +490,6 @@ public class GameMenuManager : MonoBehaviour
                         "ESC  -  Pause Menu";
         CreateLabel(col1.transform, fpText, new Vector2(0.05f, 0.05f), new Vector2(0.95f, 0.85f), fonteDef, corTextoNormal);
 
-        // Coluna 2: 3ª Pessoa
         GameObject col2 = CreatePanel(tabControlos.transform, "Col2", new Vector2(0.52f, 0.1f), new Vector2(0.96f, 0.9f), Color.clear);
         CreateLabel(col2.transform, "3rd Person (Combat & Boss)", new Vector2(0f, 0.88f), new Vector2(1f, 0.98f), fonteLabels, corTextoLabels);
         string tpText = "W, A, S, D  -  Move\n" +
@@ -532,19 +515,15 @@ public class GameMenuManager : MonoBehaviour
             new Vector2(0.3f, 0.38f), new Vector2(0.7f, 0.52f), corBotaoSair);
         btnSairConfirm.onClick.AddListener(() =>
         {
-            // Guarda o progresso físico e inventário do jogador
             SaveSystem.GuardarProgresso();
 
-            // Guarda as definições do utilizador
             PlayerPrefs.SetFloat("Sensitivity", currentSensitivity);
             PlayerPrefs.SetFloat("Volume", currentVolume);
             PlayerPrefs.SetInt("TextureQuality", currentTextureQuality);
             PlayerPrefs.Save();
 
-            // Repõe o timeScale (obrigatório para o menu principal não iniciar congelado)
             Time.timeScale = 1f;
 
-            // Carrega a cena do menu principal
             LoadingManager.Carregar(mainMenuSceneName);
         });
 
@@ -553,9 +532,6 @@ public class GameMenuManager : MonoBehaviour
         btnVoltar.onClick.AddListener(CloseMenu);
     }
 
-    // ---------------------------------------------
-    //  MOSTRAR TAB
-    // ---------------------------------------------
     void ShowTab(string tab)
     {
         tabInventario.SetActive(tab == "inventario");
@@ -570,9 +546,6 @@ public class GameMenuManager : MonoBehaviour
         btnSairTab.GetComponent<Image>().color = tab == "sair" ? corTabAtiva : corTabInativa;
     }
 
-    // ---------------------------------------------
-    //  REFRESH DO INVENTARIO
-    // ---------------------------------------------
     void RefreshInventory()
     {
         if (slotsRoot == null) return;
@@ -647,9 +620,6 @@ public class GameMenuManager : MonoBehaviour
         }
     }
 
-    // ---------------------------------------------
-    //  AUXILIARES DE UI
-    // ---------------------------------------------
     GameObject CreatePanel(Transform parent, string name,
         Vector2 anchorMin, Vector2 anchorMax, Color color)
     {
@@ -794,15 +764,14 @@ public class GameMenuManager : MonoBehaviour
         return img;
     }
 
-    // Procurar imagem de chave por ID (keyName)
     Texture2D GetKeyImage(string keyID)
     {
         if (keyImages == null) return null;
-        
+
         foreach (var entry in keyImages)
             if (entry.keyID == keyID)
                 return entry.keyImage;
-        
+
         return null;
     }
 
@@ -823,6 +792,6 @@ public class InventoryTabRef : MonoBehaviour
 [System.Serializable]
 public class KeyIconEntry
 {
-    public string keyID;      // ID da chave (ex: "Door", "lighter", etc)
-    public Texture2D keyImage; // Imagem para essa chave
+    public string keyID;
+    public Texture2D keyImage;
 }

@@ -5,10 +5,15 @@ using TMPro;
 
 public class StoryTriggerOnPickup : MonoBehaviour
 {
+
+
+
+
     // ---------------------------------------------
-    //  INSPETOR
+    //  INSPECTOR
     // ---------------------------------------------
     [Header("Monitoring object")]
+
     public GameObject watchObject;
 
     [Header("Look At")]
@@ -33,8 +38,12 @@ public class StoryTriggerOnPickup : MonoBehaviour
     [Header("Glow Settings")]
     public bool enableGlow = true;
 
+
+
+
+
     // ---------------------------------------------
-    //  ESTADO PRIVADO
+    //  PRIVATE STATE
     // ---------------------------------------------
     private float origSpeed;
     private float origSprintSpeed;
@@ -42,6 +51,10 @@ public class StoryTriggerOnPickup : MonoBehaviour
     private GlowEmitter triggerGlow;
     private TMP_Text activeSubtitleText;
     private GameObject createdCanvasObj;
+
+
+
+
 
     // ---------------------------------------------
     //  UNITY
@@ -76,8 +89,11 @@ public class StoryTriggerOnPickup : MonoBehaviour
         }
     }
 
+
+
+
     // ---------------------------------------------
-    //  SEQUENCIA
+    //  PRIVATE METHODS
     // ---------------------------------------------
     IEnumerator RunSequence()
     {
@@ -160,9 +176,6 @@ public class StoryTriggerOnPickup : MonoBehaviour
         GameStateManager.Instance?.PopState();
     }
 
-    // ---------------------------------------------
-    //  SISTEMA DE LEGENDAS
-    // ---------------------------------------------
     private Image activeSubtitleBgImage;
 
     IEnumerator PlaySubtitles()
@@ -274,7 +287,6 @@ public class StoryTriggerOnPickup : MonoBehaviour
         scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
         scaler.referenceResolution = new Vector2(1920, 1080);
 
-        // Barra Preta de Fundo (Centrada e auto-ajustável)
         GameObject bgObj = new GameObject("SubtitleBackground");
         bgObj.transform.SetParent(createdCanvasObj.transform, false);
         Image bgImage = bgObj.AddComponent<Image>();
@@ -299,7 +311,6 @@ public class StoryTriggerOnPickup : MonoBehaviour
         autoLayout.childForceExpandWidth = false;
         autoLayout.childForceExpandHeight = false;
 
-        // Objeto de Texto
         GameObject textObj = new GameObject("SubtitleText");
         textObj.transform.SetParent(bgObj.transform, false);
 

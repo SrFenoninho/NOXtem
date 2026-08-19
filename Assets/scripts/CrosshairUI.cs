@@ -3,16 +3,25 @@ using UnityEngine.UI;
 
 public class CrosshairUI : MonoBehaviour
 {
+
+
+
+
     // ---------------------------------------------
-    //  INSPETOR
+    //  INSPECTOR
     // ---------------------------------------------
     [Header("Crosshair RawImages")]
+
     public RawImage crosshairRawImage;
     public Texture normalCrosshair;
     public Texture interactCrosshair;
 
+
+
+
+
     // ---------------------------------------------
-    //  ESTADOS DA MIRA
+    //  PUBLIC METHODS
     // ---------------------------------------------
     public void SetNormal()
     {

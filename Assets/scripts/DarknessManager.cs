@@ -2,15 +2,18 @@ using UnityEngine;
 
 public class DarknessManager : MonoBehaviour
 {
+
+
+
+
+
     // ---------------------------------------------
-    //  SINGLETON
+    //  INSPECTOR
     // ---------------------------------------------
     public static DarknessManager Instance { get; private set; }
 
-    // ---------------------------------------------
-    //  INSPETOR
-    // ---------------------------------------------
     [Header("Darkness Settings")]
+
     public Color darknessColor = new Color(0.02f, 0.02f, 0.02f);
     public float ambientLight = 0f;
 
@@ -27,8 +30,11 @@ public class DarknessManager : MonoBehaviour
     public float transitionSpeed = 1.5f;
     public bool startWithDarkness = true;
 
+
+
+
     // ---------------------------------------------
-    //  ESTADO PRIVADO
+    //  PRIVATE STATE
     // ---------------------------------------------
     private bool powerRestored = false;
     private bool inDarkZone = false;
@@ -38,6 +44,10 @@ public class DarknessManager : MonoBehaviour
     private float currentAmbient;
 
     private Lighter lighter;
+
+
+
+
 
     // ---------------------------------------------
     //  UNITY
@@ -71,13 +81,10 @@ public class DarknessManager : MonoBehaviour
 
     void Update()
     {
-        // Se a energia estiver desligada OU o jogador estiver numa DarkZone,
-        // o isqueiro assume o controlo do raio de visao
         if (!powerRestored || inDarkZone)
         {
             if (lighter != null)
             {
-                // Ler os valores que o Lighter.cs esta a calcular
                 currentRadius = lighter.GetCurrentRadius();
                 currentSoftness = lighter.GetCurrentSoftness();
             }
@@ -87,23 +94,23 @@ public class DarknessManager : MonoBehaviour
                 currentSoftness = darkSoftness;
             }
 
-            // O ambiente em geral continua escuro
             currentAmbient = ambientLight;
         }
         else
         {
-            // A energia voltou e estamos fora da DarkZone - tudo fica claro gradualmente
             currentRadius = Mathf.Lerp(currentRadius, lightRadius, Time.deltaTime * transitionSpeed);
             currentSoftness = Mathf.Lerp(currentSoftness, lightSoftness, Time.deltaTime * transitionSpeed);
             currentAmbient = Mathf.Lerp(currentAmbient, lightAmbient, Time.deltaTime * transitionSpeed);
         }
 
-        // Aplica ao shader todos os frames para vermos o isqueiro a iluminar
         ApplyToShader();
     }
 
+
+
+
     // ---------------------------------------------
-    //  SHADER
+    //  PRIVATE METHODS
     // ---------------------------------------------
     void ApplyToShader()
     {
@@ -113,14 +120,16 @@ public class DarknessManager : MonoBehaviour
         Shader.SetGlobalFloat("_AmbientLight", currentAmbient);
     }
 
+
+
+
     // ---------------------------------------------
-    //  ENERGIA
+    //  PUBLIC METHODS
     // ---------------------------------------------
     public void OnPowerRestored()
     {
         powerRestored = true;
-        
-        // Acender todas as lampadas do teto registradas no mapa com efeito de piscar
+
         CeilingLight[] ceilingLights = Object.FindFirstObjectByType<CeilingLight>() != null 
             ? Object.FindObjectsByType<CeilingLight>(FindObjectsSortMode.None) 
             : new CeilingLight[0];
@@ -131,22 +140,15 @@ public class DarknessManager : MonoBehaviour
         }
     }
 
-    // ---------------------------------------------
-    //  ZONA ESCURA
-    // ---------------------------------------------
     public void SetInDarkZone(bool state)
     {
         inDarkZone = state;
 
         if (!inDarkZone && powerRestored)
         {
-            // Debug.Log("DarknessManager: Exited Dark Zone, restoring light transition...");
         }
     }
 
-    // ---------------------------------------------
-    //  CONSULTAS
-    // ---------------------------------------------
     public bool IsDark()
     {
         return !powerRestored;

@@ -2,18 +2,30 @@ using UnityEngine;
 
 public class PlayerHealthRegen : MonoBehaviour
 {
-    // ---------------------------------------------
-    //  INSPETOR
-    // ---------------------------------------------
-    [Header("Regeneration Settings")]
-    public float regenAmount = 2f;      // vida recuperada por intervalo
-    public float regenInterval = 5f;    // segundos entre cada regeneracao
+
+
+
 
     // ---------------------------------------------
-    //  ESTADO PRIVADO
+    //  INSPECTOR
+    // ---------------------------------------------
+    [Header("Regeneration Settings")]
+    public float regenAmount = 2f;
+    public float regenInterval = 5f;
+
+
+
+
+
+    // ---------------------------------------------
+    //  PRIVATE STATE
     // ---------------------------------------------
     private PlayerHealth playerHealth;
     private float nextRegen = 0f;
+
+
+
+
 
     // ---------------------------------------------
     //  UNITY
@@ -32,8 +44,11 @@ public class PlayerHealthRegen : MonoBehaviour
         }
     }
 
+
+
+
     // ---------------------------------------------
-    //  REGENERAcaO
+    //  PRIVATE METHODS
     // ---------------------------------------------
     void Regenerate()
     {
@@ -41,7 +56,6 @@ public class PlayerHealthRegen : MonoBehaviour
         {
             playerHealth.currentHealth += regenAmount;
 
-            // Garantir que nao ultrapassa o maximo
             if (playerHealth.currentHealth > playerHealth.maxHealth)
                 playerHealth.currentHealth = playerHealth.maxHealth;
         }

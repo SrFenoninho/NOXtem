@@ -3,8 +3,22 @@ using System.Collections;
 
 public class BossState_JumpAttack : IBossState
 {
+
+
+
+
+    // ---------------------------------------------
+    //  PRIVATE STATE
+    // ---------------------------------------------
     private Coroutine routine;
 
+
+
+
+
+    // ---------------------------------------------
+    //  PUBLIC METHODS
+    // ---------------------------------------------
     public void EnterState(BossController boss)
     {
         routine = boss.StartCoroutine(JumpRoutine(boss));
@@ -17,6 +31,13 @@ public class BossState_JumpAttack : IBossState
         if (routine != null) boss.StopCoroutine(routine);
     }
 
+
+
+
+
+    // ---------------------------------------------
+    //  PRIVATE METHODS
+    // ---------------------------------------------
     private IEnumerator JumpRoutine(BossController boss)
     {
         boss.movement.StopMovement();

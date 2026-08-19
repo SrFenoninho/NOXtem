@@ -5,10 +5,23 @@ using TMPro;
 
 public class CreditsScreen : MonoBehaviour
 {
+
+
+
+    // ---------------------------------------------
+    //  INSPECTOR
+    // ---------------------------------------------
     [Header("Design (Opcional)")]
+
+
+
+    // ---------------------------------------------
+    //  PRIVATE STATE
+    // ---------------------------------------------
     [Tooltip("Uma imagem para ficar de fundo (arrasta do projeto)")]
+
     public Texture imagemDeFundo;
-    
+
     [Tooltip("A fonte para o título João Rodrigues")]
     public TMP_FontAsset fonteTextoCima;
 
@@ -21,13 +34,18 @@ public class CreditsScreen : MonoBehaviour
     [Header("Caminho de Volta")]
     public string cenaDeVolta = "MainMenu";
 
+
+
+
+
+    // ---------------------------------------------
+    //  UNITY
+    // ---------------------------------------------
     void Start()
     {
-        // 1. Mostrar Rato para poderes clicar no botão!
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
-        // 2. Criar EventSystem (Crucial para o Botão detetar o teu rato!)
         if (FindFirstObjectByType<EventSystem>() == null)
         {
             GameObject esObj = new GameObject("EventSystem");
@@ -35,19 +53,17 @@ public class CreditsScreen : MonoBehaviour
             esObj.AddComponent<StandaloneInputModule>();
         }
 
-        // 3. Criar Canvas
         GameObject canvasObj = new GameObject("Credits_Canvas");
         Canvas canvas = canvasObj.AddComponent<Canvas>();
         canvas.renderMode = RenderMode.ScreenSpaceOverlay;
         canvas.sortingOrder = 900;
-        
+
         CanvasScaler scaler = canvasObj.AddComponent<CanvasScaler>();
         scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
         scaler.referenceResolution = new Vector2(1920, 1080);
-        
+
         canvasObj.AddComponent<GraphicRaycaster>();
 
-        // 4. Fundo
         GameObject fundoObj = new GameObject("Background");
         fundoObj.transform.SetParent(canvasObj.transform, false);
         RawImage bg = fundoObj.AddComponent<RawImage>();
@@ -58,7 +74,6 @@ public class CreditsScreen : MonoBehaviour
         if (imagemDeFundo != null) bg.texture = imagemDeFundo;
         else bg.color = Color.black;
 
-        // 5. Texto 1: Ideia
         GameObject t1Obj = new GameObject("Texto_Ideia");
         t1Obj.transform.SetParent(canvasObj.transform, false);
         TextMeshProUGUI t1 = t1Obj.AddComponent<TextMeshProUGUI>();
@@ -69,10 +84,9 @@ public class CreditsScreen : MonoBehaviour
         t1.color = Color.black;
         t1.rectTransform.anchorMin = new Vector2(0.5f, 0.5f);
         t1.rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
-        t1.rectTransform.anchoredPosition = new Vector2(0, 200); // Mais para cima
+        t1.rectTransform.anchoredPosition = new Vector2(0, 200);
         t1.rectTransform.sizeDelta = new Vector2(1200, 200);
 
-        // 6. Texto 2: Fontes
         GameObject t2Obj = new GameObject("Texto_Fontes");
         t2Obj.transform.SetParent(canvasObj.transform, false);
         TextMeshProUGUI t2 = t2Obj.AddComponent<TextMeshProUGUI>();
@@ -83,23 +97,21 @@ public class CreditsScreen : MonoBehaviour
         t2.color = Color.black;
         t2.rectTransform.anchorMin = new Vector2(0.5f, 0.5f);
         t2.rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
-        t2.rectTransform.anchoredPosition = new Vector2(0, -100); // Centro-baixo
+        t2.rectTransform.anchoredPosition = new Vector2(0, -100);
         t2.rectTransform.sizeDelta = new Vector2(1200, 300);
 
-        // 7. Botão Voltar
         GameObject btnObj = new GameObject("BotaoVoltar");
         btnObj.transform.SetParent(canvasObj.transform, false);
         Image btnBg = btnObj.AddComponent<Image>();
-        btnBg.color = new Color(0.2f, 0.2f, 0.2f, 1f); // Fundo cinza escuro
+        btnBg.color = new Color(0.2f, 0.2f, 0.2f, 1f);
         Button btn = btnObj.AddComponent<Button>();
         btn.targetGraphic = btnBg;
-        
+
         btnBg.rectTransform.anchorMin = new Vector2(0.5f, 0f);
         btnBg.rectTransform.anchorMax = new Vector2(0.5f, 0f);
-        btnBg.rectTransform.anchoredPosition = new Vector2(0, 150); // Perto do fundo do ecrã
+        btnBg.rectTransform.anchoredPosition = new Vector2(0, 150);
         btnBg.rectTransform.sizeDelta = new Vector2(400, 80);
 
-        // 8. Texto dentro do Botão
         GameObject btnTextObj = new GameObject("Text");
         btnTextObj.transform.SetParent(btnObj.transform, false);
         TextMeshProUGUI btnText = btnTextObj.AddComponent<TextMeshProUGUI>();
@@ -113,10 +125,16 @@ public class CreditsScreen : MonoBehaviour
         btnText.rectTransform.offsetMin = Vector2.zero;
         btnText.rectTransform.offsetMax = Vector2.zero;
 
-        // 9. Ligar o Clique mágico!
         btn.onClick.AddListener(CliqueNoBotaoVoltar);
     }
 
+
+
+
+
+    // ---------------------------------------------
+    //  PRIVATE METHODS
+    // ---------------------------------------------
     private void CliqueNoBotaoVoltar()
     {
         LoadingManager.Carregar(cenaDeVolta);

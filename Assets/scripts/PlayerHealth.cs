@@ -3,25 +3,34 @@ using UnityEngine.SceneManagement;
 
 public class PlayerHealth : MonoBehaviour
 {
+
+
+
+
     // ---------------------------------------------
-    //  INSPETOR
+    //  INSPECTOR
     // ---------------------------------------------
     [Header("Health Settings")]
     public float maxHealth = 100f;
+
     public float currentHealth;
 
     [Header("Damage Settings")]
     [HideInInspector] public bool isDefending = false;
-    public float damageCooldown = 1f;   // tempo de invencibilidade entre danos consecutivos
+    public float damageCooldown = 1f;
+
+
+
+
+    // ---------------------------------------------
+    //  PRIVATE STATE
+    // ---------------------------------------------
     private float nextDamage = 0f;
 
     [Header("Knockback Settings")]
     public float knockbackForce = 5f;
     public float knockbackDuration = 0.3f;
 
-    // ---------------------------------------------
-    //  ESTADO PRIVADO
-    // ---------------------------------------------
     private float currentKnockbackForce;
     private bool isKnockedBack = false;
     private float knockbackEndTime;
@@ -29,6 +38,10 @@ public class PlayerHealth : MonoBehaviour
     private CharacterController characterController;
     private Animator anim;
     private PlayerCombat playerCombat;
+
+
+
+
 
     // ---------------------------------------------
     //  UNITY
@@ -40,7 +53,6 @@ public class PlayerHealth : MonoBehaviour
         anim = GetComponentInChildren<Animator>();
         playerCombat = GetComponent<PlayerCombat>();
 
-        // Restaura sempre as chaves com que o jogador entrou neste nível (do nível anterior)
         if (PlayerPrefs.HasKey("PlayerKeys"))
         {
             PlayerKeys keys = GetComponent<PlayerKeys>();
@@ -56,11 +68,9 @@ public class PlayerHealth : MonoBehaviour
                         keys.AddKey(key);
                     }
                 }
-                // Debug.Log($"📂 [Player] Inventário restaurado no início da cena com {keys.GetKeys().Count} chaves.");
             }
         }
 
-        // Se veio do menu via "Continuar", aplica as definições de cena e flags (a posição padrão é usada)
         if (SaveSystem.carregarSaveAoIniciar)
         {
             SaveSystem.AplicarSaveAoPlayer(gameObject);
@@ -69,7 +79,6 @@ public class PlayerHealth : MonoBehaviour
 
     void Update()
     {
-        // Aplicar knockback horizontal enquanto ativo
         if (isKnockedBack && characterController != null)
         {
             characterController.Move(knockbackDirection * currentKnockbackForce * Time.deltaTime);
@@ -78,11 +87,15 @@ public class PlayerHealth : MonoBehaviour
         }
     }
 
+
+
+
+
     // ---------------------------------------------
-    //  DANO
+    //  PUBLIC METHODS
+    // ---------------------------------------------
     public void TakeDamage(float damageAmount, Vector3 damageSourcePosition)
     {
-        // Se estiver a defender, bloqueia apenas ataques frontais (ângulo até 75 graus para a esquerda ou direita)
         if (isDefending)
         {
             Vector3 dirToSource = (damageSourcePosition - transform.position).normalized;
@@ -91,27 +104,22 @@ public class PlayerHealth : MonoBehaviour
 
             if (angle <= 75f)
             {
-                // Debug.Log("🛡️ [PlayerHealth] Dano de " + damageAmount + " bloqueado frontalmente pela Parede de Defesa!");
                 return;
             }
         }
 
-        // Ignorar dano durante o periodo de invencibilidade
         if (Time.time < nextDamage) return;
 
         currentHealth -= damageAmount;
         nextDamage = Time.time + damageCooldown;
-        // Debug.Log("Player took " + damageAmount + " damage. Health: " + currentHealth);
 
         currentKnockbackForce = knockbackForce;
 
-        // Calcular direcao do knockback (sempre horizontal)
         knockbackDirection = (transform.position - damageSourcePosition).normalized;
         knockbackDirection.y = 0;
         isKnockedBack = true;
         knockbackEndTime = Time.time + knockbackDuration;
 
-        // Disparar animação de dano e cancelar ataque atual
         if (anim != null) anim.SetTrigger("takeDamage");
         if (playerCombat != null) playerCombat.CancelAttack();
 
@@ -127,7 +135,7 @@ public class PlayerHealth : MonoBehaviour
         nextDamage = Time.time + damageCooldown;
 
         currentKnockbackForce = customForce;
-        
+
         knockbackDirection = (transform.position - damageSourcePosition).normalized;
         knockbackDirection.y = 0;
         isKnockedBack = true;
@@ -140,17 +148,17 @@ public class PlayerHealth : MonoBehaviour
             Die();
     }
 
+
+
+
     // ---------------------------------------------
-    //  MORTE
+    //  PRIVATE METHODS
     // ---------------------------------------------
     void Die()
     {
         LoadingManager.Carregar(SceneManager.GetActiveScene().buildIndex);
     }
 
-    // ---------------------------------------------
-    //  HUD DE VIDA
-    // ---------------------------------------------
     void OnGUI()
     {
         float boxWidth = 50;

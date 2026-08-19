@@ -3,27 +3,40 @@ using UnityEngine.UI;
 
 public class LockedDoor : MonoBehaviour
 {
+
+
+
+
+
     // ---------------------------------------------
-    //  INSPETOR
+    //  INSPECTOR
     // ---------------------------------------------
     public Text messageText;
     public string requiredKeyID = "Door";
     public bool isLocked = true;
 
     [Header("audio")]
-    public AudioClip lockedSound;        // Toca se o jogador nao tiver a chave
-    public AudioClip unlockedSound;      // Toca ao destrancar a porta com sucesso
+    public AudioClip lockedSound;
+    public AudioClip unlockedSound;
 
     [Header("Glow Settings")]
     public bool enableGlowWhenKeyAvailable = true;
 
+
+
+
+
     // ---------------------------------------------
-    //  ESTADO PRIVADO
+    //  PRIVATE STATE
     // ---------------------------------------------
     private Rigidbody rb;
     private bool hasPlayedUnlockedSound = false;
     private GlowEmitter doorGlow;
     private bool hasGlowedThisRun = false;
+
+
+
+
 
     // ---------------------------------------------
     //  UNITY
@@ -36,8 +49,11 @@ public class LockedDoor : MonoBehaviour
         InitializeGlow();
     }
 
+
+
+
     // ---------------------------------------------
-    //  INICIALIZACAO DO GLOW
+    //  PRIVATE METHODS
     // ---------------------------------------------
     void InitializeGlow()
     {
@@ -54,8 +70,12 @@ public class LockedDoor : MonoBehaviour
         doorGlow.DisableGlow();
     }
 
+
+
+
+
     // ---------------------------------------------
-    //  CALLBACK DE CHAVE COLETADA
+    //  PUBLIC METHODS
     // ---------------------------------------------
     public void OnKeyPickedUp(string keyName)
     {
@@ -66,9 +86,6 @@ public class LockedDoor : MonoBehaviour
         }
     }
 
-    // ---------------------------------------------
-    //  DESBLOQUEIO POR COLISAO
-    // ---------------------------------------------
     public void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
@@ -118,9 +135,6 @@ public class LockedDoor : MonoBehaviour
         }
     }
 
-    // ---------------------------------------------
-    //  UI
-    // ---------------------------------------------
     void ClearMessage()
     {
         if (messageText != null) messageText.text = "";

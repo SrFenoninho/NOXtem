@@ -3,22 +3,43 @@ using System.Collections;
 
 public class BossVFX : MonoBehaviour
 {
+
+
+
+    // ---------------------------------------------
+    //  INSPECTOR
+    // ---------------------------------------------
     [Header("Particle System de Efeitos em Área")]
     public Color aoeParticleColor = Color.gray;
+
     public Texture aoeParticleTexture;
+
+
+
+    // ---------------------------------------------
+    //  PRIVATE STATE
+    // ---------------------------------------------
     [Range(0.5f, 5f)]
     public float aoeParticleSize = 2.0f;
+
     private ParticleSystem aoeParticles;
     private float jumpAttackRadius = 6f; 
 
     private BossController boss;
 
+
+
+
+
+    // ---------------------------------------------
+    //  PUBLIC METHODS
+    // ---------------------------------------------
     public void Initialize(BossController controller)
     {
         boss = controller;
         BossCombat combat = GetComponent<BossCombat>();
         if(combat != null) jumpAttackRadius = combat.jumpAttackRadius;
-        
+
         CreateAoeParticleSystem();
         if (aoeParticles != null) 
         {
@@ -36,19 +57,26 @@ public class BossVFX : MonoBehaviour
         StartCoroutine(ShakeCamera(duration, magnitude));
     }
 
+
+
+
+
+    // ---------------------------------------------
+    //  PRIVATE METHODS
+    // ---------------------------------------------
     private IEnumerator ShakeCamera(float duration, float magnitude)
     {
         Camera mainCam = Camera.main;
         if(mainCam == null) yield break;
-        
+
         Vector3 originalPos = mainCam.transform.localPosition;
         float elapsed = 0.0f;
-        
+
         while (elapsed < duration)
         {
             float x = Random.Range(-1f, 1f) * magnitude;
             float y = Random.Range(-1f, 1f) * magnitude;
-            
+
             mainCam.transform.localPosition = new Vector3(originalPos.x + x, originalPos.y + y, originalPos.z);
             elapsed += Time.deltaTime;
             yield return null;
@@ -111,7 +139,7 @@ public class BossVFX : MonoBehaviour
 
         var renderer = aoeParticles.GetComponent<ParticleSystemRenderer>();
         Shader particleShader = Shader.Find("Universal Render Pipeline/Particles/Unlit");
-        if (particleShader == null) particleShader = Shader.Find("Legacy Shaders/Particles/Alpha Blended"); // Fallback Clássico com Alpha
+        if (particleShader == null) particleShader = Shader.Find("Legacy Shaders/Particles/Alpha Blended");
 
         renderer.material = new Material(particleShader);
         if (aoeParticleTexture != null)
@@ -119,7 +147,7 @@ public class BossVFX : MonoBehaviour
             if (renderer.material.HasProperty("_BaseMap")) renderer.material.SetTexture("_BaseMap", aoeParticleTexture);
             else renderer.material.mainTexture = aoeParticleTexture;
         }
-        
+
         if (renderer.material.HasProperty("_BaseColor"))
             renderer.material.SetColor("_BaseColor", aoeParticleColor);
         else if (renderer.material.HasProperty("_TintColor"))

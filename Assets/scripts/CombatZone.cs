@@ -2,17 +2,23 @@ using UnityEngine;
 
 public class CombatZone : MonoBehaviour
 {
+
+
+
+
+
     // ---------------------------------------------
-    //  ESTADO GLOBAL ESTATICO
+    //  INSPECTOR
     // ---------------------------------------------
     public static bool InCombatZone { get; private set; } = false;
 
-    // ---------------------------------------------
-    //  INSPETOR
-    // ---------------------------------------------
     [Header("Referencias")]
     public FPCombat fpCombat;
     public Lighter lighter;
+
+
+
+
 
     // ---------------------------------------------
     //  UNITY
@@ -27,7 +33,6 @@ public class CombatZone : MonoBehaviour
         if (!other.CompareTag("Player")) return;
         InCombatZone = true;
         Apply(true);
-        // Debug.Log("Entrou na zona de combate");
     }
 
     void OnTriggerExit(Collider other)
@@ -35,9 +40,14 @@ public class CombatZone : MonoBehaviour
         if (!other.CompareTag("Player")) return;
         InCombatZone = false;
         Apply(false);
-        // Debug.Log("Saiu da zona de combate");
     }
 
+
+
+
+    // ---------------------------------------------
+    //  PRIVATE METHODS
+    // ---------------------------------------------
     void Apply(bool active)
     {
         if (fpCombat != null) fpCombat.enabled = active;

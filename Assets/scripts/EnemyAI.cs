@@ -2,23 +2,31 @@ using UnityEngine;
 
 public class EnemyAI : MonoBehaviour
 {
+
+
+
+
     // ---------------------------------------------
-    //  FASES DA IA
+    //  PRIVATE STATE
     // ---------------------------------------------
     private enum Phase
     {
-        Spawning,       // a sair da terra
-        OrbitFar,       // estado padrao - a orbitar longe, sem se comprometer
-        ApproachClose,  // decide aproximar-se do jogador
-        ReadyToAttack,  // chega perto, a espera do token de ataque - recua se demorar demasiado
-        Attacking,      // tem o token - a investir contra o jogador
-        Reposition,     // ataque terminado ou falhado - a recuar antes de voltar a OrbitFar
+        Spawning,
+        OrbitFar,
+        ApproachClose,
+        ReadyToAttack,
+        Attacking,
+        Reposition,
     }
 
+
+
+
     // ---------------------------------------------
-    //  INSPETOR
+    //  INSPECTOR
     // ---------------------------------------------
     [Header("Animation")]
+
     public Animator animator;
     public string spawnTrigger = "Spawn";
     public string moveXFloat = "MoveX";
@@ -35,17 +43,15 @@ public class EnemyAI : MonoBehaviour
     public float detectionRadius = 15f;
 
     [Header("Orbit")]
-    public float farOrbitRadius = 8f;   // circulo exterior de espera
-    public float closeOrbitRadius = 4.5f; // Aumentado para eles começarem a correr de mais longe!
-    public float orbitSpeed = 60f;  // graus por segundo
+    public float farOrbitRadius = 8f;
+    public float closeOrbitRadius = 4.5f;
+    public float orbitSpeed = 60f;
+
     private float orbitAngle;
 
     [Header("Approach")]
-    // Probabilidade por segundo de um inimigo em OrbitFar decidir aproximar-se
     public float approachChancePerSecond = 0.25f;
-    // Maximo de inimigos permitidos em ApproachClose+ReadyToAttack+Attacking ao mesmo tempo
     public int maxCloseEnemies = 3;
-    // Quanto tempo esperar pelo token de ataque antes de desistir e recuar
     public float readyToAttackTimeout = 3f;
 
     [Header("Attack")]
@@ -54,7 +60,6 @@ public class EnemyAI : MonoBehaviour
     public float attackRange = 1.5f;
     public float attackLungeDuration = 0.35f;
     public float attackFinishPause = 0.4f;
-    // Se o inimigo nao conseguir alcancar o jogador durante o ataque, desiste apos este tempo
     public float attackGiveUpTimeout = 5f;
 
     [Header("Reposition")]
@@ -76,9 +81,6 @@ public class EnemyAI : MonoBehaviour
     public float cloneSpawnMaxRadius = 8f;
     public float cloneSpawnHeightOffset = 2f;
 
-    // ---------------------------------------------
-    //  TEMPO DE EXECUcaO
-    // ---------------------------------------------
     [HideInInspector] public GameObject enemyPrefab;
     [HideInInspector] public GameObject cloneSpawnerPrefab;
     [HideInInspector] public int generation = 0;
@@ -88,9 +90,6 @@ public class EnemyAI : MonoBehaviour
     public System.Action OnDeath;
     public bool isOriginal = false;
 
-    // ---------------------------------------------
-    //  ESTADO PRIVADO
-    // ---------------------------------------------
     private Phase currentPhase = Phase.OrbitFar;
 
     private float currentHealth;
@@ -122,11 +121,15 @@ public class EnemyAI : MonoBehaviour
     private float phaseTimer = 0f;
     private float approachCheckTimer = 0f;
     private Vector3 repositionDir;
-    private bool hitLanded = false; // verdadeiro quando o inimigo acerta um golpe em Attacking
+    private bool hitLanded = false;
+
+
+
+
 
     // ---------------------------------------------
     //  UNITY
-    // ----------------------------------------------
+    // ---------------------------------------------
     void Awake()
     {
         EnemyCombatManager.Register(this);
@@ -138,14 +141,10 @@ public class EnemyAI : MonoBehaviour
 
         if (animator == null)
             animator = GetComponentInChildren<Animator>();
-            
-        // FORÇAR PARA FALSE!! Na Build, o Unity por vezes ativa o Apply Root Motion
-        // que faz as animações controlarem a física, lixando a IA toda!
+
         if (animator != null)
             animator.applyRootMotion = false;
 
-        // Na Build o FindGameObjectWithTag é traiçoeiro e muitas vezes apanha a Câmara ou outros modelos
-        // com a Tag do Jogador. O Inimigo andava a orbitar a Câmara e não o Boneco!
         PlayerHealth healthComponent = Object.FindAnyObjectByType<PlayerHealth>();
         if (healthComponent != null)
         {
@@ -163,7 +162,6 @@ public class EnemyAI : MonoBehaviour
         modelTransform = transform.childCount > 0 ? transform.GetChild(0) : transform;
         modelOriginalLocalPosition = modelTransform.localPosition;
 
-        // angulo inicial aleatorio para que os inimigos se espalhem imediatamente
         orbitAngle = Random.Range(0f, 360f);
 
         SetPhase(Phase.Spawning);
@@ -197,8 +195,11 @@ public class EnemyAI : MonoBehaviour
         HandleMovement();
     }
 
+
+
+
     // ---------------------------------------------
-    //  MaQUINA DE ESTADOS DAS FASES
+    //  PRIVATE METHODS
     // ---------------------------------------------
     void UpdatePhase()
     {
@@ -206,18 +207,15 @@ public class EnemyAI : MonoBehaviour
 
         switch (currentPhase)
         {
-            // -- SPAWNING -----------------------------------------------------
             case Phase.Spawning:
                 phaseTimer += Time.deltaTime;
-                
+
                 bool animationFinished = false;
                 if (animator != null)
                 {
                     AnimatorStateInfo state = animator.GetCurrentAnimatorStateInfo(0);
-                    // Verifica se já está na animação de Spawn e se já chegou ao fim (normalizedTime >= 1)
                     if (state.IsName("Spawn") && state.normalizedTime >= 0.95f)
                         animationFinished = true;
-                    // Prevenção caso o animator já tenha saído do estado
                     else if (!state.IsName("Spawn") && phaseTimer > 0.5f)
                         animationFinished = true;
                 }
@@ -232,8 +230,6 @@ public class EnemyAI : MonoBehaviour
                 }
                 break;
 
-            // -- oRBITA DISTANTE ----------------------------------------------
-            // Estado padrao. O inimigo orbita a distancia e ocasionalmente decide aproximar-se.
             case Phase.OrbitFar:
 
                 orbitAngle += orbitSpeed * 0.5f * Time.deltaTime;
@@ -250,9 +246,6 @@ public class EnemyAI : MonoBehaviour
                 }
                 break;
 
-            // -- APROXIMAcaO -----------------------------------------------
-            // O inimigo esta a aproximar-se. Quando atinge o raio proximo, entra em ReadyToAttack.
-            // Se nunca chegar (ex: o jogador esta a mover-se), desiste apos algum tempo.
             case Phase.ApproachClose:
 
                 orbitAngle += orbitSpeed * Time.deltaTime;
@@ -264,7 +257,6 @@ public class EnemyAI : MonoBehaviour
                     break;
                 }
 
-                // Nao conseguiu alcancar - recua e espera em OrbitFar
                 if (phaseTimer >= readyToAttackTimeout)
                 {
                     orbitAngle += Random.Range(60f, 120f);
@@ -272,22 +264,16 @@ public class EnemyAI : MonoBehaviour
                 }
                 break;
 
-            // -- PRONTO PARA ATACAR ----------------------------------------
-            // O inimigo esta perto e quer atacar. Solicita um token.
-            // Se o token demorar demasiado, recua para OrbitFar - nao vai aglomerar-se para sempre.
             case Phase.ReadyToAttack:
 
                 phaseTimer += Time.deltaTime;
 
-                // Obteve o token - atacar agora
                 if (Time.time >= nextAttack && EnemyCombatManager.RequestAttackToken(this))
                 {
                     SetPhase(Phase.Attacking);
-                    // O trigger de ataque é disparado apenas quando chega perto, permitindo a corrida inicial
                     break;
                 }
 
-                // Esperou demasiado tempo sem token - retirar para OrbitFar
                 if (phaseTimer >= readyToAttackTimeout)
                 {
                     orbitAngle += Random.Range(60f, 120f);
@@ -295,14 +281,10 @@ public class EnemyAI : MonoBehaviour
                 }
                 break;
 
-            // -- A ATACAR ----------------------------------------------
-            // Tem o token. Investe contra o jogador e continua a tentar ate acertar,
-            // falhar a janela de investida, ou esgotar o tempo completamente.
             case Phase.Attacking:
 
                 phaseTimer += Time.deltaTime;
 
-                // Desistiu - nao conseguiu alcancar o jogador a tempo
                 if (phaseTimer >= attackGiveUpTimeout)
                 {
                     EnemyCombatManager.ReleaseToken(this);
@@ -312,16 +294,14 @@ public class EnemyAI : MonoBehaviour
                     break;
                 }
 
-                // Verificar acerto em cada frame enquanto estiver perto o suficiente - nao apenas durante a janela de investida
                 if (distToPlayer <= attackRange && !hitLanded)
                 {
                     if (animator != null) animator.SetTrigger(attackTrigger);
                     playerHealth?.TakeDamage(attackDamage, transform.position);
                     nextAttack = Time.time + attackInterval;
-                    hitLanded = true; // acertar apenas uma vez por tentativa de ataque
+                    hitLanded = true;
                 }
 
-                // Apos a duracao da investida: se acertou, termina de forma limpa; se nao, continua a perseguir ate expirar o tempo
                 if (phaseTimer >= attackLungeDuration + attackFinishPause && hitLanded)
                 {
                     EnemyCombatManager.ReleaseToken(this);
@@ -329,8 +309,6 @@ public class EnemyAI : MonoBehaviour
                 }
                 break;
 
-            // -- REPOSICIONAMENTO ---------------------------------------------
-            // Afasta-se do jogador antes de voltar a OrbitFar.
             case Phase.Reposition:
 
                 phaseTimer += Time.deltaTime;
@@ -360,9 +338,6 @@ public class EnemyAI : MonoBehaviour
         currentPhase = next;
     }
 
-    // ---------------------------------------------
-    //  MOVIMENTO
-    // ---------------------------------------------
     void HandleMovement()
     {
         if (isKnockedBack)
@@ -377,7 +352,7 @@ public class EnemyAI : MonoBehaviour
             moveDir.z = 0;
             ApplyGravity();
             controller.Move(moveDir * Time.fixedDeltaTime);
-            return; // Nao se move enquanto nasce
+            return;
         }
 
         Vector3 targetPos = GetTargetPosition();
@@ -387,7 +362,7 @@ public class EnemyAI : MonoBehaviour
         float speedMult = currentPhase == Phase.Attacking ? 2.2f
                         : currentPhase == Phase.ApproachClose ? 1.2f
                         : currentPhase == Phase.Reposition ? 1.0f
-                        : 0.7f; // OrbitFar + ReadyToAttack deslizam lentamente
+                        : 0.7f;
 
         if (toTarget.magnitude > 0.15f)
         {
@@ -400,7 +375,6 @@ public class EnemyAI : MonoBehaviour
             moveDir.z = 0;
         }
 
-        // Estar sempre virado para o jogador INDEPENDENTEMENTE DO QUE ACONTECER
         Vector3 lookDir = player.position - transform.position;
         lookDir.y = 0;
         if (lookDir.sqrMagnitude > 0.01f)
@@ -410,14 +384,13 @@ public class EnemyAI : MonoBehaviour
         {
             Vector3 flatMoveDir = new Vector3(moveDir.x, 0, moveDir.z);
             Vector3 localMove = transform.InverseTransformDirection(flatMoveDir);
-            
+
             animator.SetFloat(moveXFloat, localMove.x / speed);
             animator.SetFloat(moveZFloat, localMove.z / speed);
         }
 
         ApplyGravity();
         controller.Move(moveDir * Time.fixedDeltaTime);
-        // CheckStuck removido porque em FPS ilimitados (Build) quebra os CharacterControllers
     }
 
     Vector3 GetTargetPosition()
@@ -426,20 +399,18 @@ public class EnemyAI : MonoBehaviour
         Vector3 toMe = transform.position - player.position;
         float currentAngle = Mathf.Atan2(toMe.z, toMe.x) * Mathf.Rad2Deg;
         float angleDiff = Mathf.DeltaAngle(currentAngle, orbitAngle);
-        // Limita a diferença para não tentar atalhar pelo meio do círculo
         float clampedAngle = currentAngle + Mathf.Clamp(angleDiff, -15f, 15f);
 
         switch (currentPhase)
         {
             case Phase.OrbitFar:
-            case Phase.ReadyToAttack: // ReadyToAttack desliza no raio distante enquanto espera
+            case Phase.ReadyToAttack:
                 rad = clampedAngle * Mathf.Deg2Rad;
                 return player.position + new Vector3(
                     Mathf.Cos(rad) * farOrbitRadius, 0,
                     Mathf.Sin(rad) * farOrbitRadius);
 
             case Phase.ApproachClose:
-                // Espiral para dentro - interpola entre o raio distante e o proximo
                 float t = Mathf.Clamp01(phaseTimer / readyToAttackTimeout);
                 float radius = Mathf.Lerp(farOrbitRadius, closeOrbitRadius, t);
                 rad = clampedAngle * Mathf.Deg2Rad;
@@ -502,9 +473,6 @@ public class EnemyAI : MonoBehaviour
         previousPosition = transform.position;
     }
 
-    // ---------------------------------------------
-    //  ATORDOAMENTO
-    // ---------------------------------------------
     void HandleStun()
     {
         modelTransform.localPosition = modelOriginalLocalPosition + new Vector3(
@@ -521,8 +489,12 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
+
+
+
+
     // ---------------------------------------------
-    //  DANO E MORTE
+    //  PUBLIC METHODS
     // ---------------------------------------------
     public void TakeDamage(float damage, float knockback = 0f, float stunDuration = 0f)
     {
@@ -540,7 +512,6 @@ public class EnemyAI : MonoBehaviour
             if (stunDuration > 0f)
                 stunEndTime = Time.time + knockbackDuration + stunDuration;
 
-            // Interromper o ataque se for atingido durante o mesmo
             if (currentPhase == Phase.Attacking)
             {
                 EnemyCombatManager.ReleaseToken(this);
@@ -575,11 +546,6 @@ public class EnemyAI : MonoBehaviour
         Destroy(gameObject);
     }
 
-    // ---------------------------------------------
-    //  AUXILIARES
-    // ---------------------------------------------
-
-    // Conta os inimigos que se comprometeram a aproximar-se ou atacar
     int CountCommittedEnemies()
     {
         int count = 0;
@@ -597,9 +563,6 @@ public class EnemyAI : MonoBehaviour
         return count;
     }
 
-    // ---------------------------------------------
-    //  DESENHOS DE DEPURAcaO
-    // ---------------------------------------------
     void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;

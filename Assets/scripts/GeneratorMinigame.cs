@@ -4,15 +4,26 @@ using System.Collections;
 
 public class GeneratorMinigame : MonoBehaviour, IInteractable
 {
+
+
+
+
     // ---------------------------------------------
-    //  INSPETOR
+    //  INSPECTOR
     // ---------------------------------------------
     [Header("UI do Minijogo")]
+
     public GameObject minigameUI;
     public Image radialImage; 
+
+
+
+    // ---------------------------------------------
+    //  PRIVATE STATE
+    // ---------------------------------------------
     [Tooltip("Arrasta o crosshair para aqui para o esconder no minijogo!")]
     public RawImage crosshairUI; 
-    
+
     [Header("Mecânica")]
     public int puxoesNecessarios = 3;
     public float velocidadeInicial = 0.5f;
@@ -30,9 +41,7 @@ public class GeneratorMinigame : MonoBehaviour, IInteractable
     public AudioClip somPuxarErro;
     public AudioClip somMotorLigado;
 
-    // ---------------------------------------------
-    //  ESTADO PRIVADO
-    // ---------------------------------------------
+
     private bool aJogar = false;
     private bool jaResolvido = false;
     private float progressoRoda = 0f;
@@ -40,8 +49,12 @@ public class GeneratorMinigame : MonoBehaviour, IInteractable
     private float velocidadeAtual;
     private float direcaoRoda = 1f; 
 
+
+
+
+
     // ---------------------------------------------
-    //  INICIO DO JOGO
+    //  UNITY
     // ---------------------------------------------
     private void Start()
     {
@@ -51,8 +64,12 @@ public class GeneratorMinigame : MonoBehaviour, IInteractable
         }
     }
 
+
+
+
+
     // ---------------------------------------------
-    //  IINTERACTABLE
+    //  PUBLIC METHODS
     // ---------------------------------------------
     public void Interact(GameObject interactor)
     {
@@ -60,8 +77,7 @@ public class GeneratorMinigame : MonoBehaviour, IInteractable
 
         GameStateManager.Instance?.PushState(GameState.Minigame);
         minigameUI.SetActive(true);
-        
-        // Esconde o Crosshair do ecrã
+
         if (crosshairUI != null)
         {
             crosshairUI.enabled = false;
@@ -72,22 +88,20 @@ public class GeneratorMinigame : MonoBehaviour, IInteractable
         direcaoRoda = 1f; 
         velocidadeAtual = velocidadeInicial;
         radialImage.fillAmount = 0f;
-        
+
         Time.timeScale = 0f;
         aJogar = true;
     }
 
     public string GetInteractMessage() => jaResolvido ? "Generator On" : "Start Generator";
 
-    // ---------------------------------------------
-    //  UPDATE COM VAI-E-VEM
-    // ---------------------------------------------
+
     private void Update()
     {
         if (!aJogar) return;
 
         progressoRoda += Time.unscaledDeltaTime * velocidadeAtual * direcaoRoda;
-        
+
         if (progressoRoda >= 1.0f)
         {
             progressoRoda = 1.0f;
@@ -110,8 +124,11 @@ public class GeneratorMinigame : MonoBehaviour, IInteractable
         }
     }
 
+
+
+
     // ---------------------------------------------
-    //  AÇÕES
+    //  PRIVATE METHODS
     // ---------------------------------------------
     private void RegistrarAcerto()
     {
@@ -119,7 +136,7 @@ public class GeneratorMinigame : MonoBehaviour, IInteractable
         progressoRoda = 0f; 
         direcaoRoda = 1f; 
         velocidadeAtual += 0.2f; 
-        
+
         if (audioSource != null && somPuxarAcerto != null)
             audioSource.PlayOneShot(somPuxarAcerto);
 
@@ -131,23 +148,19 @@ public class GeneratorMinigame : MonoBehaviour, IInteractable
     {
         progressoRoda = 0f; 
         direcaoRoda = 1f; 
-        
+
         if (audioSource != null && somPuxarErro != null)
             audioSource.PlayOneShot(somPuxarErro);
     }
 
-    // ---------------------------------------------
-    //  FIM
-    // ---------------------------------------------
     private void GanharMinijogo()
     {
         aJogar = false;
         jaResolvido = true;
-        
+
         minigameUI.SetActive(false);
         GameStateManager.Instance?.PopState(); 
 
-        // Restaura o Crosshair!
         if (crosshairUI != null)
         {
             crosshairUI.enabled = true;

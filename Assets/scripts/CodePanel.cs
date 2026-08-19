@@ -4,10 +4,15 @@ using TMPro;
 
 public class CodePanel : MonoBehaviour
 {
+
+
+
+
     // ---------------------------------------------
     //  INSPECTOR
     // ---------------------------------------------
     [Header("Door Settings")]
+
     public SimpleLockedDoor doorToUnlock;
     public string correctCode = "1234";
 
@@ -19,6 +24,12 @@ public class CodePanel : MonoBehaviour
     [Header("Interaction")]
     public float interactDistance = 3f;
 
+
+
+
+    // ---------------------------------------------
+    //  PRIVATE STATE
+    // ---------------------------------------------
     [System.Serializable]
     public struct CodeButton
     {
@@ -33,13 +44,15 @@ public class CodePanel : MonoBehaviour
     public AudioClip beepSound;
     public AudioClip errorSound;
     public AudioClip successSound;
+
     private AudioSource audioSource;
 
-    // ---------------------------------------------
-    //  ESTADO PRIVADO
-    // ---------------------------------------------
     private string currentInput = "";
     private bool isUnlocked = false;
+
+
+
+
 
     // ---------------------------------------------
     //  UNITY
@@ -48,7 +61,7 @@ public class CodePanel : MonoBehaviour
     {
         audioSource = GetComponent<AudioSource>();
         if (audioSource == null) audioSource = gameObject.AddComponent<AudioSource>();
-        
+
         UpdateDisplay();
     }
 
@@ -78,8 +91,11 @@ public class CodePanel : MonoBehaviour
         }
     }
 
+
+
+
     // ---------------------------------------------
-    //  LÓGICA DO CÓDIGO
+    //  PRIVATE METHODS
     // ---------------------------------------------
     void OnButtonPressed(string digit)
     {
@@ -109,7 +125,7 @@ public class CodePanel : MonoBehaviour
     void UpdateDisplay()
     {
         if (displayText == null) return;
-        
+
         if (currentInput == "")
         {
             displayText.text = "0000";

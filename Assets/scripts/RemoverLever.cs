@@ -2,15 +2,27 @@ using UnityEngine;
 
 public class RemoverLever : MonoBehaviour, IInteractable
 {
+
+
+
+
     // ---------------------------------------------
     //  INSPECTOR
     // ---------------------------------------------
-    [Header("Ação Principal")]
+    [Header("Aï¿½ï¿½o Principal")]
+
+
+
+    // ---------------------------------------------
+    //  PRIVATE STATE
+    // ---------------------------------------------
     [Tooltip("Arrasta para aqui o objeto da hierarquia que queres apagar")]
+
     public GameObject objectToRemove;
 
-    [Header("Animação da Alavanca")]
+    [Header("Animaï¿½ï¿½o da Alavanca")]
     public Transform leverArm;
+
     public Vector3 activatedRotation = new Vector3(-60f, 0f, 0f);
     public float animationSpeed = 5f;
 
@@ -23,12 +35,13 @@ public class RemoverLever : MonoBehaviour, IInteractable
     public bool updateObjectiveOnInteract = false;
     [TextArea] public string nextObjectiveText = "";
 
-    // ---------------------------------------------
-    //  ESTADO PRIVADO
-    // ---------------------------------------------
     private bool isActivated = false;
     private Quaternion targetRotation;
     private Quaternion defaultRotation;
+
+
+
+
 
     // ---------------------------------------------
     //  UNITY
@@ -55,8 +68,11 @@ public class RemoverLever : MonoBehaviour, IInteractable
         }
     }
 
+
+
+
     // ---------------------------------------------
-    //  INTERFACE IInteractable
+    //  PUBLIC METHODS
     // ---------------------------------------------
     public string GetInteractMessage()
     {
@@ -70,8 +86,11 @@ public class RemoverLever : MonoBehaviour, IInteractable
         Activate();
     }
 
+
+
+
     // ---------------------------------------------
-    //  ATIVACAO
+    //  PRIVATE METHODS
     // ---------------------------------------------
     void Activate()
     {

@@ -3,10 +3,15 @@ using TMPro;
 
 public class FlowFreeTerminal : MonoBehaviour, IInteractable
 {
+
+
+
+
     // ---------------------------------------------
-    //  INSPETOR
+    //  INSPECTOR
     // ---------------------------------------------
     [Header("UI References")]
+
     public TextMeshProUGUI messageText;
     public GameObject flowFreeUI;
 
@@ -20,11 +25,19 @@ public class FlowFreeTerminal : MonoBehaviour, IInteractable
     [Header("Glow Settings")]
     public bool enableGlow = true;
 
+
+
+
+
     // ---------------------------------------------
-    //  ESTADO PRIVADO
+    //  PRIVATE STATE
     // ---------------------------------------------
     private bool isGameActive = false;
     private GlowEmitter terminalGlow;
+
+
+
+
 
     // ---------------------------------------------
     //  UNITY
@@ -34,8 +47,11 @@ public class FlowFreeTerminal : MonoBehaviour, IInteractable
         InitializeGlow();
     }
 
+
+
+
     // ---------------------------------------------
-    //  INICIALIZACAO DO GLOW
+    //  PRIVATE METHODS
     // ---------------------------------------------
     void InitializeGlow()
     {
@@ -52,8 +68,12 @@ public class FlowFreeTerminal : MonoBehaviour, IInteractable
         terminalGlow.EnableGlow();
     }
 
+
+
+
+
     // ---------------------------------------------
-    //  INTERFACE IInteractable
+    //  PUBLIC METHODS
     // ---------------------------------------------
     public string GetInteractMessage()
     {
@@ -67,9 +87,6 @@ public class FlowFreeTerminal : MonoBehaviour, IInteractable
         OpenMinigame();
     }
 
-    // ---------------------------------------------
-    //  MINIJOGO
-    // ---------------------------------------------
     void OpenMinigame()
     {
         isGameActive = true;
@@ -92,9 +109,6 @@ public class FlowFreeTerminal : MonoBehaviour, IInteractable
             messageText.text = "";
     }
 
-    // ---------------------------------------------
-    //  SAIDA FORCADA
-    // ---------------------------------------------
     public void ForceClose()
     {
         isGameActive = false;
@@ -109,9 +123,6 @@ public class FlowFreeTerminal : MonoBehaviour, IInteractable
         Cursor.lockState = CursorLockMode.Locked;
     }
 
-    // ---------------------------------------------
-    //  CONCLUSAO
-    // ---------------------------------------------
     public void OnGameComplete()
     {
         isGameActive = false;

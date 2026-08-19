@@ -3,10 +3,15 @@ using System.Collections;
 
 public class EnemyCountKill : MonoBehaviour
 {
+
+
+
+
     // ---------------------------------------------
-    //  INSPETOR
+    //  INSPECTOR
     // ---------------------------------------------
     [Header("Objeto a Subir")]
+
     public Transform targetObject;
     public float riseHeight = 10f;
     public float riseSpeed = 1f;
@@ -30,12 +35,20 @@ public class EnemyCountKill : MonoBehaviour
     public OrbitCam orbitCam;
     public Camera tpCamera;
 
+
+
+
+
     // ---------------------------------------------
-    //  ESTADO PRIVADO
+    //  PRIVATE STATE
     // ---------------------------------------------
     private bool enemiesExisted = false;
     private bool triggered = false;
     private AudioSource audioSource;
+
+
+
+
 
     // ---------------------------------------------
     //  UNITY
@@ -62,8 +75,6 @@ public class EnemyCountKill : MonoBehaviour
         if (!enemiesExisted && count > 0)
             enemiesExisted = true;
 
-        // Na Build, o spawneo acontece muito rapidamente. Se tivéssemos count <= 1, ele abria o portão quando matássemos o penúltimo,
-        // ou pior: logo a seguir ao Spawner meter o 1º monstro, abria logo a porta!
         if (enemiesExisted && count <= 0)
         {
             triggered = true;
@@ -71,12 +82,14 @@ public class EnemyCountKill : MonoBehaviour
         }
     }
 
+
+
+
     // ---------------------------------------------
-    //  SEQUENCIA COMPLETA
+    //  PRIVATE METHODS
     // ---------------------------------------------
     IEnumerator RewardSequence()
     {
-        // Bloquear inventario durante toda a sequencia
         GameStateManager.Instance?.PushState(GameState.Cutscene);
 
         if (transformationManager != null && !transformationManager.IsTPForm())
@@ -181,7 +194,6 @@ public class EnemyCountKill : MonoBehaviour
         if (transformationManager != null)
             transformationManager.transformationBlocked = false;
 
-        // Sequencia terminou - inventario pode voltar a abrir
         GameStateManager.Instance?.PopState();
 
         if (teleporterToActivate != null)

@@ -3,8 +3,12 @@ using UnityEngine.UI;
 
 public class Keys : MonoBehaviour, IInteractable
 {
+
+
+
+
     // ---------------------------------------------
-    //  INSPETOR
+    //  INSPECTOR
     // ---------------------------------------------
     [Header("Key Settings")]
     public string keyName = "Door";
@@ -12,6 +16,7 @@ public class Keys : MonoBehaviour, IInteractable
     public string keyDescription = "";
 
     [Header("UI")]
+
     public Text messageText;
 
     [Header("Atualizar Objetivo (Opcional)")]
@@ -24,11 +29,19 @@ public class Keys : MonoBehaviour, IInteractable
     [Header("Glow Settings")]
     public bool enableGlow = true;
 
+
+
+
+
     // ---------------------------------------------
-    //  ESTADO PRIVADO
+    //  PRIVATE STATE
     // ---------------------------------------------
     private bool alreadyPickedUp = false;
     private GlowEmitter keyGlow;
+
+
+
+
 
     // ---------------------------------------------
     //  UNITY
@@ -46,8 +59,12 @@ public class Keys : MonoBehaviour, IInteractable
         }
     }
 
+
+
+
+
     // ---------------------------------------------
-    //  INTERFACE IInteractable
+    //  PUBLIC METHODS
     // ---------------------------------------------
     public string GetInteractMessage()
     {
@@ -87,7 +104,7 @@ public class Keys : MonoBehaviour, IInteractable
         }
 
         GetComponent<Collider>().enabled = false;
-        
+
         Renderer[] renderers = GetComponentsInChildren<Renderer>();
         foreach (Renderer r in renderers)
         {
@@ -96,19 +113,21 @@ public class Keys : MonoBehaviour, IInteractable
 
         if (keyGlow != null)
             keyGlow.DisableGlow();
-            
+
         RotateObject rotator = GetComponent<RotateObject>();
         if (rotator != null)
             rotator.StopEffects();
 
-        // 100% Garantido que desaparece dos olhos do jogador atirando a chave para fora do mapa instantaneamente
         transform.position = new Vector3(transform.position.x, transform.position.y - 1000f, transform.position.z);
 
         Destroy(gameObject, 2.1f);
     }
 
+
+
+
     // ---------------------------------------------
-    //  GLOW
+    //  PRIVATE METHODS
     // ---------------------------------------------
     void NotifyDoorsAboutKey(string keyName)
     {
@@ -122,9 +141,6 @@ public class Keys : MonoBehaviour, IInteractable
             reader.OnKeyPickedUp(keyName);
     }
 
-    // ---------------------------------------------
-    //  UI
-    // ---------------------------------------------
     void ClearMessage()
     {
         if (messageText != null)

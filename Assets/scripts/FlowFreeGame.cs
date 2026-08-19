@@ -7,10 +7,15 @@ using System.Collections.Generic;
 
 public class FlowFreeGame : MonoBehaviour
 {
+
+
+
+
     // ---------------------------------------------
-    //  INSPETOR
+    //  INSPECTOR
     // ---------------------------------------------
     [Header("References")]
+
     public FlowFreePuzzle puzzleData;
     public FlowFreeTerminal terminal;
     public FlowFreeUI gameUI;
@@ -20,8 +25,12 @@ public class FlowFreeGame : MonoBehaviour
     public Button resetButton;
     public Button exitButton;
 
+
+
+
+
     // ---------------------------------------------
-    //  ESTADO PRIVADO
+    //  PRIVATE STATE
     // ---------------------------------------------
     private PuzzleData currentPuzzle;
     private Color[,] grid = new Color[5, 5];
@@ -29,6 +38,10 @@ public class FlowFreeGame : MonoBehaviour
     private Color currentDragColor = Color.clear;
     private FlowFreeCell[,] cellRefs = new FlowFreeCell[5, 5];
     private bool puzzleComplete = false;
+
+
+
+
 
     // ---------------------------------------------
     //  UNITY
@@ -59,17 +72,18 @@ public class FlowFreeGame : MonoBehaviour
             exitButton.onClick.RemoveListener(ExitMinigame);
     }
 
+
+
+
+
     // ---------------------------------------------
-    //  REGISTO DE CELULAS
+    //  PUBLIC METHODS
     // ---------------------------------------------
     public void RegisterCell(FlowFreeCell cell)
     {
         cellRefs[cell.x, cell.y] = cell;
     }
 
-    // ---------------------------------------------
-    //  JOGO
-    // ---------------------------------------------
     public void StartNewGame()
     {
         if (puzzleData == null) return;
@@ -112,17 +126,17 @@ public class FlowFreeGame : MonoBehaviour
                     cellRefs[x, y].UpdateVisual();
     }
 
-    // ---------------------------------------------
-    //  SAIDA DO MINIJOGO
-    // ---------------------------------------------
     public void ExitMinigame()
     {
         if (terminal != null)
             terminal.ForceClose();
     }
 
+
+
+
     // ---------------------------------------------
-    //  INICIALIZACAO DA GRELHA
+    //  PRIVATE METHODS
     // ---------------------------------------------
     void InitializeGrid()
     {
@@ -142,9 +156,6 @@ public class FlowFreeGame : MonoBehaviour
         }
     }
 
-    // ---------------------------------------------
-    //  INPUT DE ARRASTAR
-    // ---------------------------------------------
     void Update()
     {
         if (puzzleComplete) return;
@@ -177,9 +188,6 @@ public class FlowFreeGame : MonoBehaviour
             currentDragColor = Color.clear;
     }
 
-    // ---------------------------------------------
-    //  LOGICA DA GRELHA
-    // ---------------------------------------------
     bool HasAdjacentColor(int x, int y, Color color)
     {
         if (x > 0 && grid[x - 1, y] == color) return true;
@@ -212,9 +220,6 @@ public class FlowFreeGame : MonoBehaviour
     public Color GetCellColor(int x, int y) => grid[x, y];
     public bool IsEndpoint(int x, int y) => isEndpoint[x, y];
 
-    // ---------------------------------------------
-    //  VERIFICACAO DE CONCLUSAO
-    // ---------------------------------------------
     void CheckCompletion()
     {
         if (currentPuzzle.solution == null) return;

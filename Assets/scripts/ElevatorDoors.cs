@@ -4,18 +4,23 @@ using System.Collections;
 
 public class ElevatorDoors : MonoBehaviour, IInteractable
 {
+
+
+
+
     // ---------------------------------------------
-    //  INSPETOR
+    //  INSPECTOR
     // ---------------------------------------------
     [Header("Elevator Doors")]
+
     public Transform door1;
     public Transform door2;
 
     [Header("Movement Settings")]
     public Vector3 moveDirection = Vector3.right;
-    public float door1Distance = 2f; // Distância que a Porta 1 vai andar
-    public float door2Distance = 1f; // Distância que a Porta 2 vai andar
-    public float openDuration = 1.5f; // Segundos que demora a abrir
+    public float door1Distance = 2f;
+    public float door2Distance = 1f;
+    public float openDuration = 1.5f;
 
     [Header("Security")]
     public bool isLocked = false;
@@ -30,18 +35,26 @@ public class ElevatorDoors : MonoBehaviour, IInteractable
     public AudioClip openSound;
     public AudioClip lockedSound;
     public AudioClip grantedSound;
+
+
+
+
+    // ---------------------------------------------
+    //  PRIVATE STATE
+    // ---------------------------------------------
     private AudioSource audioSource;
 
     [Header("Glow")]
     public bool enableGlow = true;
 
-    // ---------------------------------------------
-    //  ESTADO PRIVADO
-    // ---------------------------------------------
     private GlowEmitter glow;
     private bool isOpened = false;
     private Vector3 door1StartPos;
     private Vector3 door2StartPos;
+
+
+
+
 
     // ---------------------------------------------
     //  UNITY
@@ -58,6 +71,12 @@ public class ElevatorDoors : MonoBehaviour, IInteractable
         InitializeGlow();
     }
 
+
+
+
+    // ---------------------------------------------
+    //  PRIVATE METHODS
+    // ---------------------------------------------
     void InitializeGlow()
     {
         if (!enableGlow) return;
@@ -71,18 +90,22 @@ public class ElevatorDoors : MonoBehaviour, IInteractable
         }
     }
 
+
+
+
+
+    // ---------------------------------------------
+    //  PUBLIC METHODS
+    // ---------------------------------------------
     public void OnKeyPickedUp(string keyName)
     {
         if (keyName == this.requiredKeyName && enableGlow && glow != null)
             glow.EnableGlow();
     }
 
-    // ---------------------------------------------
-    //  INTERFACE IInteractable
-    // ---------------------------------------------
     public string GetInteractMessage()
     {
-        if (isOpened) return ""; // Ou algo como "Portas abertas"
+        if (isOpened) return "";
         if (isLocked) return $"Press E to use card reader (Requires {requiredKeyName})";
         return "Press E to open elevator doors";
     }
@@ -128,9 +151,6 @@ public class ElevatorDoors : MonoBehaviour, IInteractable
         }
     }
 
-    // ---------------------------------------------
-    //  ABRIR AS PORTAS
-    // ---------------------------------------------
     void OpenDoors()
     {
         if (isOpened) return;
@@ -160,7 +180,6 @@ public class ElevatorDoors : MonoBehaviour, IInteractable
             elapsed += Time.deltaTime;
             float t = Mathf.Clamp01(elapsed / openDuration);
 
-            // Transição suave (acelera no início e trava no fim)
             float smoothStep = Mathf.SmoothStep(0f, 1f, t);
 
             if (door1 != null)
@@ -172,7 +191,6 @@ public class ElevatorDoors : MonoBehaviour, IInteractable
             yield return null;
         }
 
-        // Garante que param exatamente na posição final
         if (door1 != null) door1.localPosition = door1TargetPos;
         if (door2 != null) door2.localPosition = door2TargetPos;
     }

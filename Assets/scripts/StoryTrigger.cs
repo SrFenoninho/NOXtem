@@ -6,6 +6,12 @@ using TMPro;
 [System.Serializable]
 public class SubtitleLine
 {
+
+
+
+    // ---------------------------------------------
+    //  INSPECTOR
+    // ---------------------------------------------
     [TextArea(2, 4)] public string text;
     public float duration = 3f;
     public float delayBefore = 0f;
@@ -13,10 +19,9 @@ public class SubtitleLine
 
 public class StoryTrigger : MonoBehaviour
 {
-    // ---------------------------------------------
-    //  INSPETOR
-    // ---------------------------------------------
+
     [Header("Look At")]
+
     public Transform lookTarget;
     public float lookSpeed = 3f;
 
@@ -37,14 +42,22 @@ public class StoryTrigger : MonoBehaviour
     [Header("Glow Settings")]
     public bool enableGlow = true;
 
+
+
+
+
     // ---------------------------------------------
-    //  ESTADO PRIVADO
+    //  PRIVATE STATE
     // ---------------------------------------------
     private float origSpeed;
     private float origSprintSpeed;
     private GlowEmitter triggerGlow;
     private TMP_Text activeSubtitleText;
     private GameObject createdCanvasObj;
+
+
+
+
 
     // ---------------------------------------------
     //  UNITY
@@ -62,9 +75,6 @@ public class StoryTrigger : MonoBehaviour
         }
     }
 
-    // ---------------------------------------------
-    //  TRIGGER
-    // ---------------------------------------------
     void OnTriggerEnter(Collider other)
     {
         if (!other.CompareTag("Player")) return;
@@ -78,8 +88,11 @@ public class StoryTrigger : MonoBehaviour
         StartCoroutine(RunSequence());
     }
 
+
+
+
     // ---------------------------------------------
-    //  SEQUENCIA
+    //  PRIVATE METHODS
     // ---------------------------------------------
     IEnumerator RunSequence()
     {
@@ -164,9 +177,6 @@ public class StoryTrigger : MonoBehaviour
         Destroy(gameObject);
     }
 
-    // ---------------------------------------------
-    //  SISTEMA DE LEGENDAS
-    // ---------------------------------------------
     private Image activeSubtitleBgImage;
 
     IEnumerator PlaySubtitles()
@@ -278,7 +288,6 @@ public class StoryTrigger : MonoBehaviour
         scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
         scaler.referenceResolution = new Vector2(1920, 1080);
 
-        // Barra Preta de Fundo (Centrada e auto-ajustável)
         GameObject bgObj = new GameObject("SubtitleBackground");
         bgObj.transform.SetParent(createdCanvasObj.transform, false);
         Image bgImage = bgObj.AddComponent<Image>();
@@ -303,7 +312,6 @@ public class StoryTrigger : MonoBehaviour
         autoLayout.childForceExpandWidth = false;
         autoLayout.childForceExpandHeight = false;
 
-        // Objeto de Texto
         GameObject textObj = new GameObject("SubtitleText");
         textObj.transform.SetParent(bgObj.transform, false);
 
@@ -332,9 +340,6 @@ public class StoryTrigger : MonoBehaviour
             subtitlePanel.SetActive(false);
     }
 
-    // ---------------------------------------------
-    //  DESENHOS DE DEPURACAO
-    // ---------------------------------------------
     void OnDrawGizmosSelected()
     {
         if (lookTarget != null)

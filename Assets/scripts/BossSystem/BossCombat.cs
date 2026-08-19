@@ -2,6 +2,12 @@ using UnityEngine;
 
 public class BossCombat : MonoBehaviour
 {
+
+
+
+    // ---------------------------------------------
+    //  INSPECTOR
+    // ---------------------------------------------
     [Header("Ataque Melee")]
     public float attackRange = 2.5f;
     public float attackDamage = 15f;
@@ -18,8 +24,22 @@ public class BossCombat : MonoBehaviour
     public float jumpAirTime = 1.2f;
     [HideInInspector] public float nextJumpAttackTime = 0f;
 
+
+
+
+
+    // ---------------------------------------------
+    //  PRIVATE STATE
+    // ---------------------------------------------
     private BossController boss;
 
+
+
+
+
+    // ---------------------------------------------
+    //  PUBLIC METHODS
+    // ---------------------------------------------
     public void Initialize(BossController controller)
     {
         boss = controller;

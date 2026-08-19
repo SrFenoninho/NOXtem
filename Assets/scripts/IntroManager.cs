@@ -4,11 +4,23 @@ using UnityEngine.UI;
 
 public class IntroManager : MonoBehaviour
 {
+
+
+
+
     // ---------------------------------------------
-    //  INSPETOR
+    //  INSPECTOR
     // ---------------------------------------------
     [Header("Audio")]
+
     public AudioClip introAudio;
+
+
+
+
+    // ---------------------------------------------
+    //  PRIVATE STATE
+    // ---------------------------------------------
     private AudioSource audioSource;
 
     [Header("Fade")]
@@ -22,6 +34,10 @@ public class IntroManager : MonoBehaviour
     public FPMove playerMovement;
     public Lighter lighter;
 
+
+
+
+
     // ---------------------------------------------
     //  UNITY
     // ---------------------------------------------
@@ -34,7 +50,6 @@ public class IntroManager : MonoBehaviour
         if (playerMovement != null) playerMovement.inputBlocked = true;
         if (lighter != null) lighter.inputBlocked = true;
 
-        // Bloquear menu radial durante a intro
         GameStateManager.Instance?.PushState(GameState.Cutscene);
 
         if (introAudio != null)
@@ -43,8 +58,11 @@ public class IntroManager : MonoBehaviour
         StartCoroutine(IntroSequence());
     }
 
+
+
+
     // ---------------------------------------------
-    //  SEQUeNCIA DA INTRO
+    //  PRIVATE METHODS
     // ---------------------------------------------
     IEnumerator IntroSequence()
     {
@@ -56,13 +74,9 @@ public class IntroManager : MonoBehaviour
         if (lighter != null) lighter.inputBlocked = false;
         if (lighter != null) lighter.ForceLight(true);
 
-        // Libertar o menu radial
         GameStateManager.Instance?.PopState();
     }
 
-    // ---------------------------------------------
-    //  FADE
-    // ---------------------------------------------
     IEnumerator FadeIn()
     {
         float elapsed = 0f;
@@ -76,9 +90,6 @@ public class IntroManager : MonoBehaviour
         if (fadeImage != null) fadeImage.gameObject.SetActive(false);
     }
 
-    // ---------------------------------------------
-    //  AUXILIARES
-    // ---------------------------------------------
     void SetAlpha(float a)
     {
         if (fadeImage == null) return;

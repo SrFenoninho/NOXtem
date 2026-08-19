@@ -3,15 +3,27 @@ using UnityEngine.UI;
 
 public class Lever : MonoBehaviour, IInteractable
 {
+
+
+
+
     // ---------------------------------------------
-    //  INSPETOR
+    //  INSPECTOR
     // ---------------------------------------------
     [Header("Lever Settings")]
     public string leverID = "Lever_A";
 
     [Header("Animacao")]
+
+
+
+    // ---------------------------------------------
+    //  PRIVATE STATE
+    // ---------------------------------------------
     [Tooltip("Transform da parte visual que roda ao ativar (ex: o braco da alavanca)")]
+
     public Transform leverArm;
+
     public Vector3 activatedRotation = new Vector3(-60f, 0f, 0f);
     public float animationSpeed = 5f;
 
@@ -29,13 +41,14 @@ public class Lever : MonoBehaviour, IInteractable
     [Header("Glow Settings")]
     public bool enableGlow = true;
 
-    // ---------------------------------------------
-    //  ESTADO PRIVADO
-    // ---------------------------------------------
     private bool isActivated = false;
     private Quaternion targetRotation;
     private Quaternion defaultRotation;
     private GlowEmitter leverGlow;
+
+
+
+
 
     // ---------------------------------------------
     //  UNITY
@@ -70,8 +83,11 @@ public class Lever : MonoBehaviour, IInteractable
                 leverArm.localRotation, targetRotation, Time.deltaTime * animationSpeed);
     }
 
+
+
+
     // ---------------------------------------------
-    //  INTERFACE IInteractable
+    //  PUBLIC METHODS
     // ---------------------------------------------
     public string GetInteractMessage()
     {
@@ -86,8 +102,11 @@ public class Lever : MonoBehaviour, IInteractable
         Activate();
     }
 
+
+
+
     // ---------------------------------------------
-    //  ATIVACAO
+    //  PRIVATE METHODS
     // ---------------------------------------------
     void Activate()
     {
@@ -104,12 +123,11 @@ public class Lever : MonoBehaviour, IInteractable
 
         if (LeverSystem.Instance != null)
             LeverSystem.Instance.OnLeverActivated();
-        
+
         if (updateObjectiveOnInteract && !string.IsNullOrEmpty(nextObjectiveText))
         {
             ObjectiveManager.Instance?.ShowObjective(nextObjectiveText);
         }
 
-        // Debug.Log($"Alavanca {leverID} ativada!");
     }
 }

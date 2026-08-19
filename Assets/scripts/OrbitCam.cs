@@ -2,12 +2,18 @@ using UnityEngine;
 
 public class OrbitCam : MonoBehaviour
 {
+
+
+
+
     // ---------------------------------------------
-    //  INSPETOR
+    //  INSPECTOR
     // ---------------------------------------------
     [Header("Target")]
-    public Transform target;                            // o jogador
-    public Vector3 targetOffset = new Vector3(0, 1.6f, 0); // altura dos olhos
+
+    public Transform target;
+
+    public Vector3 targetOffset = new Vector3(0, 1.6f, 0);
 
     [Header("Camera Settings")]
     public float distance = 5f;
@@ -17,13 +23,20 @@ public class OrbitCam : MonoBehaviour
 
     [Header("Collision")]
     public LayerMask collisionMask;
-    public float collisionRadius = 0.3f;                // raio do SphereCast para evitar penetracao
+    public float collisionRadius = 0.3f;
+
+
+
 
     // ---------------------------------------------
-    //  ESTADO PRIVADO
+    //  PRIVATE STATE
     // ---------------------------------------------
-    private float yaw = 0f;     // rotacao horizontal
-    private float pitch = 20f;  // rotacao vertical (fixa - so roda horizontalmente)
+    private float yaw = 0f;
+    private float pitch = 20f;
+
+
+
+
 
     // ---------------------------------------------
     //  UNITY
@@ -32,12 +45,10 @@ public class OrbitCam : MonoBehaviour
     {
         if (target == null)
         {
-            // Debug.LogError("OrbitCamera precisa de um Target!");
             enabled = false;
             return;
         }
 
-        // Iniciar atras do jogador
         yaw = target.eulerAngles.y;
 
         sensitivity = PlayerPrefs.GetFloat("Sensitivity", 100f);
@@ -52,34 +63,30 @@ public class OrbitCam : MonoBehaviour
         UpdateCameraPosition();
     }
 
+
+
+
     // ---------------------------------------------
-    //  INPUT
+    //  PRIVATE METHODS
     // ---------------------------------------------
     void HandleInput()
     {
         float mouseX = Input.GetAxis("Mouse X") * (sensitivity * 0.05f);
         yaw += mouseX;
-        // Pitch removido - camera so roda horizontalmente (design intencional)
     }
 
-    // ---------------------------------------------
-    //  POSICIONAMENTO
-    // ---------------------------------------------
     void UpdateCameraPosition()
     {
         Vector3 targetPosition = target.position + targetOffset;
 
-        // Calcular posicao desejada com base na rotacao horizontal
         Quaternion rotation = Quaternion.Euler(pitch, yaw, 0);
         Vector3 desiredPosition = targetPosition - rotation * Vector3.forward * distance;
 
-        // SphereCast para detetar colisoes entre o alvo e a camera
         Vector3 direction = desiredPosition - targetPosition;
         RaycastHit hit;
 
         if (Physics.SphereCast(targetPosition, collisionRadius, direction.normalized, out hit, distance, collisionMask))
         {
-            // Aproximar a camera ao ponto de colisao
             transform.position = targetPosition + direction.normalized * (hit.distance - collisionRadius);
         }
         else

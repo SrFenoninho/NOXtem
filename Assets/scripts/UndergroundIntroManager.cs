@@ -5,10 +5,15 @@ using UnityEngine.UI;
 
 public class UndergroundIntroManager : MonoBehaviour
 {
+
+
+
+
     // ---------------------------------------------
     //  INSPECTOR
     // ---------------------------------------------
     [Header("Player & Camera")]
+
     public FPMove playerMovement;
     public Transform playerCamera;
 
@@ -16,6 +21,13 @@ public class UndergroundIntroManager : MonoBehaviour
     public AudioClip firstAudio;
     public AudioClip secondAudio;
     public AudioClip punchAudio;
+
+
+
+
+    // ---------------------------------------------
+    //  PRIVATE STATE
+    // ---------------------------------------------
     private AudioSource audioSource;
 
     [Header("Elevator Doors")]
@@ -24,7 +36,7 @@ public class UndergroundIntroManager : MonoBehaviour
     public Vector3 doorMoveDirection = Vector3.right;
     public float jammedDistance = 0.5f;
     public float openDuration = 1f;
-    
+
     [Header("Punch Settings")]
     public float punchForce = 1500f;
 
@@ -35,14 +47,15 @@ public class UndergroundIntroManager : MonoBehaviour
     public float shakeDuration = 4f;
     public float shakeMagnitude = 0.05f;
 
-    // ---------------------------------------------
-    //  ESTADO PRIVADO
-    // ---------------------------------------------
     private bool waitingForPunch = false;
     private Vector3 cameraOriginalLocalPos;
-    
+
     private Vector3 door1StartPos;
     private Vector3 door2StartPos;
+
+
+
+
 
     // ---------------------------------------------
     //  UNITY
@@ -71,8 +84,11 @@ public class UndergroundIntroManager : MonoBehaviour
         }
     }
 
+
+
+
     // ---------------------------------------------
-    //  SEQUENCIA DA CUTSCENE
+    //  PRIVATE METHODS
     // ---------------------------------------------
     void StartCutscene()
     {
@@ -125,7 +141,7 @@ public class UndergroundIntroManager : MonoBehaviour
         {
             messageText.text = "Left Click to force the door open";
         }
-        
+
         waitingForPunch = true;
     }
 
@@ -153,13 +169,10 @@ public class UndergroundIntroManager : MonoBehaviour
         }
     }
 
-    // ---------------------------------------------
-    //  AÇÃO DO JOGADOR
-    // ---------------------------------------------
     void PerformPunch()
     {
         waitingForPunch = false;
-        
+
         if (punchAudio != null)
             audioSource.PlayOneShot(punchAudio);
 
@@ -183,7 +196,7 @@ public class UndergroundIntroManager : MonoBehaviour
         {
             rb = doorTransform.gameObject.AddComponent<Rigidbody>();
         }
-        
+
         rb.isKinematic = false;
 
         Vector3 forceDirection = (playerCamera != null) ? playerCamera.forward : Vector3.forward;

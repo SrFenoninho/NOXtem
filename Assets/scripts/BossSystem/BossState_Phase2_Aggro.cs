@@ -2,6 +2,13 @@ using UnityEngine;
 
 public class BossState_Phase2_Aggro : IBossState
 {
+
+
+
+
+    // ---------------------------------------------
+    //  PUBLIC METHODS
+    // ---------------------------------------------
     public void EnterState(BossController boss)
     {
         boss.health.isInvulnerable = false;
@@ -19,7 +26,6 @@ public class BossState_Phase2_Aggro : IBossState
 
         boss.movement.MoveTo(boss.playerTarget.position, boss.movement.runSpeed);
 
-        // Ataca apenas se estiver mesmo encostado, para garantir que não soco o ar a 2.5 metros
         if(dist <= 1.8f && Time.time >= boss.combat.nextAttackTime)
         {
             boss.ChangeState(new BossState_MeleeAttack());

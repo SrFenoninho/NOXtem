@@ -2,22 +2,34 @@ using UnityEngine;
 
 public class ObjectiveTrigger : MonoBehaviour
 {
+
+
+
+
     // ---------------------------------------------
-    //  INSPETOR
+    //  PRIVATE STATE
     // ---------------------------------------------
     [TextArea]
+
+
+
+    // ---------------------------------------------
+    //  INSPECTOR
+    // ---------------------------------------------
     public string objectiveText = "Objetivo: ";
     public bool needsInteraction = false;
 
     [Header("Glow Settings")]
     public bool enableGlow = true;
 
-    // ---------------------------------------------
-    //  ESTADO PRIVADO
-    // ---------------------------------------------
+
     private bool playerInside = false;
     private bool triggered = false;
     private GlowEmitter triggerGlow;
+
+
+
+
 
     // ---------------------------------------------
     //  UNITY
@@ -41,9 +53,6 @@ public class ObjectiveTrigger : MonoBehaviour
             Trigger();
     }
 
-    // ---------------------------------------------
-    //  TRIGGER
-    // ---------------------------------------------
     void OnTriggerEnter(Collider other)
     {
         if (triggered) return;
@@ -60,6 +69,12 @@ public class ObjectiveTrigger : MonoBehaviour
             playerInside = false;
     }
 
+
+
+
+    // ---------------------------------------------
+    //  PRIVATE METHODS
+    // ---------------------------------------------
     void Trigger()
     {
         triggered = true;

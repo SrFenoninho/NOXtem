@@ -2,32 +2,48 @@ using UnityEngine;
 
 public class EnemySpawn : MonoBehaviour
 {
-    // ---------------------------------------------
-    //  INSPETOR
-    // ---------------------------------------------
-    [Header("Spawn Settings")]
-    public GameObject enemyPrefab;
-    public GameObject cloneSpawnerPrefab;   // prefab do CloneSpawner para passar aos inimigos
-    public int enemyCount = 20;             // numero de inimigos a criar no inicio
-    public float spawnRadius = 10f;         // raio a volta do spawner
-    public float spawnHeightOffset = 2f;    // ligeiramente acima do chao para o CharacterController aterrar
+
+
+
 
     // ---------------------------------------------
-    //  ESTADO PRIVADO
+    //  INSPECTOR
+    // ---------------------------------------------
+    [Header("Spawn Settings")]
+
+    public GameObject enemyPrefab;
+    public GameObject cloneSpawnerPrefab;
+    public int enemyCount = 20;
+    public float spawnRadius = 10f;
+    public float spawnHeightOffset = 2f;
+
+
+
+
+
+    // ---------------------------------------------
+    //  PRIVATE STATE
     // ---------------------------------------------
     private int currentEnemies = 0;
+
+
+
+
 
     // ---------------------------------------------
     //  UNITY
     // ---------------------------------------------
     void Start()
     {
-        EnemyCombatManager.Clear(); // <-- GARANTIR LIMPEZA ABSOLUTA NA MUDANÇA DE CENA NA BUILD
+        EnemyCombatManager.Clear();
         SpawnAllEnemies();
     }
 
+
+
+
     // ---------------------------------------------
-    //  SPAWN
+    //  PRIVATE METHODS
     // ---------------------------------------------
     void SpawnAllEnemies()
     {
@@ -37,7 +53,6 @@ public class EnemySpawn : MonoBehaviour
 
     void SpawnEnemy()
     {
-        // Posicao aleatoria dentro do raio de spawn
         float angle = Random.Range(0f, Mathf.PI * 2f);
         float distance = Random.Range(spawnRadius * 0.3f, spawnRadius);
 
@@ -51,7 +66,7 @@ public class EnemySpawn : MonoBehaviour
         {
             GameObject spawnerObj = Instantiate(cloneSpawnerPrefab, spawnPos, Quaternion.identity);
             currentEnemies++;
-            
+
             EnemyCloneSpawner spawner = spawnerObj.GetComponent<EnemyCloneSpawner>();
             if (spawner != null)
             {
@@ -77,22 +92,16 @@ public class EnemySpawn : MonoBehaviour
         }
     }
 
-    // ---------------------------------------------
-    //  MORTE DE INIMIGO
-    // ---------------------------------------------
     void HandleEnemyDeath()
     {
         currentEnemies--;
     }
 
-    // ---------------------------------------------
-    //  DESENHOS DE DEPURAcaO
-    // ---------------------------------------------
     void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, spawnRadius);
         Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(transform.position, spawnRadius * 0.3f); // raio minimo
+        Gizmos.DrawWireSphere(transform.position, spawnRadius * 0.3f);
     }
 }

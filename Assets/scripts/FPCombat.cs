@@ -2,8 +2,12 @@ using UnityEngine;
 
 public class FPCombat : MonoBehaviour
 {
+
+
+
+
     // ---------------------------------------------
-    //  INSPETOR
+    //  INSPECTOR
     // ---------------------------------------------
     [Header("Light Attack")]
     public float lightDamage = 25f;
@@ -18,20 +22,29 @@ public class FPCombat : MonoBehaviour
     public float lightImpulseForce = 3f;
 
     [Header("Hitbox")]
+
     public Hitbox attackHitbox;
     public string enemyTag = "Enemy";
 
     [Header("Defesa")]
     public HitboxDefense defenseHitbox;
-    public Camera fpCamera;             // para orientar a parede corretamente
+    public Camera fpCamera;
+
+
+
+
 
     // ---------------------------------------------
-    //  ESTADO PRIVADO
+    //  PRIVATE STATE
     // ---------------------------------------------
     private bool canAttack = true;
     private bool isDefending = false;
     private PlayerComboSYS comboSystem;
     private FPMove fpMove;
+
+
+
+
 
     // ---------------------------------------------
     //  UNITY
@@ -53,8 +66,11 @@ public class FPCombat : MonoBehaviour
             LightAttack();
     }
 
+
+
+
     // ---------------------------------------------
-    //  DEFESA
+    //  PRIVATE METHODS
     // ---------------------------------------------
     void HandleDefense()
     {
@@ -67,7 +83,6 @@ public class FPCombat : MonoBehaviour
             if (fpMove != null) fpMove.inputBlocked = true;
             if (defenseHitbox != null)
             {
-                // Alinhar spawnPoint com a direcao da camara FP
                 if (fpCamera != null && defenseHitbox.spawnPoint != null)
                 {
                     defenseHitbox.spawnPoint.rotation = Quaternion.Euler(
@@ -85,18 +100,12 @@ public class FPCombat : MonoBehaviour
         }
     }
 
-    // ---------------------------------------------
-    //  ATAQUE
-    // ---------------------------------------------
     void LightAttack()
     {
         canAttack = false;
 
-        // Impulso para a frente
         if (fpMove != null)
         {
-            // FPMove nao tem AddImpulse - aplicar via moveDir nao e possivel diretamente
-            // por isso o impulso e ignorado em FP por agora
         }
 
         attackHitbox.EnableHitbox(lightDamage, enemyTag, null, lightKnockback, lightStunDuration);
@@ -107,8 +116,12 @@ public class FPCombat : MonoBehaviour
     void EndHitWindow() => attackHitbox.DisableHitbox();
     void EndAttack() => canAttack = true;
 
+
+
+
+
     // ---------------------------------------------
-    //  CANCELAR
+    //  PUBLIC METHODS
     // ---------------------------------------------
     public void CancelAttack()
     {
@@ -118,9 +131,6 @@ public class FPCombat : MonoBehaviour
         canAttack = true;
     }
 
-    // ---------------------------------------------
-    //  COMBO
-    // ---------------------------------------------
     public void OnHitLanded()
     {
         if (comboSystem != null)

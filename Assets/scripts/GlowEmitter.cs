@@ -2,30 +2,43 @@ using UnityEngine;
 
 public class GlowEmitter : MonoBehaviour
 {
+
+
+
+
     // ---------------------------------------------
-    //  INSPETOR
+    //  INSPECTOR
     // ---------------------------------------------
     [Header("Glow Settings")]
     public bool enableGlow = false;
     public Color glowColor = Color.white;
+
     public Texture particleTexture; 
-    
+
     [Header("Particle System Settings")]
+
     public Vector3 particleOffset = new Vector3(0f, 0f, -0.5f);
     [Range(1, 40)] public int emissionRate = 10;
     [Range(0.02f, 0.4f)] public float particleSize = 0.25f;
     [Range(0.5f, 10f)] public float particleLifetime = 3f;
     public float particleRotationSpeed = 0.5f;
-    
+
     [Header("Dispersão")]
     [Range(0.05f, 1f)] public float dispersalSpeed = 1.0f;
 
+
+
+
     // ---------------------------------------------
-    //  ESTADO PRIVADO
+    //  PRIVATE STATE
     // ---------------------------------------------
     private GameObject particleObj;
     private ParticleSystem particles;
     private ParticleSystem.EmissionModule emission;
+
+
+
+
 
     // ---------------------------------------------
     //  UNITY
@@ -36,8 +49,11 @@ public class GlowEmitter : MonoBehaviour
             InitializeGlow();
     }
 
+
+
+
     // ---------------------------------------------
-    //  INICIALIZACAO DO GLOW
+    //  PRIVATE METHODS
     // ---------------------------------------------
     void InitializeGlow()
     {
@@ -50,12 +66,10 @@ public class GlowEmitter : MonoBehaviour
         else
             particleObj.transform.localPosition = Vector3.zero;
 
-        // Puxar a partícula para fora usando o offset para não ficar presa dentro da malha do objeto
         particleObj.transform.Translate(particleOffset, Space.Self);
 
         particles = particleObj.AddComponent<ParticleSystem>();
-        
-        // Configurar main
+
         var main = particles.main;
         main.startColor = glowColor;
         main.startSize = particleSize;
@@ -63,16 +77,14 @@ public class GlowEmitter : MonoBehaviour
         main.startLifetime = particleLifetime;
         main.maxParticles = 1;
         main.simulationSpace = ParticleSystemSimulationSpace.World;
-        
+
         var shape = particles.shape;
         shape.enabled = false;
 
-        // Rotação sobre o tempo
         var rotOverLifetime = particles.rotationOverLifetime;
         rotOverLifetime.enabled = true;
         rotOverLifetime.z = new ParticleSystem.MinMaxCurve(particleRotationSpeed);
 
-        // Opacity fade
         var colorOverLifetime = particles.colorOverLifetime;
         colorOverLifetime.enabled = true;
         Gradient gradient = new Gradient();
@@ -90,7 +102,6 @@ public class GlowEmitter : MonoBehaviour
         );
         colorOverLifetime.color = new ParticleSystem.MinMaxGradient(gradient);
 
-        // Size over lifetime (Aumenta de tamanho e volta a encolher no final)
         var sizeOverLifetime = particles.sizeOverLifetime;
         sizeOverLifetime.enabled = true;
         AnimationCurve sizeCurve = new AnimationCurve();
@@ -100,26 +111,23 @@ public class GlowEmitter : MonoBehaviour
         sizeCurve.AddKey(1f, 0.01f);
         sizeOverLifetime.size = new ParticleSystem.MinMaxCurve(1f, sizeCurve);
 
-        // Emission (Seguro)
         emission = particles.emission;
         emission.rateOverTime = 0f;
-        // Largar um pulso de 1 partícula a cada ciclo da sua vida
         emission.SetBursts(new ParticleSystem.Burst[] { new ParticleSystem.Burst(0f, 1, 1, 0, particleLifetime) });
-        
-        particles.Play(); // Forçar o arranque do sistema
 
-        // Renderer
+        particles.Play();
+
         var renderer = particles.GetComponent<ParticleSystemRenderer>();
         Shader particleShader = Shader.Find("Universal Render Pipeline/Particles/Unlit");
-        if (particleShader == null) particleShader = Shader.Find("Legacy Shaders/Particles/Alpha Blended"); // Fallback Clássico com Alpha
-        
+        if (particleShader == null) particleShader = Shader.Find("Legacy Shaders/Particles/Alpha Blended");
+
         renderer.material = new Material(particleShader);
         if (particleTexture != null)
         {
             if (renderer.material.HasProperty("_BaseMap")) renderer.material.SetTexture("_BaseMap", particleTexture);
             else renderer.material.mainTexture = particleTexture;
         }
-        
+
         if (renderer.material.HasProperty("_BaseColor"))
             renderer.material.SetColor("_BaseColor", glowColor);
         else if (renderer.material.HasProperty("_TintColor"))
@@ -130,14 +138,17 @@ public class GlowEmitter : MonoBehaviour
         renderer.renderMode = ParticleSystemRenderMode.Billboard;
     }
 
+
+
+
     // ---------------------------------------------
-    //  CONTROLE DO GLOW
+    //  PUBLIC METHODS
     // ---------------------------------------------
     public void DisableGlow()
     {
         if (particles != null)
             particles.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
-        
+
         if (particleObj != null)
             particleObj.SetActive(false);
     }
@@ -152,7 +163,7 @@ public class GlowEmitter : MonoBehaviour
 
         if (particleObj != null)
             particleObj.SetActive(true);
-        
+
         if (particles != null)
             particles.Play();
     }

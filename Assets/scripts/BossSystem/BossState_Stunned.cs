@@ -3,8 +3,22 @@ using System.Collections;
 
 public class BossState_Stunned : IBossState
 {
+
+
+
+
+    // ---------------------------------------------
+    //  PRIVATE STATE
+    // ---------------------------------------------
     private Coroutine routine;
 
+
+
+
+
+    // ---------------------------------------------
+    //  PUBLIC METHODS
+    // ---------------------------------------------
     public void EnterState(BossController boss)
     {
         routine = boss.StartCoroutine(StunRoutine(boss));
@@ -17,6 +31,13 @@ public class BossState_Stunned : IBossState
         if(routine != null) boss.StopCoroutine(routine);
     }
 
+
+
+
+
+    // ---------------------------------------------
+    //  PRIVATE METHODS
+    // ---------------------------------------------
     private IEnumerator StunRoutine(BossController boss)
     {
         boss.movement.StopMovement();

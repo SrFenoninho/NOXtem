@@ -4,28 +4,41 @@ using System.Collections;
 
 public class PlayerComboSYS : MonoBehaviour
 {
+
+
+
+
     // ---------------------------------------------
-    //  INSPETOR
+    //  INSPECTOR
     // ---------------------------------------------
     [Header("UI Settings")]
-    public TMP_Text comboText;                  // Arrastar o TextMeshPro aqui no Inspector
+
+    public TMP_Text comboText;
     public string comboFormat = "COMBO x{0}";
 
     [Header("Combo Settings")]
-    public float comboResetTime = 1f;           // segundos sem acertar antes do combo reiniciar
-    public int minimumComboToShow = 2;          // so mostrar o contador a partir de x2
+    public float comboResetTime = 1f;
+    public int minimumComboToShow = 2;
 
     [Header("Punch Scale Effect")]
-    public float punchScale = 1.3f;             // escala maxima do texto a cada acerto
-    public float punchDuration = 0.15f;         // duracao da animacao de impacto
+    public float punchScale = 1.3f;
+    public float punchDuration = 0.15f;
+
+
+
+
 
     // ---------------------------------------------
-    //  ESTADO PRIVADO
+    //  PRIVATE STATE
     // ---------------------------------------------
     private int currentCombo = 0;
     private float lastHitTime = 0f;
     private Vector3 originalScale;
     private Coroutine punchCoroutine;
+
+
+
+
 
     // ---------------------------------------------
     //  UNITY
@@ -42,15 +55,17 @@ public class PlayerComboSYS : MonoBehaviour
 
     void Update()
     {
-        // Reiniciar combo se nao acertar dentro do comboResetTime
         if (currentCombo > 0 && Time.time - lastHitTime > comboResetTime)
             ResetCombo();
     }
 
+
+
+
+
     // ---------------------------------------------
-    //  REGISTO DE ACERTO
+    //  PUBLIC METHODS
     // ---------------------------------------------
-    // Chamado pela Hitbox quando um ataque acerta num inimigo
     public void RegisterHit()
     {
         currentCombo++;
@@ -58,8 +73,11 @@ public class PlayerComboSYS : MonoBehaviour
         UpdateComboUI();
     }
 
+
+
+
     // ---------------------------------------------
-    //  UI
+    //  PRIVATE METHODS
     // ---------------------------------------------
     void UpdateComboUI()
     {
@@ -70,7 +88,6 @@ public class PlayerComboSYS : MonoBehaviour
             comboText.enabled = true;
             comboText.text = string.Format(comboFormat, currentCombo);
 
-            // Efeito de impacto a cada acerto - cancela o anterior se ainda estiver a correr
             if (punchCoroutine != null)
                 StopCoroutine(punchCoroutine);
             punchCoroutine = StartCoroutine(PunchScale());
@@ -82,15 +99,10 @@ public class PlayerComboSYS : MonoBehaviour
         }
     }
 
-    // ---------------------------------------------
-    //  ANIMAcaO DE ESCALA
-    // ---------------------------------------------
-    // Escala o texto para cima e depois para baixo - sem DOTween
     IEnumerator PunchScale()
     {
         float elapsed = 0f;
 
-        // Escalar para cima
         while (elapsed < punchDuration / 2f)
         {
             elapsed += Time.deltaTime;
@@ -101,7 +113,6 @@ public class PlayerComboSYS : MonoBehaviour
 
         elapsed = 0f;
 
-        // Escalar para baixo
         while (elapsed < punchDuration / 2f)
         {
             elapsed += Time.deltaTime;
@@ -114,9 +125,6 @@ public class PlayerComboSYS : MonoBehaviour
         punchCoroutine = null;
     }
 
-    // ---------------------------------------------
-    //  RESET
-    // ---------------------------------------------
     void ResetCombo()
     {
         currentCombo = 0;

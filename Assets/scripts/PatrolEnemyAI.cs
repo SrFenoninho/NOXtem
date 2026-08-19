@@ -4,8 +4,12 @@ using UnityEngine.AI;
 [RequireComponent(typeof(NavMeshAgent))]
 public class PatrolEnemyAI : MonoBehaviour
 {
+
+
+
+
     // ---------------------------------------------
-    //  FASES DA IA
+    //  PRIVATE STATE
     // ---------------------------------------------
     private enum State
     {
@@ -15,10 +19,14 @@ public class PatrolEnemyAI : MonoBehaviour
         Attacking
     }
 
+
+
+
     // ---------------------------------------------
-    //  INSPETOR
+    //  INSPECTOR
     // ---------------------------------------------
     [Header("Patrol Settings")]
+
     public Transform[] waypoints;
     public float patrolSpeed = 3f;
 
@@ -29,10 +37,10 @@ public class PatrolEnemyAI : MonoBehaviour
     public float chaseSpeed = 6f;
 
     [Header("Search Settings")]
-    public int lookAroundCount = 4;           // Nº de direções a olhar em cada fase
-    public float lookRotateSpeed = 100f;      // Velocidade de rotação (graus/segundo)
-    public float lookHoldDuration = 1.5f;     // Tempo parado a olhar para cada direção
-    public float searchMoveDistance = 4f;     // Distância a avançar entre as fases de busca
+    public int lookAroundCount = 4;
+    public float lookRotateSpeed = 100f;
+    public float lookHoldDuration = 1.5f;
+    public float searchMoveDistance = 4f;
 
     [Header("Musica de Perseguicao")]
     public MusicManager musicManager;
@@ -48,9 +56,7 @@ public class PatrolEnemyAI : MonoBehaviour
     public Animator animator;
     public string speedParam = "Speed";
 
-    // ---------------------------------------------
-    //  ESTADO PRIVADO
-    // ---------------------------------------------
+
     private NavMeshAgent agent;
     private AudioSource chaseMusicSource;
     private bool chaseMusicPlaying = false;
@@ -61,25 +67,24 @@ public class PatrolEnemyAI : MonoBehaviour
     private PlayerHealth playerHealth;
     private State currentState;
 
-    // Último local onde viu o jogador
     private Vector3 lastPlayerPosition;
 
-    // ---------------------------------------------
-    //  SUB-ESTADOS DE BUSCA
-    // ---------------------------------------------
     private enum SearchSubState
     {
-        GoingToLastPosition,  // A caminho do último local onde viu o jogador
-        LookingAround,        // Parado a olhar para os lados
-        MovingForward,        // A avançar um pouco antes de olhar outra vez
+        GoingToLastPosition,
+        LookingAround,
+        MovingForward,
     }
     private SearchSubState searchSubState;
 
-    // Controlo da rotação de busca
-    private float targetLookAngle;     // Ângulo Y alvo para a rotação atual
-    private float lookHoldTimer;       // Tempo restante a olhar nessa direção
-    private int looksRemaining;        // Olhares que faltam nesta fase
-    private int searchPhase;           // 0 = 1ª fase de olhar | 1 = avançou, 2ª fase
+    private float targetLookAngle;
+    private float lookHoldTimer;
+    private int looksRemaining;
+    private int searchPhase;
+
+
+
+
 
     // ---------------------------------------------
     //  UNITY
@@ -120,8 +125,11 @@ public class PatrolEnemyAI : MonoBehaviour
         }
     }
 
+
+
+
     // ---------------------------------------------
-    //  MAQUINA DE ESTADOS
+    //  PRIVATE METHODS
     // ---------------------------------------------
     void HandleStateTransitions()
     {
@@ -134,7 +142,7 @@ public class PatrolEnemyAI : MonoBehaviour
 
             if (distToPlayer <= attackRange)
             {
-                if (currentState != State.Attacking)  // ← SÓ MUDA SE NÃO JÁ ESTÁ
+                if (currentState != State.Attacking)
                 {
                     currentState = State.Attacking;
                     StartChaseMusic();
@@ -142,7 +150,7 @@ public class PatrolEnemyAI : MonoBehaviour
             }
             else
             {
-                if (currentState != State.Chasing)  // ← SÓ MUDA SE NÃO JÁ ESTÁ
+                if (currentState != State.Chasing)
                 {
                     currentState = State.Chasing;
                     StartChaseMusic();
@@ -173,9 +181,6 @@ public class PatrolEnemyAI : MonoBehaviour
         }
     }
 
-    // ---------------------------------------------
-    //  COMPORTAMENTOS
-    // ---------------------------------------------
     void PatrolBehavior()
     {
         agent.speed = patrolSpeed;
@@ -198,32 +203,24 @@ public class PatrolEnemyAI : MonoBehaviour
     {
         switch (searchSubState)
         {
-            // --------------------------------------------------
-            // FASE 0: Vai até ao último local onde viu o jogador
-            // --------------------------------------------------
+
             case SearchSubState.GoingToLastPosition:
                 agent.speed = patrolSpeed * 1.2f;
                 agent.isStopped = false;
 
                 if (!agent.pathPending && agent.remainingDistance < 0.5f)
                 {
-                    // Chegou — para e começa a olhar para os lados (fase 1)
                     EnterLookAround(phase: 0);
                 }
                 break;
 
-            // --------------------------------------------------
-            // FASE 1 / 3: Olha para os lados aleatoriamente
-            // --------------------------------------------------
             case SearchSubState.LookingAround:
                 agent.isStopped = true;
 
-                // Roda suavemente em direção ao ângulo alvo
                 float currentY = transform.eulerAngles.y;
                 float newY = Mathf.MoveTowardsAngle(currentY, targetLookAngle, lookRotateSpeed * Time.deltaTime);
                 transform.rotation = Quaternion.Euler(0f, newY, 0f);
 
-                // Chegou à direção alvo?
                 if (Mathf.Abs(Mathf.DeltaAngle(newY, targetLookAngle)) < 2f)
                 {
                     lookHoldTimer -= Time.deltaTime;
@@ -234,18 +231,15 @@ public class PatrolEnemyAI : MonoBehaviour
 
                         if (looksRemaining > 0)
                         {
-                            // Escolhe mais uma direção aleatória
                             PickNextLookAngle();
                         }
                         else if (searchPhase == 0)
                         {
-                            // Terminou 1ª fase de olhar → avança um pouco
                             searchPhase = 1;
                             TryMoveForward();
                         }
                         else
                         {
-                            // Terminou 2ª fase de olhar sem ver nada → volta à patrulha
                             agent.isStopped = false;
                             currentState = State.Patrolling;
                             PickRandomWaypoint();
@@ -254,23 +248,18 @@ public class PatrolEnemyAI : MonoBehaviour
                 }
                 break;
 
-            // --------------------------------------------------
-            // FASE 2: Avança um pouco antes de olhar outra vez
-            // --------------------------------------------------
             case SearchSubState.MovingForward:
                 agent.speed = patrolSpeed;
                 agent.isStopped = false;
 
                 if (!agent.pathPending && agent.remainingDistance < 0.5f)
                 {
-                    // Chegou ao ponto intermédio → olha outra vez (fase 2)
                     EnterLookAround(phase: 1);
                 }
                 break;
         }
     }
 
-    // Inicia uma fase de "olhar para os lados"
     void EnterLookAround(int phase)
     {
         searchPhase = phase;
@@ -279,7 +268,6 @@ public class PatrolEnemyAI : MonoBehaviour
         PickNextLookAngle();
     }
 
-    // Escolhe um ângulo Y aleatório (evita repetir o atual)
     void PickNextLookAngle()
     {
         float newAngle;
@@ -290,7 +278,6 @@ public class PatrolEnemyAI : MonoBehaviour
         lookHoldTimer = lookHoldDuration;
     }
 
-    // Tenta avançar um pouco na direção em que está a olhar
     void TryMoveForward()
     {
         Vector3 forwardPos = transform.position + transform.forward * searchMoveDistance;
@@ -304,14 +291,12 @@ public class PatrolEnemyAI : MonoBehaviour
         }
         else
         {
-            // Sem NavMesh à frente — salta direto para a 2ª fase de olhar
             EnterLookAround(phase: 1);
         }
     }
 
     void AttackBehavior()
     {
-        // No One Shot Kill, ele investe até ao fim
         agent.isStopped = false;
         agent.SetDestination(player.position);
 
@@ -343,9 +328,6 @@ public class PatrolEnemyAI : MonoBehaviour
         agent.SetDestination(waypoints[currentWaypointIndex].position);
     }
 
-    // ---------------------------------------------
-    //  LOGICA DE VISAO (FOV)
-    // ---------------------------------------------
     bool CanSeePlayer()
     {
         float distToPlayer = Vector3.Distance(transform.position, player.position);
@@ -367,9 +349,6 @@ public class PatrolEnemyAI : MonoBehaviour
         return false;
     }
 
-    // ---------------------------------------------
-    //  DESENHOS DE DEBUGACAO
-    // ---------------------------------------------
     void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.yellow;
@@ -378,7 +357,6 @@ public class PatrolEnemyAI : MonoBehaviour
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, attackRange);
 
-        // Cone de Visão
         Gizmos.color = Color.green;
         Vector3 leftBoundary = Quaternion.Euler(0, -viewAngle / 2f, 0) * transform.forward;
         Vector3 rightBoundary = Quaternion.Euler(0, viewAngle / 2f, 0) * transform.forward;
@@ -386,9 +364,6 @@ public class PatrolEnemyAI : MonoBehaviour
         Gizmos.DrawRay(transform.position + Vector3.up, rightBoundary * detectionRadius);
     }
 
-    // ---------------------------------------------
-    //  MUSICA DE PERSEGUICAO
-    // ---------------------------------------------
     void StartChaseMusic()
     {
         if (chaseMusicPlaying || chaseMusic == null) return;

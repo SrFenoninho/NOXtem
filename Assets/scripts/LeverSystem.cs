@@ -2,15 +2,23 @@ using UnityEngine;
 
 public class LeverSystem : MonoBehaviour
 {
+
+
+
+
+
     // ---------------------------------------------
-    //  SINGLETON
+    //  INSPECTOR
     // ---------------------------------------------
     public static LeverSystem Instance { get; private set; }
 
-    // ---------------------------------------------
-    //  INSPETOR
-    // ---------------------------------------------
     [Header("Alavancas")]
+
+
+
+    // ---------------------------------------------
+    //  PRIVATE STATE
+    // ---------------------------------------------
     [Tooltip("Arrastar aqui os 3 objetos Lever da cena")]
     public Lever[] levers;
 
@@ -19,7 +27,8 @@ public class LeverSystem : MonoBehaviour
     public Light[] roomLights;
 
     [Header("Audio")]
-    public AudioClip powerOnSound;  // som quando a eletricidade e restaurada
+    public AudioClip powerOnSound;
+
     private AudioSource audioSource;
 
     [Header("UI")]
@@ -29,18 +38,18 @@ public class LeverSystem : MonoBehaviour
     public bool updateObjectiveOnRestore = false;
     [TextArea] public string nextObjectiveText = "Energia restaurada, segue em frente.";
 
-    // ---------------------------------------------
-    //  ESTADO PRIVADO
-    // ---------------------------------------------
     private int leversActivated = 0;
     private bool powerRestored = false;
+
+
+
+
 
     // ---------------------------------------------
     //  UNITY
     // ---------------------------------------------
     void Awake()
     {
-        // Singleton simples - so deve existir um LeverSystem por cena
         if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
@@ -55,14 +64,16 @@ public class LeverSystem : MonoBehaviour
         if (audioSource == null)
             audioSource = gameObject.AddComponent<AudioSource>();
 
-        // Garantir que as luzes da sala comecam desligadas
         SetRoomLights(false);
     }
 
+
+
+
+
     // ---------------------------------------------
-    //  CHAMADO PELAS ALAVANCAS
+    //  PUBLIC METHODS
     // ---------------------------------------------
-    // Cada Lever.cs chama este metodo ao ser ativado
     public void OnLeverActivated()
     {
         if (powerRestored) return;
@@ -80,28 +91,25 @@ public class LeverSystem : MonoBehaviour
                 Invoke(nameof(ClearMessage), 3f);
         }
 
-        // Debug.Log($"Alavanca ativada! {leversActivated}/{levers.Length}");
-
-        // Verificar se todas estao ativas
         if (leversActivated >= levers.Length)
             RestorePower();
     }
 
+
+
+
     // ---------------------------------------------
-    //  RESTAURAR ENERGIA
+    //  PRIVATE METHODS
     // ---------------------------------------------
     void RestorePower()
     {
         powerRestored = true;
 
-        // Som de energia a voltar
         if (powerOnSound != null && audioSource != null)
             audioSource.PlayOneShot(powerOnSound);
 
-        // Acender luzes da sala
         SetRoomLights(true);
 
-        // Avisar o DarknessManager para remover a escuridao
         if (DarknessManager.Instance != null)
             DarknessManager.Instance.OnPowerRestored();
 
@@ -115,12 +123,8 @@ public class LeverSystem : MonoBehaviour
             ObjectiveManager.Instance?.ShowObjective(nextObjectiveText);
         }
 
-        // Debug.Log("Energia restaurada! Todas as alavancas ativas.");
     }
 
-    // ---------------------------------------------
-    //  AUXILIARES
-    // ---------------------------------------------
     void SetRoomLights(bool on)
     {
         if (roomLights != null)
@@ -129,7 +133,6 @@ public class LeverSystem : MonoBehaviour
                 if (l != null) l.enabled = on;
         }
 
-        // Encontrar todas as lampadas CeilingLight no mapa e acende-las
         CeilingLight[] ceilingLights = Object.FindFirstObjectByType<CeilingLight>() != null 
             ? Object.FindObjectsByType<CeilingLight>(FindObjectsSortMode.None) 
             : new CeilingLight[0];

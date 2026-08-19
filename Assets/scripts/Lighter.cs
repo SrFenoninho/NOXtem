@@ -3,16 +3,29 @@ using UnityEngine.UI;
 
 public class Lighter : MonoBehaviour
 {
+
+
+
+
     // ---------------------------------------------
-    //  INSPETOR
+    //  INSPECTOR
     // ---------------------------------------------
     [Header("Input")]
     public KeyCode toggleKey = KeyCode.F;
 
     [Header("Viewmodel")]
+
     public GameObject lighterModel;
     public GameObject rightArmRoot;
+
+
+
+
+    // ---------------------------------------------
+    //  PRIVATE STATE
+    // ---------------------------------------------
     private Renderer[] armRenderers;
+
     public Vector3 hiddenPosition = new Vector3(0.4f, -0.5f, 0.6f);
     public Vector3 visiblePosition = new Vector3(0.25f, -0.25f, 0.5f);
     public float drawSpeed = 8f;
@@ -54,9 +67,6 @@ public class Lighter : MonoBehaviour
     public float flickerAmount = 0.5f;
     public float rangeFlickerAmount = 1.0f;
 
-    // ---------------------------------------------
-    //  ESTADO PRIVADO
-    // ---------------------------------------------
     [HideInInspector] public bool inputBlocked = false;
     private bool isLit = false;
     private float currentRadius;
@@ -70,6 +80,10 @@ public class Lighter : MonoBehaviour
 
     private FPMove fpMove;
 
+
+
+
+
     // ---------------------------------------------
     //  UNITY
     // ---------------------------------------------
@@ -79,6 +93,13 @@ public class Lighter : MonoBehaviour
 
         if (lighterLight == null)
             lighterLight = GetComponent<Light>() ?? GetComponentInChildren<Light>();
+
+        if (lighterLight != null)
+        {
+            // Forçar a luz do isqueiro a ser sempre Pixel Light (#1) no URP
+            lighterLight.renderMode = LightRenderMode.ForcePixel;
+            lighterLight.range = Mathf.Max(lighterLight.range, 20.0f);
+        }
 
         origRadiusOff = radiusOff;
         origRadiusOn = radiusOn;
@@ -123,8 +144,11 @@ public class Lighter : MonoBehaviour
         UpdateLightComponent();
     }
 
+
+
+
     // ---------------------------------------------
-    //  LIGAR / DESLIGAR
+    //  PRIVATE METHODS
     // ---------------------------------------------
     void Toggle()
     {
@@ -140,12 +164,8 @@ public class Lighter : MonoBehaviour
 
         SetArmVisibility(!isLit);
 
-        // Debug.Log(isLit ? "Isqueiro aceso" : "Isqueiro apagado");
     }
 
-    // ---------------------------------------------
-    //  EFEITOS VISUAIS
-    // ---------------------------------------------
     void UpdateVignette()
     {
         if (vignetteImage == null) return;
@@ -198,14 +218,11 @@ public class Lighter : MonoBehaviour
                     float n1 = Mathf.PerlinNoise(Time.time * flickerSpeed, 0f);
                     float n2 = Mathf.PerlinNoise(0f, Time.time * (flickerSpeed * 0.7f));
 
-                    // 1. Transição dinâmica da cor da chama
                     lighterLight.color = Color.Lerp(flameColorSecondary, flameColorPrimary, n1);
 
-                    // 2. Variação do raio de luz (usando Range Flicker Amount do Inspector)
                     float rangeDip = (n2 - 0.5f) * rangeFlickerAmount;
                     lighterLight.range = Mathf.Max(0.2f, lightRangeOn + rangeDip);
 
-                    // 3. Variação da intensidade de luz (usando Flicker Amount do Inspector)
                     float intensityFlicker = (n1 - 0.5f) * flickerAmount;
                     lighterLight.intensity = Mathf.Max(0.05f, lightIntensityOn + intensityFlicker);
                 }
@@ -224,8 +241,11 @@ public class Lighter : MonoBehaviour
         }
     }
 
+
+
+
     // ---------------------------------------------
-    //  VALORES DE ZONA
+    //  PUBLIC METHODS
     // ---------------------------------------------
     public void SetZoneValues(float darkRad, float darkSoft)
     {
@@ -256,9 +276,6 @@ public class Lighter : MonoBehaviour
         currentSoftness = targetSoftness;
     }
 
-    // ---------------------------------------------
-    //  AUXILIARES
-    // ---------------------------------------------
     void SetAlpha(Image img, float a) { Color c = img.color; c.a = a; img.color = c; }
 
     void SetArmVisibility(bool visible)
@@ -282,9 +299,6 @@ public class Lighter : MonoBehaviour
         SetArmVisibility(!isLit);
     }
 
-    // ---------------------------------------------
-    //  CONSULTAS
-    // ---------------------------------------------
     public float GetCurrentRadius() => currentRadius;
     public float GetCurrentSoftness() => currentSoftness;
     public bool IsLit() => isLit;
